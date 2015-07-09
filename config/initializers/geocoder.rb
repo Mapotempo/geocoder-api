@@ -15,19 +15,10 @@
 # along with Mapotempo. If not, see:
 # <http://www.gnu.org/licenses/agpl.html>
 #
-require './wrappers/addok'
-require './wrappers/ruby_geocoder_opencagedata'
-require './wrappers/demo'
+require 'geocoder'
 
 
 module AddokWrapper
-  @@c = {
-    product_title: 'Addock Wrapper geocoding API',
-    product_contact: 'frederic@mapotempo.com',
-    geocoders: {
-      fra: Wrappers::Addok.new('http://api-adresse.data.gouv.fr/', 'france.geojson'),
-    },
-    geocoder_fallback: Wrappers::RubyGeocoderOpencagedata.new,
-    api_keys: ['demo']
+  @@c[:ruby_geocode] = {
   }
 end

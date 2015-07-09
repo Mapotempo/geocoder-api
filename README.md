@@ -25,3 +25,8 @@ Running
 ```
 bundle exec rake server
 ```
+
+And in production mode:
+```
+APP_ENV=production bundle exec rake server
+```

@@ -15,19 +15,25 @@
 # along with Mapotempo. If not, see:
 # <http://www.gnu.org/licenses/agpl.html>
 #
-require './wrappers/addok'
+require './test/test_helper'
+
 require './wrappers/ruby_geocoder_opencagedata'
-require './wrappers/demo'
 
+class Wrappers::RubyGeocoderOpencagedataTest < Minitest::Test
 
-module AddokWrapper
-  @@c = {
-    product_title: 'Addock Wrapper geocoding API',
-    product_contact: 'frederic@mapotempo.com',
-    geocoders: {
-      fra: Wrappers::Addok.new('http://api-adresse.data.gouv.fr/', 'france.geojson'),
-    },
-    geocoder_fallback: Wrappers::RubyGeocoderOpencagedata.new,
-    api_keys: ['demo']
-  }
+  def test_geocode_from_full_text
+    rg = Wrappers::RubyGeocoderOpencagedata.new
+    result = rg.geocode({query: '1 Front Street, NYC'})
+    assert 0 < result[:features].size
+    g = result[:features][0][:properties][:geocoding]
+    assert_equal 'New York City', g[:city]
+  end
+
+  def test_geocode_from_part
+    rg = Wrappers::RubyGeocoderOpencagedata.new
+    result = rg.geocode({housenumber: '10', street: 'Via del Parlamento', city: 'Roma'})
+    assert 0 < result[:features].size
+    g = result[:features][0][:properties][:geocoding]
+    assert_equal 'Rome', g[:city]
+  end
 end
