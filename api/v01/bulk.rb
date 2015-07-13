@@ -41,7 +41,7 @@ module Api
         error!(message, 500)
       end
 
-      desc 'Geocode from bulk json address. From full text or splited in fields', {
+      desc 'Geocode from bulk json address. From full text or splited in fields.', {
         nickname: 'geocodes',
         params: GeocodesRequest.documentation,
         entity: GeocodesResult,
