@@ -34,16 +34,19 @@ module Wrappers
 
     def initialize(boundary = nil)
       super(boundary)
-#      Geocoder.configure(lookup: :here,
-# FIXME
-#  here: {
-#    api_key: ['yihiGwg1ibLi0q6BfBOa', '5GEGWZnjPAA-ZIwc7DF3Mw']
-#  }
-#)
     end
 
     def geocode(params, limit = 10)
-      q = flatten_query(params)
+      here_geocoder(flatten_query(params), limit)
+    end
+
+    def reverse(params)
+      here_geocoder([params[:lat], params[:lng]], 1)
+    end
+
+    private
+
+    def here_geocoder(q, limit)
       Geocoder::Configuration.lookup = :here
       Geocoder::Configuration.api_key = ::AddokWrapper::config[:ruby_geocode][Geocoder::Configuration.lookup]
       response = Geocoder.search(q, params: {maxresults: limit})
@@ -85,11 +88,6 @@ module Wrappers
       r[:features] = features
       r
     end
-
-    #def reverse(params)
-    #end
-
-    private
 
     def parse_address_additional_data(additional_data)
       h = Hash.new{ |h, k| h[k] = nil }

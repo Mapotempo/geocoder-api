@@ -36,4 +36,12 @@ class Wrappers::RubyGeocoderHereTest < Minitest::Test
     g = result[:features][0][:properties][:geocoding]
     assert_equal 'Москва', g[:city]
   end
+
+  def test_reverse
+    rg = Wrappers::RubyGeocoderHere.new
+    result = rg.reverse({lat: 42.90360, lng: -2.17306})
+    assert_equal 1, result[:features].size
+    g = result[:features][0][:properties][:geocoding]
+    assert_equal 'Alsasua', g[:city]
+  end
 end
