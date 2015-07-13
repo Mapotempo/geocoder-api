@@ -31,7 +31,7 @@ module Api
 
       rescue_from :all do |error|
         message = {error: error.class.name, detail: error.message}
-        if ['development'].include?(ENV['RAILS_ENV'])
+        if ['development'].include?(ENV['APP_ENV'])
           message[:trace] = error.backtrace
           STDERR.puts error.message
           STDERR.puts error.backtrace
