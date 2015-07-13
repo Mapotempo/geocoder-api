@@ -10,6 +10,8 @@ Installation
 bundle install
 # Download French boundaries
 wget "http://polygons.openstreetmap.fr/get_geojson.py?id=2202162&params=0.004000-0.001000-0.001000" -O france.geojson
+# Convert ot KML
+ogr2ogr -f "KML" -lco COORDINATE_PRECISION=7 france.kml france.geojson
 ```
 
 

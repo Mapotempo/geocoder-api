@@ -9,8 +9,7 @@ gem 'grape-entity'
 gem 'grape-swagger'
 
 gem 'rest-client'
-gem 'rgeo'
-gem 'rgeo-geojson'
+gem 'border_patrol'
 
 group :test do
   gem 'rack-test'

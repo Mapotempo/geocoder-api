@@ -15,16 +15,14 @@
 # along with Mapotempo. If not, see:
 # <http://www.gnu.org/licenses/agpl.html>
 #
-require 'rgeo'
-require 'rgeo/geo_json'
+require 'border_patrol'
 
 
 module Wrappers
   class Wrapper
     def initialize(boundary = nil)
       if boundary
-        json = File.open(boundary, "r").read
-        @boundary = RGeo::GeoJSON.decode(json, json_parser: :json)
+        @boundary = BorderPatrol.parse_kml(File.read(boundary))
       end
     end
 
@@ -86,8 +84,7 @@ module Wrappers
 
     def contains?(lat, lng)
       if !lat.nil? && !lng.nil?
-        point = RGeo::Cartesian.factory.point(lng, lat)
-        @boundary.contains?(point)
+        @boundary.contains_point?(lng, lat)
       end
     end
   end
