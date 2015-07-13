@@ -37,7 +37,16 @@ module Wrappers
     end
 
     def geocode(params, limit = 10)
-      q = flatten_query(params)
+      opencagedata_geocoder(flatten_query(params), limit)
+    end
+
+    def reverse(params)
+      opencagedata_geocoder([params[:lat], params[:lng]], 1)
+    end
+
+    private
+
+    def opencagedata_geocoder(q, limit)
       Geocoder::Configuration.lookup = :opencagedata
       Geocoder::Configuration.api_key = ::AddokWrapper::config[:ruby_geocode][Geocoder::Configuration.lookup]
       response = Geocoder.search(q, params: {limit: limit})
@@ -77,8 +86,5 @@ module Wrappers
       r[:features] = features
       r
     end
-
-    #def reverse(params)
-    #end
   end
 end
