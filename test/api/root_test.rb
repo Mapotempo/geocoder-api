@@ -15,33 +15,20 @@
 # along with Mapotempo. If not, see:
 # <http://www.gnu.org/licenses/agpl.html>
 #
-require 'grape'
-require 'grape-swagger'
-require 'grape-entity'
+require './test/test_helper'
 
-require './api/v01/unitary'
-require './api/v01/bulk'
+require './api/root'
 
-module Api
-  class Root < Grape::API
+class Api::RootTest < Minitest::Test
+  include Rack::Test::Methods
 
-    before do
-      if !::AddokWrapper::config[:api_keys].include?(params[:api_key])
-        error!('401 Unauthorized', 401)
-      end
-    end
+  def app
+    Api::Root
+  end
 
-    mount V01::Unitary
-    mount V01::Bulk
-    documentation_class = add_swagger_documentation hide_documentation_path: true, info: {
-      title: ::AddokWrapper::config[:product_title],
-      description: 'API access require an api_key.',
-      contact: ::AddokWrapper::config[:product_contact]
-    }
-
-    desc 'Ping hook. Responds by "pong".'
-    get '/ping' do
-      'pong'
-    end
+  def test_ping
+    get '/ping?api_key=demo'
+    assert last_response.ok?, last_response.body
+    assert_equal 'pong', last_response.body
   end
 end
