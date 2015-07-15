@@ -25,7 +25,7 @@ module AddokWrapper
     product_title: 'Addock Wrapper geocoding API',
     product_contact: 'frederic@mapotempo.com',
     geocoders: {
-      fra: Wrappers::Addok.new('http://api-adresse.data.gouv.fr/', 'france.kml'),
+      fra: Wrappers::Addok.new('http://api-adresse.data.gouv.fr', 'france.kml'),
     },
     geocoder_fallback: Wrappers::RubyGeocoderOpencagedata.new,
     api_keys: ['demo']

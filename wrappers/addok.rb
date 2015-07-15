@@ -32,7 +32,7 @@ module Wrappers
     end
 
     def reverse(params)
-      response = RestClient.get(@url + 'reverse/', {params: {lat: params[:lat], lon: params[:lng]}}) { |response, request, result, &block|
+      response = RestClient.get(@url + '/reverse', {params: {lat: params[:lat], lon: params[:lng]}}) { |response, request, result, &block|
         case response.code
         when 200
           response
@@ -54,7 +54,7 @@ module Wrappers
         }
       }
 
-      addok_geocodes('search/csv/', ['q'], csv_string)
+      addok_geocodes('/search/csv', ['q'], csv_string)
     end
 
     def reverses(list_params)
@@ -65,7 +65,7 @@ module Wrappers
         }
       }
 
-      addok_geocodes('reverse/csv/', nil, csv_string)
+      addok_geocodes('/reverse/csv', nil, csv_string)
     end
 
     def complete(params, limit = 10)
@@ -86,7 +86,7 @@ module Wrappers
       p.delete('country')
       p.merge!({q: q, type: type})
       p.select!{ |i| i }
-      response = RestClient.get(@url + 'search/', {params: p}) { |response, request, result, &block|
+      response = RestClient.get(@url + '/search', {params: p}) { |response, request, result, &block|
         case response.code
         when 200
           response
