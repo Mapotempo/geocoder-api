@@ -77,7 +77,7 @@ module AddokWrapper
   private
 
   def self.geocode_country(name)
-    if ['france', 'fra', 'fr'].include?(name)
+    if ['france', 'fra', 'fr'].include?(name.downcase)
       :fra
     end
   end
