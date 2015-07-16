@@ -177,7 +177,7 @@ module Wrappers
         },
         geometry: {
           type: 'Point',
-          coordinates: [p[''], p['']]
+          coordinates: [p['longitude'], p['latitude']]
         },
         type: 'Feature'
       }
