@@ -17,7 +17,6 @@
 #
 require './test/test_helper'
 
-require './wrappers/ruby_geocoder_here'
 
 class Wrappers::RubyGeocoderHereTest < Minitest::Test
 

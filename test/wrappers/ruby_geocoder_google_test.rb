@@ -17,12 +17,11 @@
 #
 require './test/test_helper'
 
-require './wrappers/ruby_geocoder_google'
 
 class Wrappers::RubyGeocoderGoogleTest < Minitest::Test
 
   def test_geocode_from_full_text
-    rg = Wrappers::RubyGeocoderGoogle.new
+    rg = AddokWrapper::GOOGLE
     result = rg.geocode({query: "Front Street, NYC"})
     assert result
     g = result[:features][0][:properties][:geocoding]

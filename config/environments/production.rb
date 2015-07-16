@@ -20,13 +20,16 @@ require './wrappers/demo'
 
 
 module AddokWrapper
+  ADDOK_FRA = Wrappers::Addok.new('http://api-adresse.data.gouv.fr', 'france.kml')
+  DEMO = Wrappers::Demo.new
+
   @@c = {
     product_title: 'Addock Wrapper geocoding API',
     product_contact: 'frederic@mapotempo.com',
     geocoders: {
-      fra: Wrappers::Addok.new('http://api-adresse.data.gouv.fr', 'france.kml'),
+      fra: ADDOK_FRA,
     },
-    geocoder_fallback: Wrappers::Demo.new,
+    geocoder_fallback: DEMO,
     api_keys: ['demo']
   }
 end

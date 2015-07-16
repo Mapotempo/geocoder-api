@@ -22,7 +22,7 @@ require './wrappers/addok'
 class Wrappers::AddokTest < Minitest::Test
 
   def test_geocodes_from_full_text
-    rg = Wrappers::Addok.new('http://api-adresse.data.gouv.fr/')
+    rg = AddokWrapper::ADDOK_FRA
     result = rg.geocodes([{query: '50 Bv de la Plage, Arcachon'}])
     assert 0 < result.size
     g = result[0][:properties][:geocoding]
@@ -30,7 +30,7 @@ class Wrappers::AddokTest < Minitest::Test
   end
 
   def test_geocodes_from_part
-    rg = Wrappers::Addok.new('http://api-adresse.data.gouv.fr/')
+    rg = AddokWrapper::ADDOK_FRA
     result = rg.geocodes([{housenumber: '50', street: 'Bv de la Plage', city: 'Arcachon'}])
     assert 0 < result.size
     g = result[0][:properties][:geocoding]
@@ -38,7 +38,7 @@ class Wrappers::AddokTest < Minitest::Test
   end
 
   def test_reverses
-    rg = Wrappers::Addok.new('http://api-adresse.data.gouv.fr/')
+    rg = AddokWrapper::ADDOK_FRA
     result = rg.reverses([{lat: 47.09305, lng: 5.48827}])
     assert_equal 1, result.size
     g = result[0][:properties][:geocoding]
