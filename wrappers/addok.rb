@@ -161,7 +161,7 @@ module Wrappers
             'score': p['result_score'], # Not in spec
             'type': p['result_type'],
             # 'accuracy': p['accuracy'],
-            'label': p['result_address'], # result_label
+            'label': p['result_label'],
             'name': p['result_name'],
             'housenumber': p['result_housenumber'],
             'street': p['result_street'],
