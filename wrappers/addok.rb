@@ -48,9 +48,9 @@ module Wrappers
 
     def geocodes(list_params)
       csv_string = CSV.generate { |csv|
-        csv << ['q', 'plop'] # Workaround bug in addok
+        csv << ['q']
         list_params.each{ |params|
-          csv << [flatten_query(params), '']
+          csv << [flatten_query(params)]
         }
       }
 
@@ -134,6 +134,8 @@ module Wrappers
 
     def addok_geocodes(url_part, columns, csv)
       post = {
+        delimiter: ',',
+        encoding: 'utf-8',
         multipart: true,
         data: FakeFileStringIO.new(csv, 'r')
       }
@@ -148,7 +150,7 @@ module Wrappers
         end
       }
       result = []
-      CSV.parse(response, headers: true) { |p|
+      CSV.parse(response[3..-1], headers: true) { |p|
         result << map_from_csv(p)
       }
       result
