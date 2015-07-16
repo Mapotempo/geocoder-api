@@ -22,13 +22,13 @@ require 'geocoder'
 module Wrappers
   class RubyGeocoderOpencagedata < Wrapper
     @@header = {
-      'type': 'FeatureCollection',
-      'geocoding': {
-        'licence': 'CC-BY-SA, ODbL',
-        'attribution': 'Data OpenStreetMap and contributors under ODbL. GeoNames under CC-BY',
-        'query': nil,
+      type: 'FeatureCollection',
+      geocoding: {
+        licence: 'CC-BY-SA, ODbL',
+        attribution: 'Data OpenStreetMap and contributors under ODbL. GeoNames under CC-BY',
+        query: nil,
       },
-      'features': []
+      features: []
     }
 
 
@@ -54,29 +54,29 @@ module Wrappers
         a = r.data
         # http://geocoder.opencagedata.com/api.html
         f = {
-          'properties': {
-            'geocoding': {
-              'score': a['confidence'] / 10.0,
-              'type': nil,
-              'label': a['formatted'],
-              'name': nil,
-              'housenumber': a['components']['house_number'],
-              'street': a['components']['road'],
-              'postcode': a['components']['postcode'],
-              'city': a['components']['town'] || a['components']['city'] || a['components']['state_district'],
-              'district': nil,
-              'county': a['components']['county'],
-              'state': a['components']['state'],
-              'country': a['components']['country'],
+          properties: {
+            geocoding: {
+              score: a['confidence'] / 10.0,
+              type: nil,
+              label: a['formatted'],
+              name: nil,
+              housenumber: a['components']['house_number'],
+              street: a['components']['road'],
+              postcode: a['components']['postcode'],
+              city: a['components']['town'] || a['components']['city'] || a['components']['state_district'],
+              district: nil,
+              county: a['components']['county'],
+              state: a['components']['state'],
+              country: a['components']['country'],
             }
           },
-          'type': 'Feature',
-          'geometry': {
-            'coordinates': [
+          type: 'Feature',
+          geometry: {
+            coordinates: [
               a['geometry']['lng'],
               a['geometry']['lat']
             ],
-            'type': 'Point'
+            type: 'Point'
           }
         }
       }

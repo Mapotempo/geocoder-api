@@ -22,13 +22,13 @@ require 'geocoder'
 module Wrappers
   class RubyGeocoderHere < Wrapper
     @@header = {
-      'type': 'FeatureCollection',
-      'geocoding': {
-        'licence': 'HERE',
-        'attribution': 'HERE',
-        'query': nil,
+      type: 'FeatureCollection',
+      geocoding: {
+        licence: 'HERE',
+        attribution: 'HERE',
+        query: nil,
       },
-      'features': []
+      features: []
     }
 
 
@@ -56,29 +56,29 @@ module Wrappers
         # https://developer.here.com/rest-apis/documentation/geocoder/topics/resource-type-response-geocode.html
         additional_data = parse_address_additional_data(a['Location']['Address']['AdditionalData'])
         {
-          'properties': {
-            'geocoding': {
-              'score': a['Relevance'],
-              'type': a['LocationType'], # TODO map to common value
-              'label': a['Location']['Address']['Label'],
-              'name': a['Location']['Address']['Name'],
-              'housenumber': [a['Location']['Address']['HouseNumber'], a['Location']['Address']['Building']].select{ |i| i }.join(' '),
-              'street': a['Location']['Address']['Street'],
-              'postcode': a['Location']['Address']['PostalCode'],
-              'city': a['Location']['Address']['City'],
-              #'district': a['Location']['Address']['District'], # In HERE API district is a city district
-              'county': additional_data['CountyName'],
-              'state': additional_data['StateName'],
-              'country': additional_data['CountryName'],
+          properties: {
+            geocoding: {
+              score: a['Relevance'],
+              type: a['LocationType'], # TODO map to common value
+              label: a['Location']['Address']['Label'],
+              name: a['Location']['Address']['Name'],
+              housenumber: [a['Location']['Address']['HouseNumber'], a['Location']['Address']['Building']].select{ |i| i }.join(' '),
+              street: a['Location']['Address']['Street'],
+              postcode: a['Location']['Address']['PostalCode'],
+              city: a['Location']['Address']['City'],
+              #district: a['Location']['Address']['District'], # In HERE API district is a city district
+              county: additional_data['CountyName'],
+              state: additional_data['StateName'],
+              country: additional_data['CountryName'],
             }
           },
-          'type': 'Feature',
-          'geometry': {
-            'coordinates': [
+          type: 'Feature',
+          geometry: {
+            coordinates: [
               a['Location']['DisplayPosition']['Longitude'],
               a['Location']['DisplayPosition']['Latitude']
             ],
-            'type': 'Point'
+            type: 'Point'
           }
         }
       }

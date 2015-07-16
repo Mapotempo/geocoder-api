@@ -37,7 +37,7 @@ class Api::V01::UnitaryTest < Minitest::Test
   end
 
   def test_should_not_geocode_without_country
-    get '/0.1/geocode', {api_key: 'demo', 'query': 'Place Pey Berland, Bordeaux'}
+    get '/0.1/geocode', {api_key: 'demo', query: 'Place Pey Berland, Bordeaux'}
     assert !last_response.ok?, last_response.body
   end
 

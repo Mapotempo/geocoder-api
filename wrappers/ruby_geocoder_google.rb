@@ -22,45 +22,45 @@ require 'geocoder'
 module Wrappers
   class RubyGeocoderGoogle < Wrapper
     @@header = {
-      'type': 'FeatureCollection',
-      'geocoding': {
-        'licence': 'Google Maps',
-        'attribution': 'Google Maps',
-        'query': nil,
+      type: 'FeatureCollection',
+      geocoding: {
+        licence: 'Google Maps',
+        attribution: 'Google Maps',
+        query: nil,
       },
-      'features': []
+      features: []
     }
 
     @@location_type = {
-      'ROOFTOP': 1,
-      'RANGE_INTERPOLATED': 0.95,
-      'GEOMETRIC_CENTER': 0.9,
-      'APPROXIMATE': 0.85,
+      'ROOFTOP' =>  1,
+      'RANGE_INTERPOLATED' =>  0.95,
+      'GEOMETRIC_CENTER' =>  0.9,
+      'APPROXIMATE' =>  0.85,
     }
 
     @@type = {
-      'street_address': 'house',
-      'route': 'street',
-      'intersection': 'street',
-      'political': nil,
-      'country': 'country',
-      'administrative_area_level_1': 'state',
-      'administrative_area_level_2': 'county',
-      'administrative_area_level_3': 'district',
-      'administrative_area_level_4': nil,
-      'administrative_area_level_5': nil,
-      'colloquial_area': nil,
-      'locality': 'city',
-      'ward': nil,
-      'sublocality': nil,
-      'neighborhood': nil,
-      'premise': nil,
-      'subpremise': nil,
-      'postal_code': nil,
-      'natural_feature': nil,
-      'airport indicates': nil,
-      'park indicates': nil,
-      'point_of_interest': nil,
+      'street_address' =>  'house',
+      'route' =>  'street',
+      'intersection' =>  'street',
+      'political' =>  nil,
+      'country' =>  'country',
+      'administrative_area_level_1' =>  'state',
+      'administrative_area_level_2' =>  'county',
+      'administrative_area_level_3' =>  'district',
+      'administrative_area_level_4' =>  nil,
+      'administrative_area_level_5' =>  nil,
+      'colloquial_area' =>  nil,
+      'locality' =>  'city',
+      'ward' =>  nil,
+      'sublocality' =>  nil,
+      'neighborhood' =>  nil,
+      'premise' =>  nil,
+      'subpremise' =>  nil,
+      'postal_code' =>  nil,
+      'natural_feature' =>  nil,
+      'airport indicates' =>  nil,
+      'park indicates' =>  nil,
+      'point_of_interest' =>  nil,
     }
 
     def initialize(boundary = nil)
@@ -77,29 +77,29 @@ module Wrappers
         # https://developers.google.com/maps/documentation/geocoding/
         address_components = parse_address_components(a['address_components'])
         {
-          'properties': {
-            'geocoding': {
-              'score': @@location_type[a['geometry']['location_type']],
-              'type': @@type[a['type']],
-              'label': a['formatted_address'],
-              'name': a['address_components'][0]['short_name'],
-              'housenumber': address_components['street_number'],
-              'street': address_components['route'],
-              'postcode': address_components['postal_code'],
-              'city': address_components['locality'],
-              'district': address_components['administrative_area_level_3'],
-              'county': address_components['administrative_area_level_2'],
-              'state': address_components['administrative_area_level_1'],
-              'country': address_components['country'],
+          properties: {
+            geocoding: {
+              score: @@location_type[a['geometry']['location_type']],
+              type: @@type[a['type']],
+              label: a['formatted_address'],
+              name: a['address_components'][0]['short_name'],
+              housenumber: address_components['street_number'],
+              street: address_components['route'],
+              postcode: address_components['postal_code'],
+              city: address_components['locality'],
+              district: address_components['administrative_area_level_3'],
+              county: address_components['administrative_area_level_2'],
+              state: address_components['administrative_area_level_1'],
+              country: address_components['country'],
             }
           },
-          'type': 'Feature',
-          'geometry': {
-            'coordinates': [
+          type: 'Feature',
+          geometry: {
+            coordinates: [
               a['geometry']['location']['lng'],
               a['geometry']['location']['lat']
             ],
-            'type': 'Point'
+            type: 'Point'
           }
         }
       }

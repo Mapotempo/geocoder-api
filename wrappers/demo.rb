@@ -20,46 +20,46 @@ require './wrappers/wrapper'
 module Wrappers
   class Demo < Wrapper
     @@header = {
-      'type': 'FeatureCollection',
-      'geocoding': {
-        'licence': 'ODbL',
-        'attribution': 'Demo Data',
-        'query': '24 allée de Bercy 75012 Paris',
+      type: 'FeatureCollection',
+      geocoding: {
+        licence: 'ODbL',
+        attribution: 'Demo Data',
+        query: '24 allée de Bercy 75012 Paris',
       },
-      'features': []
+      features: []
     }
 
     @@feature = {
-      'properties': {
-        'geocoding': {
-          'score': 0, # Not in spec
-          'type': 'house',
-          'accuracy': 20,
-          'label': 'My Shoes Shop, 64 rue de Metz 59280 Armentières',
-          'name': 'My Shoes Shop',
-          'housenumber': '64',
-          'street': 'Rue de Metz',
-          'postcode': '59280',
-          'city': 'Armentières',
-          'district': nil,
-          'county': nil,
-          'state': nil,
-          'country': 'France',
-          'admin': {
-            'level2': 'France',
-            'level4': 'Nord-Pas-de-Calais',
-            'level6': 'Nord'
+      properties: {
+        geocoding: {
+          score: 0, # Not in spec
+          type: 'house',
+          accuracy: 20,
+          label: 'My Shoes Shop, 64 rue de Metz 59280 Armentières',
+          name: 'My Shoes Shop',
+          housenumber: '64',
+          street: 'Rue de Metz',
+          postcode: '59280',
+          city: 'Armentières',
+          district: nil,
+          county: nil,
+          state: nil,
+          country: 'France',
+          admin: {
+            level2: 'France',
+            level4: 'Nord-Pas-de-Calais',
+            level6: 'Nord'
           },
-          'geohash': 'Ehugh5oofiToh9aWe3heemu7ighee8',
+          geohash: 'Ehugh5oofiToh9aWe3heemu7ighee8',
         }
       },
-      'type': 'Feature',
-      'geometry': {
-        'coordinates': [
+      type: 'Feature',
+      geometry: {
+        coordinates: [
           2.889957,
           50.687328
         ],
-        'type': 'Point'
+        type: 'Point'
       }
     }
 

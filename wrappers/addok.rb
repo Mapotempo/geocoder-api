@@ -103,29 +103,29 @@ module Wrappers
     def map_spec(json)
       # Convert from geocodejson-spec to geocodejson-spec-namespace
       json['geocoding'] = {
-        'licence': json['licence'],
-        'attribution': json['attribution'],
-        'query': json['query'],
+        licence: json['licence'],
+        attribution: json['attribution'],
+        query: json['query'],
       }.select{ |k, v| not v.nil? }
 
       json['features'].collect{ |features|
         p = features['properties']
         features['properties']['geocoding'] = {
-          'score': p['score'], # Not in spec
-          'type': p['type'],
-          # 'accuracy': p['accuracy'],
-          'label': p['label'],
-          'name': p['name'],
-          'housenumber': p['housenumber'],
-          'street': p['street'],
-          'postcode': p['postcode'],
-          'city': p['city'],
-          'district': p['district'],
-          'county': p['county'],
-          'state': p['state'],
-          'country': p['country'],
-          'admin': p['admin'],
-          'geohash': p['geohash'],
+          score: p['score'], # Not in spec
+          type: p['type'],
+          # accuracy: p['accuracy'],
+          label: p['label'],
+          name: p['name'],
+          housenumber: p['housenumber'],
+          street: p['street'],
+          postcode: p['postcode'],
+          city: p['city'],
+          district: p['district'],
+          county: p['county'],
+          state: p['state'],
+          country: p['country'],
+          admin: p['admin'],
+          geohash: p['geohash'],
         }.select{ |k, v| not v.nil? }
       }
 
@@ -156,30 +156,30 @@ module Wrappers
 
     def map_from_csv(p)
       {
-        'properties': {
-          'geocoding': {
-            'score': p['result_score'], # Not in spec
-            'type': p['result_type'],
-            # 'accuracy': p['accuracy'],
-            'label': p['result_label'],
-            'name': p['result_name'],
-            'housenumber': p['result_housenumber'],
-            'street': p['result_street'],
-            'postcode': p['result_postcode'],
-            'city': p['result_city'],
-            'district': p['result_district'],
-            'county': p['result_county'],
-            'state': p['result_state'],
-            'country': p['result_country'],
-            # 'admin': p['admin'],
-            'geohash': p['geohash'],
+        properties: {
+          geocoding: {
+            score: p['result_score'], # Not in spec
+            type: p['result_type'],
+            # accuracy: p['accuracy'],
+            label: p['result_label'],
+            name: p['result_name'],
+            housenumber: p['result_housenumber'],
+            street: p['result_street'],
+            postcode: p['result_postcode'],
+            city: p['result_city'],
+            district: p['result_district'],
+            county: p['result_county'],
+            state: p['result_state'],
+            country: p['result_country'],
+            # admin: p['admin'],
+            geohash: p['geohash'],
           },
         },
-        'geometry': {
-          'type': 'Point',
-          'coordinates': [p[''], p['']]
+        geometry: {
+          type: 'Point',
+          coordinates: [p[''], p['']]
         },
-        'type': 'Feature'
+        type: 'Feature'
       }
     end
   end
