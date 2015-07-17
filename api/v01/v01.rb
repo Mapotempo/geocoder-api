@@ -17,24 +17,26 @@
 #
 require 'grape'
 require 'grape-swagger'
-require 'grape-entity'
 
-require './api/v01/v01'
+require './api/v01/unitary'
+require './api/v01/bulk'
 
 module Api
-  class Root < Grape::API
+  module V01
+    class V01 < Grape::API
+      version '0.1', using: :path
+      format :json
+      content_type :json, 'application/json; charset=UTF-8'
+      default_format :json
 
-    mount V01::V01
+      before do
+        if !::AddokWrapper::config[:api_keys].include?(params[:api_key])
+          error!('401 Unauthorized', 401)
+        end
+      end
 
-    documentation_class = add_swagger_documentation hide_documentation_path: true, info: {
-      title: ::AddokWrapper::config[:product_title],
-      description: 'API access require an api_key.',
-      contact: ::AddokWrapper::config[:product_contact]
-    }
-
-    desc 'Ping hook. Responds by "pong".'
-    get '/ping' do
-      'pong'
+      mount Unitary
+      mount Bulk
     end
   end
 end
