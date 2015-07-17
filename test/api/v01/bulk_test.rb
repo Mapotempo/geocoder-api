@@ -55,4 +55,32 @@ class Api::V01::BulkTest < Minitest::Test
     assert_equal 1, features.size
     assert_equal '33', features[0]['properties']['geocoding']['ref']
   end
+
+  def test_geocodes_order
+    post '/0.1/geocodes', {api_key: 'demo', geocodes: [
+      {query: 'NYC', country: 'ttt'},
+      {query: 'Bordeaux', country: 'France'},
+      {query: 'Rome', country: 'ttt'},
+    ]}
+    assert last_response.ok?, last_response.body
+    features = JSON.parse(last_response.body)['geocodes']
+    assert_equal 3, features.size
+    assert_equal 'Armentières', features[0]['properties']['geocoding']['city'] # From Demo wrapper
+    assert_equal 'Bordeaux', features[1]['properties']['geocoding']['city']
+    assert_equal 'Armentières', features[2]['properties']['geocoding']['city'] # From Demo wrapper
+  end
+
+  def test_should_reverses_oder
+    post '/0.1/reverses', {api_key: 'demo', reverses: [
+      {lat: 0.1, lng: 0.1},
+      {lat: 46.03349, lng: 4.07271},
+      {lat: 0.2, lng: 0.2},
+    ]}
+    assert last_response.ok?, last_response.body
+    features = JSON.parse(last_response.body)['reverses']
+    assert_equal 3, features.size
+    assert_equal 'Armentières', features[0]['properties']['geocoding']['city'] # From Demo wrapper
+    assert_equal 'Roanne', features[1]['properties']['geocoding']['city']
+    assert_equal 'Armentières', features[2]['properties']['geocoding']['city'] # From Demo wrapper
+  end
 end
