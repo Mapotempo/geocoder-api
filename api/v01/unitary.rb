@@ -44,7 +44,7 @@ module Api
         entity: GeocodeResult
       }
       params {
-        requires :country, type: String, desc: 'ISO 3166-alpha-3 Country code filter.'
+        requires :country, type: String, desc: 'Simple country name, ISO 3166-alpha-2 or ISO 3166-alpha-3.'
         optional :housenumber, type: String
         optional :street, type: String
         optional :postcode, type: String
@@ -92,7 +92,7 @@ module Api
         entity: GeocodeResult
       }
       params {
-        requires :country, type: String, desc: 'ISO 3166-alpha-3 Country code filter.'
+        requires :country, type: String, desc: 'Simple country name, ISO 3166-alpha-2 or ISO 3166-alpha-3.'
         optional :housenumber, type: String
         optional :street, type: String
         optional :postcode, type: String

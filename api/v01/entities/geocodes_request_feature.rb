@@ -23,7 +23,7 @@ module Api
       end
 
       expose(:ref, documentation: { type: String, desc: 'Row Ref for bulk request, returned in result.' })
-      expose(:country, documentation: { type: String, desc: 'ISO 3166-alpha-3 Country code filter.' })
+      expose(:country, documentation: { type: String, desc: 'Simple country name, ISO 3166-alpha-2 or ISO 3166-alpha-3.' })
       expose(:housenumber, documentation: { type: String, desc: 'Row Ref from bulk request.' })
       expose(:street, documentation: { type: String, desc: 'Street of the place.' })
       expose(:postcode, documentation: { type: String, desc: 'Postcode of the place.' })
