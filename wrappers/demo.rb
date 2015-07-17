@@ -65,19 +65,19 @@ module Wrappers
 
     def geocode(params, limit = 10)
       r = @@header.dup
-      r[:features] = [@@feature] * limit
+      r[:features] = ([@@feature] * limit).collect(&:dup)
       r
     end
 
     def reverse(params)
       r = @@header.dup
-      r[:features] = [@@feature]
+      r[:features] = [@@feature].collect(&:dup)
       r
     end
 
     def complete(params, limit = 10)
       r = @@header.dup
-      r[:features] = [@@feature] * limit
+      r[:features] = ([@@feature] * limit).collect(&:dup)
       r
     end
   end
