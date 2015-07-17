@@ -42,7 +42,7 @@ module AddokWrapper
 
   def self.wrapper_geocodes(list_params)
     by_country = list_params.group_by{ |params|
-      self.geocode_country(params[:country].to_sym)
+      self.geocode_country(params[:country])
     }
     by_country.collect{ |country, list_params|
       if @@c[:geocoders].key?(country)
@@ -66,7 +66,7 @@ module AddokWrapper
   end
 
   def self.wrapper_complete(params)
-    country = self.geocode_country(params[:country].to_sym)
+    country = self.geocode_country(params[:country])
     if @@c[:geocoders].key?(country)
       @@c[:geocoders][country].complete(params, params[:limit])
     elsif @@c[:geocoder_fallback]
@@ -77,7 +77,7 @@ module AddokWrapper
   private
 
   def self.geocode_country(name)
-    if ['france', 'fra', 'fr'].include?(name.downcase)
+    if ['france', 'fra', 'fr'].include?(name.strip.downcase)
       :fra
     end
   end
