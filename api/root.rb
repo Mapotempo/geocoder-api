@@ -23,6 +23,9 @@ require './api/v01/v01'
 
 module Api
   class Root < Grape::API
+    format :json
+    content_type :json, 'application/json; charset=UTF-8'
+    default_format :json
 
     mount V01::V01
 
