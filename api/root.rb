@@ -29,7 +29,7 @@ module Api
 
     mount V01::V01
 
-    documentation_class = add_swagger_documentation hide_documentation_path: true, info: {
+    documentation_class = add_swagger_documentation base_path: (lambda do |request| "#{request.scheme}://#{request.host}:#{request.port}" end), hide_documentation_path: true, info: {
       title: ::AddokWrapper::config[:product_title],
       description: 'API access require an api_key.',
       contact: ::AddokWrapper::config[:product_contact]

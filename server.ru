@@ -20,5 +20,13 @@ require File.expand_path('../config/environments/' + ENV['APP_ENV'], __FILE__)
 Dir[File.dirname(__FILE__) + '/config/initializers/*.rb'].each {|file| require file }
 require './addok_wrapper'
 require './api/root'
+require 'rack/cors'
+
+use Rack::Cors do
+  allow do
+    origins '*'
+    resource '*', headers: :any, methods: :get
+  end
+end
 
 run Api::Root

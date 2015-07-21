@@ -3,6 +3,7 @@ source 'https://rubygems.org'
 gem 'rack'
 gem 'rakeup'
 gem 'puma'
+gem 'rack-cors'
 
 gem 'grape'
 gem 'grape-entity'
