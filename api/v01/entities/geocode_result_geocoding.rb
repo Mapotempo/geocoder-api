@@ -15,6 +15,7 @@
 # along with Mapotempo. If not, see:
 # <http://www.gnu.org/licenses/agpl.html>
 #
+require './api/v01/entities/entity'
 require './api/v01/entities/geocode_result_feature'
 
 
@@ -25,10 +26,10 @@ module Api
         'GeocodeResultGeocoding'
       end
 
-      expose(:version, documentation: { type: String, desc: 'A semver.org compliant version number. Describes the version of the GeocodeJSON spec that is implemented by this instance.' })
-      expose(:licence, documentation: { type: String, desc: 'Default: null. The licence of the data. In case of multiple sources, and then multiple licences, can be an object with one key by source.' })
-      expose(:attribution, documentation: { type: String, desc: 'Default: null. The attribution of the data. In case of multiple sources, and then multiple attributions, can be an object with one key by source.' })
-      expose(:query, documentation: { type: String, desc: 'Default: null. The query that has been issued to trigger the search.' })
+      expose_not_nil(:version, documentation: { type: String, desc: 'A semver.org compliant version number. Describes the version of the GeocodeJSON spec that is implemented by this instance.' })
+      expose_not_nil(:licence, documentation: { type: String, desc: 'Default: null. The licence of the data. In case of multiple sources, and then multiple licences, can be an object with one key by source.' })
+      expose_not_nil(:attribution, documentation: { type: String, desc: 'Default: null. The attribution of the data. In case of multiple sources, and then multiple attributions, can be an object with one key by source.' })
+      expose_not_nil(:query, documentation: { type: String, desc: 'Default: null. The query that has been issued to trigger the search.' })
     end
   end
 end
