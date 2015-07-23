@@ -139,7 +139,7 @@ module Wrappers
         multipart: true,
         data: FakeFileStringIO.new(csv, 'r')
       }
-      response = RestClient.post(@url + url_part, post) { |response, request, result, &block|
+      response = RestClient::Request.execute(method: :post, url: @url + url_part, timeout: nil, payload: post) { |response, request, result, &block|
         case response.code
         when 200
           response
