@@ -7,7 +7,8 @@ gem 'rack-cors'
 
 gem 'grape'
 gem 'grape-entity'
-gem 'grape-swagger'
+gem 'grape-swagger', github: 'tim-vandecasteele/grape-swagger' # FIXME wait for v0.10.2
+
 
 gem 'rest-client'
 gem 'border_patrol'
