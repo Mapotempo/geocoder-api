@@ -83,4 +83,9 @@ class Api::V01::BulkTest < Minitest::Test
     assert_equal 'Roanne', features[1]['properties']['geocoding']['city']
     assert_equal 'Armentières', features[2]['properties']['geocoding']['city'] # From Demo wrapper
   end
+
+  def test_geocodes_should_fail
+    post '/0.1/geocodes', {api_key: 'demo', geocodes: 'plop'}
+    assert !last_response.ok?, last_response.body
+  end
 end
