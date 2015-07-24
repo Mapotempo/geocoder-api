@@ -150,7 +150,7 @@ module Wrappers
         end
       }
       result = []
-      CSV.parse(response[3..-1].force_encoding('utf-8'), headers: true) { |p|
+      CSV.parse(response.force_encoding('utf-8'), headers: true) { |p|
         result << map_from_csv(p)
       }
       result
