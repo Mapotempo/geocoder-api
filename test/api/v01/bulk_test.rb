@@ -27,7 +27,7 @@ class Api::V01::BulkTest < Minitest::Test
   end
 
   def test_geocodes_from_full_text
-    post '/0.1/geocodes', {api_key: 'demo', geocodes: [{ref: '33', query: 'Place Pey Berland, Bordeaux', country: 'ttt'}]}
+    post '/0.1/geocode', {api_key: 'demo', geocodes: [{ref: '33', query: 'Place Pey Berland, Bordeaux', country: 'ttt'}]}
     assert last_response.ok?, last_response.body
     features = JSON.parse(last_response.body)['geocodes']
     assert 0 < features.size
@@ -35,21 +35,21 @@ class Api::V01::BulkTest < Minitest::Test
   end
 
   def test_should_geocodes_from_fields
-    post '/0.1/geocodes', {api_key: 'demo', geocodes: [{street: 'Place Pey Berland', city: 'Bordeaux', country: 'ttt'}]}
+    post '/0.1/geocode', {api_key: 'demo', geocodes: [{street: 'Place Pey Berland', city: 'Bordeaux', country: 'ttt'}]}
     assert last_response.ok?, last_response.body
     features = JSON.parse(last_response.body)['geocodes']
     assert 0 < features.size
   end
 
   def test should_not_geocodes_without_country
-    post '/0.1/geocodes', {api_key: 'demo', geocodes: [{query: 'Place Pey Berland, Bordeaux'}]}
+    post '/0.1/geocode', {api_key: 'demo', geocodes: [{query: 'Place Pey Berland, Bordeaux'}]}
     assert last_response.ok?, last_response.body
     features = JSON.parse(last_response.body)['geocodes']
     assert_equal 0, features.size
   end
 
   def test_should_reverses
-    post '/0.1/reverses', {api_key: 'demo', reverses: [{ref: '33', lat: 0.1, lng: 0.1}]}
+    post '/0.1/reverse', {api_key: 'demo', reverses: [{ref: '33', lat: 0.1, lng: 0.1}]}
     assert last_response.ok?, last_response.body
     features = JSON.parse(last_response.body)['reverses']
     assert_equal 1, features.size
@@ -57,7 +57,7 @@ class Api::V01::BulkTest < Minitest::Test
   end
 
   def test_geocodes_order
-    post '/0.1/geocodes', {api_key: 'demo', geocodes: [
+    post '/0.1/geocode', {api_key: 'demo', geocodes: [
       {query: 'NYC', country: 'ttt'},
       {query: 'Bordeaux', country: 'France'},
       {query: 'Rome', country: 'ttt'},
@@ -71,7 +71,7 @@ class Api::V01::BulkTest < Minitest::Test
   end
 
   def test_should_reverses_oder
-    post '/0.1/reverses', {api_key: 'demo', reverses: [
+    post '/0.1/reverse', {api_key: 'demo', reverses: [
       {lat: 0.1, lng: 0.1},
       {lat: 46.03349, lng: 4.07271},
       {lat: 0.2, lng: 0.2},
@@ -85,7 +85,7 @@ class Api::V01::BulkTest < Minitest::Test
   end
 
   def test_geocodes_should_fail
-    post '/0.1/geocodes', {api_key: 'demo', geocodes: 'plop'}
+    post '/0.1/geocode', {api_key: 'demo', geocodes: 'plop'}
     assert !last_response.ok?, last_response.body
   end
 end

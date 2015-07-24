@@ -41,46 +41,49 @@ module Api
         error!(message, 500)
       end
 
-      desc 'Geocode from bulk json address. From full text or splited in fields.', {
-        nickname: 'geocodes',
-        params: GeocodesRequest.documentation,
-        entity: GeocodesResult,
-      }
-      post '/geocodes' do
-        if !params.key?('geocodes') || !params['geocodes'].kind_of?(Array)
-          error!('400 Bad Request. Missing or invalid field "geocodes".', 400)
-        end
-        results = AddokWrapper::wrapper_geocodes(params['geocodes'])
-        if results
-          results = {geocodes: results}
-          status 200
-          present results, with: GeocodesResult
-        else
-          error!('500 Internal Server Error', 500)
+      resource :geocode do
+        desc 'Geocode from bulk json address. From full text or splited in fields.', {
+          nickname: 'geocodes',
+          params: GeocodesRequest.documentation,
+          entity: GeocodesResult,
+        }
+        post do
+          if !params.key?('geocodes') || !params['geocodes'].kind_of?(Array)
+            error!('400 Bad Request. Missing or invalid field "geocodes".', 400)
+          end
+          results = AddokWrapper::wrapper_geocodes(params['geocodes'])
+          if results
+            results = {geocodes: results}
+            status 200
+            present results, with: GeocodesResult
+          else
+            error!('500 Internal Server Error', 500)
+          end
         end
       end
 
-
-      desc 'Reverse geocode from bulk json address.', {
-        nickname: 'reverses',
-        params: ReversesRequest.documentation,
-        entity: ReversesResult,
-      }
-      post '/reverses' do
-        params['reverses'].each{ |param|
-          param[:lat] = param[:lat].to_f
-          param[:lng] = param[:lng].to_f
+      resource :reverse do
+        desc 'Reverse geocode from bulk json address.', {
+          nickname: 'reverses',
+          params: ReversesRequest.documentation,
+          entity: ReversesResult,
         }
-        if !params.key?('reverses') || !params['reverses'].kind_of?(Array)
-          error!('400 Bad Request. Missing or invalid field "reverses".', 400)
-        end
-        results = AddokWrapper::wrapper_reverses(params['reverses'])
-        if results
-          results = {reverses: results}
-          status 200
-          present results, with: ReversesResult
-        else
-          error!('500 Internal Server Error', 500)
+        post do
+          params['reverses'].each{ |param|
+            param[:lat] = param[:lat].to_f
+            param[:lng] = param[:lng].to_f
+          }
+          if !params.key?('reverses') || !params['reverses'].kind_of?(Array)
+            error!('400 Bad Request. Missing or invalid field "reverses".', 400)
+          end
+          results = AddokWrapper::wrapper_reverses(params['reverses'])
+          if results
+            results = {reverses: results}
+            status 200
+            present results, with: ReversesResult
+          else
+            error!('500 Internal Server Error', 500)
+          end
         end
       end
     end

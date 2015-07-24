@@ -38,79 +38,80 @@ module Api
         error!(message, 500)
       end
 
+      resource :geocode do
+        desc 'Geocode an address. From full text or splited in fields', {
+          nickname: 'geocode',
+          entity: GeocodeResult
+        }
+        params {
+          requires :country, type: String, desc: 'Simple country name, ISO 3166-alpha-2 or ISO 3166-alpha-3.'
+          optional :housenumber, type: String
+          optional :street, type: String
+          optional :postcode, type: String
+          optional :city, type: String
+          optional :query, type: String, desc: 'Full text, free form, address search.'
+          optional :type, type: String, desc: 'Queried result type filter. One of "house", "street", "locality", "city", "region", "country".'
+          optional :lat, type: Float, desc: 'Prioritize results around this latitude.'
+          optional :lng, type: Float, desc: 'Prioritize results around this longitude.'
+          optional :limit, type: Integer, desc: 'Max results numbers. (default and upper max 10)'
+        }
+        get do
+          params[:limit] = [params[:limit] || 10, 10].min
 
-      desc 'Geocode an address. From full text or splited in fields', {
-        nickname: 'geocode',
-        entity: GeocodeResult
-      }
-      params {
-        requires :country, type: String, desc: 'Simple country name, ISO 3166-alpha-2 or ISO 3166-alpha-3.'
-        optional :housenumber, type: String
-        optional :street, type: String
-        optional :postcode, type: String
-        optional :city, type: String
-        optional :query, type: String, desc: 'Full text, free form, address search.'
-        optional :type, type: String, desc: 'Queried result type filter. One of "house", "street", "locality", "city", "region", "country".'
-        optional :lat, type: Float, desc: 'Prioritize results around this latitude.'
-        optional :lng, type: Float, desc: 'Prioritize results around this longitude.'
-        optional :limit, type: Integer, desc: 'Max results numbers. (default and upper max 10)'
-      }
-      get '/geocode' do
-        params[:limit] = [params[:limit] || 10, 10].min
+          results = AddokWrapper::wrapper_geocode(params)
+          if results
+            results[:geocoding][:version] = 'draft#namespace#score'
+            present results, with: GeocodeResult
+          else
+            error!('500 Internal Server Error', 500)
+          end
+        end
 
-        results = AddokWrapper::wrapper_geocode(params)
-        if results
-          results[:geocoding][:version] = 'draft#namespace#score'
-          present results, with: GeocodeResult
-        else
-          error!('500 Internal Server Error', 500)
+        desc 'Complete an address.', {
+          nickname: 'complete',
+          entity: GeocodeResult
+        }
+        params {
+          requires :country, type: String, desc: 'Simple country name, ISO 3166-alpha-2 or ISO 3166-alpha-3.'
+          optional :housenumber, type: String
+          optional :street, type: String
+          optional :postcode, type: String
+          optional :city, type: String
+          optional :query, type: String, desc: 'Full text, free form, address search.'
+          optional :type, type: String, desc: 'Queried result type filter. One of "house", "street", "locality", "city", "region", "country".'
+          optional :lat, type: Float, desc: 'Prioritize results around this latitude.'
+          optional :lng, type: Float, desc: 'Prioritize results around this longitude.'
+          optional :limit, type: Integer, desc: 'Max results numbers. (default and upper max 10)'
+        }
+        patch do
+          params[:limit] = [params[:limit] || 10, 10].min
+          results = AddokWrapper::wrapper_complete(params)
+          if results
+            results[:geocoding][:version] = 'draft#namespace#score'
+            present results, with: GeocodeResult
+          else
+            error!('500 Internal Server Error', 500)
+          end
         end
       end
 
-
-      desc 'Reverse geocode an address.', {
-        nickname: 'reverse',
-        entity: GeocodeResult
-      }
-      params {
-        requires :lat, type: Float, desc: 'Latitude.'
-        requires :lng, type: Float, desc: 'Longitude.'
-      }
-      get '/reverse' do
-        results = AddokWrapper::wrapper_reverse(params)
-        if results
-          results[:geocoding][:version] = 'draft#namespace#score'
-          present results, with: GeocodeResult
-        else
-          error!('500 Internal Server Error', 500)
-        end
-      end
-
-
-      desc 'Complete an address.', {
-        nickname: 'complete',
-        entity: GeocodeResult
-      }
-      params {
-        requires :country, type: String, desc: 'Simple country name, ISO 3166-alpha-2 or ISO 3166-alpha-3.'
-        optional :housenumber, type: String
-        optional :street, type: String
-        optional :postcode, type: String
-        optional :city, type: String
-        optional :query, type: String, desc: 'Full text, free form, address search.'
-        optional :type, type: String, desc: 'Queried result type filter. One of "house", "street", "locality", "city", "region", "country".'
-        optional :lat, type: Float, desc: 'Prioritize results around this latitude.'
-        optional :lng, type: Float, desc: 'Prioritize results around this longitude.'
-        optional :limit, type: Integer, desc: 'Max results numbers. (default and upper max 10)'
-      }
-      get '/complete' do
-        params[:limit] = [params[:limit] || 10, 10].min
-        results = AddokWrapper::wrapper_complete(params)
-        if results
-          results[:geocoding][:version] = 'draft#namespace#score'
-          present results, with: GeocodeResult
-        else
-          error!('500 Internal Server Error', 500)
+      resource :reverse do
+        desc 'Reverse geocode an address.', {
+          nickname: 'reverse',
+          entity: GeocodeResult
+        }
+        params {
+          requires :lat, type: Float, desc: 'Latitude.'
+          requires :lng, type: Float, desc: 'Longitude.'
+        }
+        get do
+          results = AddokWrapper::wrapper_reverse(params)
+          if results
+            results[:geocoding][:version] = 'draft#namespace#score'
+            present results, with: GeocodeResult
+          else
+            error!('500 Internal Server Error', 500)
+          end
         end
       end
     end

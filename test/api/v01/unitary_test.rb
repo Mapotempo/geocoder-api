@@ -85,7 +85,7 @@ class Api::V01::UnitaryTest < Minitest::Test
   end
 
   def _test_should_complete(country)
-    get '/0.1/complete', {api_key: 'demo', query: 'Place Pey, Bordeaux', country: country}
+    patch '/0.1/geocode', {api_key: 'demo', query: 'Place Pey, Bordeaux', country: country}
     assert last_response.ok?, last_response.body
     features = JSON.parse(last_response.body)['features']
     assert 0 < features.size
