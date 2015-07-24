@@ -45,7 +45,6 @@ module Api
         nickname: 'geocodes',
         params: GeocodesRequest.documentation,
         entity: GeocodesResult,
-        is_array: true
       }
       post '/geocodes' do
         results = AddokWrapper::wrapper_geocodes(params['geocodes'])
@@ -63,7 +62,6 @@ module Api
         nickname: 'reverses',
         params: ReversesRequest.documentation,
         entity: ReversesResult,
-        is_array: true
       }
       post '/reverses' do
         params['reverses'].each{ |param|
