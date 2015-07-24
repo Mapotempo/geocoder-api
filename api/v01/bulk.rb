@@ -47,6 +47,9 @@ module Api
         entity: GeocodesResult,
       }
       post '/geocodes' do
+        if !params.key?('geocodes') || !params['geocodes'].kind_of?(Array)
+          error!('400 Bad Request. Missing or invalid field "geocodes".', 400)
+        end
         results = AddokWrapper::wrapper_geocodes(params['geocodes'])
         if results
           results = {geocodes: results}
@@ -68,6 +71,9 @@ module Api
           param[:lat] = param[:lat].to_f
           param[:lng] = param[:lng].to_f
         }
+        if !params.key?('reverses') || !params['reverses'].kind_of?(Array)
+          error!('400 Bad Request. Missing or invalid field "reverses".', 400)
+        end
         results = AddokWrapper::wrapper_reverses(params['reverses'])
         if results
           results = {reverses: results}
