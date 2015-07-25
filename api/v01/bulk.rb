@@ -45,7 +45,7 @@ module Api
         desc 'Geocode from bulk json address. From full text or splited in fields.', {
           nickname: 'geocodes',
           params: GeocodesRequest.documentation,
-          entity: GeocodesResult,
+          entity: [GeocodesRequest, GeocodesResult],
         }
         post do
           if !params.key?('geocodes') || !params['geocodes'].kind_of?(Array)
@@ -66,7 +66,7 @@ module Api
         desc 'Reverse geocode from bulk json address.', {
           nickname: 'reverses',
           params: ReversesRequest.documentation,
-          entity: ReversesResult,
+          entity: [ReversesRequest, ReversesResult],
         }
         post do
           params['reverses'].each{ |param|
