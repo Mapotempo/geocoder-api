@@ -30,7 +30,7 @@ module AddokWrapper
   DEMO = Wrappers::Demo.new
 
   @@c = {
-    product_title: 'Addock Wrapper geocoding API',
+    product_title: 'Addok Wrapper geocoding API',
     product_contact: 'frederic@mapotempo.com',
     geocoders: {
       fra: ADDOK_FRA,
