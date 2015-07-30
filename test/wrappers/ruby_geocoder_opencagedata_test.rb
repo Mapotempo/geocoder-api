@@ -26,14 +26,16 @@ class Wrappers::RubyGeocoderOpencagedataTest < Minitest::Test
     assert 0 < result[:features].size
     g = result[:features][0][:properties][:geocoding]
     assert_equal 'New York City', g[:city]
+    assert_equal 'house', g[:type]
   end
 
   def test_geocode_from_part
     rg = AddokWrapper::OPENCAGEDATA
-    result = rg.geocode({housenumber: '10', street: 'Via del Parlamento', city: 'Roma'})
+    result = rg.geocode({street: 'Via del Parlamento', city: 'Roma'})
     assert 0 < result[:features].size
     g = result[:features][0][:properties][:geocoding]
     assert_equal 'Rome', g[:city]
+    assert_equal 'street', g[:type]
   end
 
   def test_reverse

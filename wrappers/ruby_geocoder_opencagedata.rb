@@ -53,21 +53,22 @@ module Wrappers
       features = response.collect{ |r|
         a = r.data
         # http://geocoder.opencagedata.com/api.html
+        c = a['components']
         f = {
           properties: {
             geocoding: {
               score: a['confidence'] / 10.0,
-              type: nil,
+              type: c.key?('house_number') ? 'house' : c.key?('road') ? 'street' : c.key?('city') ? 'city' : c.key?('country') ? 'country' : nil,
               label: a['formatted'],
               name: nil,
-              housenumber: a['components']['house_number'],
-              street: a['components']['road'],
-              postcode: a['components']['postcode'],
-              city: a['components']['town'] || a['components']['city'] || a['components']['state_district'],
+              housenumber: c['house_number'],
+              street: c['road'],
+              postcode: c['postcode'],
+              city: c['town'] || c['city'] || c['state_district'],
               district: nil,
-              county: a['components']['county'],
-              state: a['components']['state'],
-              country: a['components']['country'],
+              county: c['county'],
+              state: c['state'],
+              country: c['country'],
             }
           },
           type: 'Feature',
