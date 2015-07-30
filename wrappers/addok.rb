@@ -50,7 +50,7 @@ module Wrappers
       csv_string = CSV.generate { |csv|
         csv << ['q']
         list_params.each{ |params|
-          csv << [flatten_query(params)]
+          csv << [flatten_query(params, false)]
         }
       }
 
@@ -75,7 +75,7 @@ module Wrappers
     private
 
     def addok_geocode(params, limit)
-      q = flatten_query(params)
+      q = flatten_query(params, false)
       type = params[:type]
       if not ['housenumber', 'street'].include?(type)
         type = nil

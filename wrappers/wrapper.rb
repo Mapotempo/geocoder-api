@@ -74,11 +74,11 @@ module Wrappers
 
     private
 
-    def flatten_query(params)
+    def flatten_query(params, with_country = true)
       if params[:query]
         params[:query]
       else
-        [params[:housenumber], params[:street], params[:postcode], params[:city]].select{ |i| not i.nil? }.join(' ')
+        [params[:housenumber], params[:street], params[:postcode], params[:city], (params[:country] if with_country)].select{ |i| not i.nil? }.join(' ')
       end
     end
 
