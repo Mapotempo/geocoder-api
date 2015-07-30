@@ -31,6 +31,18 @@ module Wrappers
       features: []
     }
 
+    @@match_level = {
+      'country' => 'country',
+      'state' => 'state',
+      'county' => 'county',
+      'city' => 'city',
+      'district' => nil, # HERE 'district' not at the rank in other geocoders
+      'street' => 'street',
+      'intersection' => 'intersection',
+      'houseNumber' => 'house',
+      'postalCode' => nil,
+      'landmark' => nil
+    }
 
     def initialize(boundary = nil)
       super(boundary)
@@ -59,7 +71,7 @@ module Wrappers
           properties: {
             geocoding: {
               score: a['Relevance'],
-              type: a['LocationType'], # TODO map to common value
+              type: @@match_level[a['MatchLevel']],
               label: a['Location']['Address']['Label'],
               name: a['Location']['Address']['Name'],
               housenumber: [a['Location']['Address']['HouseNumber'], a['Location']['Address']['Building']].select{ |i| i }.join(' '),
