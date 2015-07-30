@@ -35,6 +35,7 @@ class Wrappers::AddokTest < Minitest::Test
     assert 0 < result.size
     g = result[0][:properties][:geocoding]
     assert_equal 'Arcachon', g[:city]
+    assert_equal 'house', g[:type]
   end
 
   def test_reverses

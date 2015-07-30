@@ -77,7 +77,7 @@ module Wrappers
     def addok_geocode(params, limit)
       q = flatten_query(params, false)
       type = params[:type]
-      if not ['housenumber', 'street'].include?(type)
+      if not ['house', 'street'].include?(type)
         type = nil
       end
       p = params.dup
@@ -112,7 +112,7 @@ module Wrappers
         p = features['properties']
         features['properties']['geocoding'] = {
           score: p['score'], # Not in spec
-          type: p['type'],
+          type: p['type'] == 'housenumber' ? 'house' : p['type'], # Hack to match spec around addok return value
           # accuracy: p['accuracy'],
           label: p['label'],
           name: p['name'],
@@ -161,7 +161,7 @@ module Wrappers
         properties: {
           geocoding: {
             score: p['result_score'], # Not in spec
-            type: p['result_type'],
+            type: p['result_type'] == 'housenumber' ? 'house' : p['type'], # Hack to match spec around addok return value
             # accuracy: p['accuracy'],
             label: p['result_label'],
             name: p['result_name'],
