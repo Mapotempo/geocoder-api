@@ -28,7 +28,7 @@ module Wrappers
     end
 
     def geocode(params, limit = 10)
-      addok_geocode(params, limit)
+      addok_geocode(params, limit, false)
     end
 
     def reverse(params)
@@ -69,12 +69,12 @@ module Wrappers
     end
 
     def complete(params, limit = 10)
-      addok_geocode(params, limit)
+      addok_geocode(params, limit, true)
     end
 
     private
 
-    def addok_geocode(params, limit)
+    def addok_geocode(params, limit, complete)
       q = flatten_query(params, false)
       type = params[:type]
       if not ['house', 'street'].include?(type)
@@ -84,7 +84,7 @@ module Wrappers
       p.delete('api_key')
       p.delete('query')
       p.delete('country')
-      p.merge!({q: q, type: type})
+      p.merge!({q: q, type: type, autocomplete: complete ? 1 : 0})
       p.select!{ |i| i }
       response = RestClient.get(@url + '/search', {params: p}) { |response, request, result, &block|
         case response.code
