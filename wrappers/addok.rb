@@ -76,16 +76,15 @@ module Wrappers
 
     def addok_geocode(params, limit, complete)
       q = flatten_query(params, false)
-      type = params[:type]
-      if not ['house', 'street'].include?(type)
-        type = nil
-      end
-      p = params.dup
-      p.delete('api_key')
-      p.delete('query')
-      p.delete('country')
-      p.merge!({q: q, type: type, autocomplete: complete ? 1 : 0})
-      p.select!{ |i| i }
+      p = {
+        q: q,
+        limit: limit,
+        autocomplete: complete ? 1 : 0,
+        lat: params['lat'],
+        lon: params['lng'],
+        type: (params[:type] if ['house', 'street'].include?(params[:type]))
+      }
+      p.compact!
       response = RestClient.get(@url + '/search', {params: p}) { |response, request, result, &block|
         case response.code
         when 200
