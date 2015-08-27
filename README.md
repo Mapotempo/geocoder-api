@@ -34,7 +34,10 @@ APP_ENV=production bundle exec rake server
 Usage
 =====
 
-The API is defined in Swagger format at http://localhost:8558/swagger_doc
+The API is defined in Swagger format at
+http://localhost:8558/swagger_doc
+and can be tested with Swagger-UI
+http://swagger.mapotempo.com/?url=http://geocode.mapotempo.com/swagger_doc
 
 Geocoding and Address completion
 ---------------------------------
