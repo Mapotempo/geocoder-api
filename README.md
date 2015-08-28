@@ -6,7 +6,8 @@ Build in Ruby with a [Grape](https://github.com/intridea/grape) REST [swagger](h
 Installation
 ============
 
-Install package containing ogr2ogr exec from system package (GDAL).
+If you need to create a kml, install package containing ogr2ogr exec from system package (GDAL).
+
 In addok-wrapper as root directory:
 
 ```
