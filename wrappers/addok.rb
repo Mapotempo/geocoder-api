@@ -48,9 +48,9 @@ module Wrappers
 
     def geocodes(list_params)
       csv_string = CSV.generate { |csv|
-        csv << ['q']
+        csv << ['q', 'r']
         list_params.each{ |params|
-          csv << [flatten_query(params, false)]
+          csv << [flatten_query(params, false), params[:ref]]
         }
       }
 
@@ -138,6 +138,7 @@ module Wrappers
         multipart: true,
         data: FakeFileStringIO.new(csv, 'r')
       }
+      post[:columns] = 'q' if columns
       response = RestClient::Request.execute(method: :post, url: @url + url_part, timeout: nil, payload: post) { |response, request, result, &block|
         case response.code
         when 200
@@ -159,6 +160,7 @@ module Wrappers
       {
         properties: {
           geocoding: {
+            ref: p['r'],
             score: p['result_score'], # Not in spec
             type: p['result_type'] == 'housenumber' ? 'house' : p['type'], # Hack to match spec around addok return value
             # accuracy: p['accuracy'],
