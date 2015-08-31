@@ -70,8 +70,13 @@ module Api
         }
         post do
           params['reverses'].each{ |param|
-            param[:lat] = param[:lat].to_f
-            param[:lng] = param[:lng].to_f
+            begin
+              param[:lat] = Float(param[:lat].gsub(',', '.'))
+              param[:lng] = Float(param[:lng].gsub(',', '.'))
+            rescue
+              param[:lat] = nil
+              param[:lng] = nil
+            end
           }
           if !params.key?('reverses') || !params['reverses'].kind_of?(Array)
             error!('400 Bad Request. Missing or invalid field "reverses".', 400)
