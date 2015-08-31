@@ -42,7 +42,7 @@ module AddokWrapper
 
   def self.wrapper_geocodes(list_params)
     by_country = list_params.each_with_index.group_by{ |params, index|
-      self.geocode_country(params[:country])
+      self.geocode_country(params[:country]) if params[:country]
     }
     by_country.collect{ |country, list_params|
       list_params.collect!{ |params, index|
