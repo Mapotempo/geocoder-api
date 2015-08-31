@@ -178,10 +178,10 @@ module Wrappers
             geohash: p['geohash'],
           },
         },
-        geometry: {
+        geometry: (!p['longitude'].nil? && !p['latitude'].nil?) ? {
           type: 'Point',
           coordinates: [p['longitude'].to_f, p['latitude'].to_f]
-        },
+        } : nil,
         type: 'Feature'
       }
     end
