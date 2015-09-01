@@ -46,9 +46,16 @@ module Wrappers
       list_params.collect{ |params|
         features = geocode(params, limit = 1)[:features]
         if features.size > 0
-          f = features[0]
-          f[:properties][:geocoding][:ref] = params['ref']
-          f
+          features[0][:properties][:geocoding][:ref] = params['ref']
+          features[0]
+        else
+          {
+            properties: {
+              geocoding: {
+                ref: params['ref']
+              }
+            }
+          }
         end
       }.select{ |p|
         !p.nil?
@@ -59,9 +66,16 @@ module Wrappers
       list_params.collect{ |params|
         features = reverse(params)[:features]
         if features.size > 0
-          f = features[0]
-          f[:properties][:geocoding][:ref] = params['ref']
-          f
+          features[0][:properties][:geocoding][:ref] = params['ref']
+          features[0]
+        else
+          {
+            properties: {
+              geocoding: {
+                ref: params['ref']
+              }
+            }
+          }
         end
       }.select{ |p|
         !p.nil?
