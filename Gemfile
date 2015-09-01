@@ -7,7 +7,7 @@ gem 'rack-cors'
 
 gem 'grape'
 gem 'grape-entity'
-gem 'grape-swagger', github: 'tim-vandecasteele/grape-swagger' # FIXME wait for v0.10.2
+gem 'grape-swagger'
 
 
 gem 'rest-client'
