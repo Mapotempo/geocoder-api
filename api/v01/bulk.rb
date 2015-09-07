@@ -18,6 +18,7 @@
 require 'grape'
 require 'grape-swagger'
 
+require './api/geojson_formatter'
 require './api/v01/entities/geocodes_request'
 require './api/v01/entities/geocodes_result'
 require './api/v01/entities/reverses_request'
@@ -26,10 +27,11 @@ require './api/v01/entities/reverses_result'
 module Api
   module V01
     class Bulk < Grape::API
-      version '0.1', using: :path
-      format :json
       content_type :json, 'application/json; charset=UTF-8'
+      content_type :geojson, 'application/vnd.geo+json; charset=UTF-8'
+      formatter :geojson, GeoJsonFormatter
       default_format :json
+      version '0.1', using: :path
 
       rescue_from :all do |error|
         message = {error: error.class.name, detail: error.message}

@@ -24,11 +24,6 @@ require './api/v01/bulk'
 module Api
   module V01
     class V01 < Grape::API
-      version '0.1', using: :path
-      format :json
-      content_type :json, 'application/json; charset=UTF-8'
-      default_format :json
-
       before do
         if !::AddokWrapper::config[:api_keys].include?(params[:api_key])
           error!('401 Unauthorized', 401)
