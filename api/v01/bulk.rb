@@ -75,6 +75,9 @@ module Api
           entity: [ReversesRequest, ReversesResult],
         }
         post do
+          if !params.key?('reverses') || !params['reverses'].kind_of?(Array)
+            error!('400 Bad Request. Missing or invalid field "reverses".', 400)
+          end
           params['reverses'].each{ |param|
             begin
               param[:lat] = Float(param[:lat].gsub(',', '.'))
@@ -84,9 +87,6 @@ module Api
               param[:lng] = nil
             end
           }
-          if !params.key?('reverses') || !params['reverses'].kind_of?(Array)
-            error!('400 Bad Request. Missing or invalid field "reverses".', 400)
-          end
           results = AddokWrapper::wrapper_reverses(params['reverses'])
           if results
             results = {reverses: results}
