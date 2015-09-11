@@ -21,7 +21,7 @@ require './test/test_helper'
 class Wrappers::RubyGeocoderHereTest < Minitest::Test
 
   def test_geocode_from_full_text
-    rg = Wrappers::RubyGeocoderHere.new
+    rg = AddokWrapper::HERE
     result = rg.geocode({query: 'ул. Неглинная, д.4, Москва, 109012'})
     assert 0 < result[:features].size
     g = result[:features][0][:properties][:geocoding]
@@ -29,7 +29,7 @@ class Wrappers::RubyGeocoderHereTest < Minitest::Test
   end
 
   def test_geocode_from_part
-    rg = Wrappers::RubyGeocoderHere.new
+    rg = AddokWrapper::HERE
     result = rg.geocode({housenumber: '4', street: 'ул. Неглинная', city: 'Москва'})
     assert 0 < result[:features].size
     g = result[:features][0][:properties][:geocoding]
@@ -37,7 +37,7 @@ class Wrappers::RubyGeocoderHereTest < Minitest::Test
   end
 
   def test_reverse
-    rg = Wrappers::RubyGeocoderHere.new
+    rg = AddokWrapper::HERE
     result = rg.reverse({lat: 42.90360, lng: -2.17306})
     assert_equal 1, result[:features].size
     g = result[:features][0][:properties][:geocoding]

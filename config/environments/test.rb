@@ -15,6 +15,9 @@
 # along with Mapotempo. If not, see:
 # <http://www.gnu.org/licenses/agpl.html>
 #
+require 'active_support'
+require 'tmpdir'
+
 require './wrappers/addok'
 require './wrappers/ruby_geocoder_google'
 require './wrappers/ruby_geocoder_here'
@@ -23,11 +26,13 @@ require './wrappers/demo'
 
 
 module AddokWrapper
-  ADDOK_FRA = Wrappers::Addok.new('http://api-adresse.data.gouv.fr', 'france.kml')
-  GOOGLE = Wrappers::RubyGeocoderGoogle.new
-  HERE = Wrappers::RubyGeocoderHere.new
-  OPENCAGEDATA = Wrappers::RubyGeocoderOpencagedata.new
-  DEMO = Wrappers::Demo.new
+  CACHE = ActiveSupport::Cache::FileStore.new(File.join(Dir.tmpdir, 'addok'), namespace: 'addok', expires_in: 60*60*24*1)
+
+  ADDOK_FRA = Wrappers::Addok.new(CACHE, 'http://api-adresse.data.gouv.fr', 'france.kml')
+  GOOGLE = Wrappers::RubyGeocoderGoogle.new(CACHE)
+  HERE = Wrappers::RubyGeocoderHere.new(CACHE)
+  OPENCAGEDATA = Wrappers::RubyGeocoderOpencagedata.new(CACHE)
+  DEMO = Wrappers::Demo.new(CACHE)
 
   @@c = {
     product_title: 'Addok Wrapper geocoding API',

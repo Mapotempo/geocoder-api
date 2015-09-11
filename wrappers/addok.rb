@@ -22,8 +22,8 @@ require 'ostruct'
 
 module Wrappers
   class Addok < Wrapper
-    def initialize(url, boundary = nil)
-      super(boundary)
+    def initialize(cache, url, boundary = nil)
+      super(cache, boundary)
       @url = url
     end
 
@@ -32,17 +32,22 @@ module Wrappers
     end
 
     def reverse(params)
-      response = RestClient.get(@url + '/reverse', {params: {lat: params[:lat], lon: params[:lng]}}) { |response, request, result, &block|
-        case response.code
-        when 200
-          response
-        when 400
-          raise response
-        else
-          response.return!(request, result, &block)
-        end
-      }
-      json = JSON.parse(response, object_class: OpenStruct)
+      key = [:addok, :reverse, Digest::MD5.hexdigest(Marshal.dump([@url, params.to_a.sort_by{ |i| i[0].to_s }]))]
+      json = @cache.read(key)
+      if !json
+        response = RestClient.get(@url + '/reverse', {params: {lat: params[:lat], lon: params[:lng]}}) { |response, request, result, &block|
+          case response.code
+          when 200
+            response
+          when 400
+            raise response
+          else
+            response.return!(request, result, &block)
+          end
+        }
+        json = JSON.parse(response, object_class: OpenStruct)
+        @cache.write(key, json)
+      end
       map_spec(json)
     end
 
@@ -75,27 +80,35 @@ module Wrappers
     private
 
     def addok_geocode(params, limit, complete)
-      q = flatten_query(params, false)
-      p = {
-        q: q,
-        limit: limit,
-        autocomplete: complete ? 1 : 0,
-        lat: params['lat'],
-        lon: params['lng'],
-        type: (params[:type] if ['house', 'street'].include?(params[:type]))
-      }
-      p.compact!
-      response = RestClient.get(@url + '/search', {params: p}) { |response, request, result, &block|
-        case response.code
-        when 200
-          response
-        when 400
-          raise response
-        else
-          response.return!(request, result, &block)
-        end
-      }
-      json = JSON.parse(response, object_class: OpenStruct)
+      key_params = {limit: limit, complete: complete}.merge(params).reject{ |k, v| k == 'api_key'}
+
+      key = [:addok, :geocode, Digest::MD5.hexdigest(Marshal.dump([@url, key_params.to_a.sort_by{ |i| i[0].to_s }]))]
+      json = @cache.read(key)
+      if !json
+        q = flatten_query(params, false)
+        p = {
+          q: q,
+          limit: limit,
+          autocomplete: complete ? 1 : 0,
+          lat: params['lat'],
+          lon: params['lng'],
+          type: (params[:type] if ['house', 'street'].include?(params[:type]))
+        }
+        p.compact!
+        response = RestClient.get(@url + '/search', {params: p}) { |response, request, result, &block|
+          case response.code
+          when 200
+            response
+          when 400
+            raise response
+          else
+            response.return!(request, result, &block)
+          end
+        }
+        json = JSON.parse(response, object_class: OpenStruct)
+        @cache.write(key, json)
+      end
+
       map_spec(json)
     end
 

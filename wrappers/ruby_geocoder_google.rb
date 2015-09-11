@@ -63,50 +63,58 @@ module Wrappers
       'point_of_interest' => nil,
     }
 
-    def initialize(boundary = nil)
-      super(boundary)
+    def initialize(cache, boundary = nil)
+      super(cache, boundary)
     end
 
     def geocode(params, limit = 10)
-      q = flatten_query(params)
-      Geocoder::Configuration.lookup = :google
-      Geocoder::Configuration.api_key = ::AddokWrapper::config[:ruby_geocode][Geocoder::Configuration.lookup]
-      response = Geocoder.search(q)
-      features = response.collect{ |r|
-        a = r.data
-        # https://developers.google.com/maps/documentation/geocoding/
-        address_components = parse_address_components(a['address_components'])
-        {
-          properties: {
-            geocoding: {
-              score: @@location_type[a['geometry']['location_type']],
-              type: @@type[a['type']],
-              label: a['formatted_address'],
-              name: a['address_components'][0]['short_name'],
-              housenumber: address_components['street_number'],
-              street: address_components['route'],
-              postcode: address_components['postal_code'],
-              city: address_components['locality'],
-              district: address_components['administrative_area_level_3'],
-              county: address_components['administrative_area_level_2'],
-              state: address_components['administrative_area_level_1'],
-              country: address_components['country'],
+      key_params = {limit: limit}.merge(params).reject{ |k, v| k == 'api_key'}
+
+      key = [:google, :geocode, Digest::MD5.hexdigest(Marshal.dump(key_params.to_a.sort_by{ |i| i[0].to_s }))]
+      r = @cache.read(key)
+      if !r
+        q = flatten_query(params)
+        Geocoder::Configuration.lookup = :google
+        Geocoder::Configuration.api_key = ::AddokWrapper::config[:ruby_geocode][Geocoder::Configuration.lookup]
+        response = Geocoder.search(q)
+        features = response.collect{ |r|
+          a = r.data
+          # https://developers.google.com/maps/documentation/geocoding/
+          address_components = parse_address_components(a['address_components'])
+          {
+            properties: {
+              geocoding: {
+                score: @@location_type[a['geometry']['location_type']],
+                type: @@type[a['type']],
+                label: a['formatted_address'],
+                name: a['address_components'][0]['short_name'],
+                housenumber: address_components['street_number'],
+                street: address_components['route'],
+                postcode: address_components['postal_code'],
+                city: address_components['locality'],
+                district: address_components['administrative_area_level_3'],
+                county: address_components['administrative_area_level_2'],
+                state: address_components['administrative_area_level_1'],
+                country: address_components['country'],
+              }
+            },
+            type: 'Feature',
+            geometry: {
+              coordinates: [
+                a['geometry']['location']['lng'],
+                a['geometry']['location']['lat']
+              ],
+              type: 'Point'
             }
-          },
-          type: 'Feature',
-          geometry: {
-            coordinates: [
-              a['geometry']['location']['lng'],
-              a['geometry']['location']['lat']
-            ],
-            type: 'Point'
           }
         }
-      }
 
-      r = @@header.dup
-      r[:geocoding][:query] = q
-      r[:features] = features
+        r = @@header.dup
+        r[:geocoding][:query] = q
+        r[:features] = features
+        @cache.write(key, r)
+      end
+
       r
     end
 

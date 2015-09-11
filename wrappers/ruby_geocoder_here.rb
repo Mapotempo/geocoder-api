@@ -44,8 +44,8 @@ module Wrappers
       'landmark' => nil
     }
 
-    def initialize(boundary = nil)
-      super(boundary)
+    def initialize(cache, boundary = nil)
+      super(cache, boundary)
     end
 
     def geocode(params, limit = 10)
@@ -59,45 +59,51 @@ module Wrappers
     private
 
     def here_geocoder(q, limit)
-      Geocoder::Configuration.lookup = :here
-      Geocoder::Configuration.api_key = ::AddokWrapper::config[:ruby_geocode][Geocoder::Configuration.lookup]
-      response = Geocoder.search(q, params: {maxresults: limit})
-      #Geocoder.search(nil, params: {maxresults: limit, city: params[:city], district: params[:district], housenumber: params[:housenumber], postalcode: params[:postcode], state: params[:state], street: params[:street]})
-      features = response.collect{ |r|
-        a = r.data
-        # https://developer.here.com/rest-apis/documentation/geocoder/topics/resource-type-response-geocode.html
-        additional_data = parse_address_additional_data(a['Location']['Address']['AdditionalData'])
-        {
-          properties: {
-            geocoding: {
-              score: a['Relevance'],
-              type: @@match_level[a['MatchLevel']],
-              label: a['Location']['Address']['Label'],
-              name: a['Location']['Address']['Name'],
-              housenumber: [a['Location']['Address']['HouseNumber'], a['Location']['Address']['Building']].select{ |i| i }.join(' '),
-              street: a['Location']['Address']['Street'],
-              postcode: a['Location']['Address']['PostalCode'],
-              city: a['Location']['Address']['City'],
-              #district: a['Location']['Address']['District'], # In HERE API district is a city district
-              county: additional_data['CountyName'],
-              state: additional_data['StateName'],
-              country: additional_data['CountryName'],
+      key = [:here, :geocode, Digest::MD5.hexdigest(Marshal.dump({q: q, limit: limit}.to_a.sort_by{ |i| i[0].to_s }))]
+      r = @cache.read(key)
+      if !r
+        Geocoder::Configuration.lookup = :here
+        Geocoder::Configuration.api_key = ::AddokWrapper::config[:ruby_geocode][Geocoder::Configuration.lookup]
+        response = Geocoder.search(q, params: {maxresults: limit})
+        #Geocoder.search(nil, params: {maxresults: limit, city: params[:city], district: params[:district], housenumber: params[:housenumber], postalcode: params[:postcode], state: params[:state], street: params[:street]})
+        features = response.collect{ |r|
+          a = r.data
+          # https://developer.here.com/rest-apis/documentation/geocoder/topics/resource-type-response-geocode.html
+          additional_data = parse_address_additional_data(a['Location']['Address']['AdditionalData'])
+          {
+            properties: {
+              geocoding: {
+                score: a['Relevance'],
+                type: @@match_level[a['MatchLevel']],
+                label: a['Location']['Address']['Label'],
+                name: a['Location']['Address']['Name'],
+                housenumber: [a['Location']['Address']['HouseNumber'], a['Location']['Address']['Building']].select{ |i| i }.join(' '),
+                street: a['Location']['Address']['Street'],
+                postcode: a['Location']['Address']['PostalCode'],
+                city: a['Location']['Address']['City'],
+                #district: a['Location']['Address']['District'], # In HERE API district is a city district
+                county: additional_data['CountyName'],
+                state: additional_data['StateName'],
+                country: additional_data['CountryName'],
+              }
+            },
+            type: 'Feature',
+            geometry: {
+              coordinates: [
+                a['Location']['DisplayPosition']['Longitude'],
+                a['Location']['DisplayPosition']['Latitude']
+              ],
+              type: 'Point'
             }
-          },
-          type: 'Feature',
-          geometry: {
-            coordinates: [
-              a['Location']['DisplayPosition']['Longitude'],
-              a['Location']['DisplayPosition']['Latitude']
-            ],
-            type: 'Point'
           }
         }
-      }
 
-      r = @@header.dup
-      r[:geocoding][:query] = q
-      r[:features] = features
+        r = @@header.dup
+        r[:geocoding][:query] = q
+        r[:features] = features
+        @cache.write(key, r)
+      end
+
       r
     end
 

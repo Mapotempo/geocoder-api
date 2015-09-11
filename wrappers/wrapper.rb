@@ -20,7 +20,8 @@ require 'border_patrol'
 
 module Wrappers
   class Wrapper
-    def initialize(boundary = nil)
+    def initialize(cache, boundary = nil)
+      @cache = cache
       if boundary
         @boundary = BorderPatrol.parse_kml(File.read(boundary))
       end
