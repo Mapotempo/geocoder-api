@@ -25,7 +25,7 @@ module Api
         'GeocodesRequest'
       end
 
-      expose(:geocodes, using: GeocodesRequestFeature, documentation: { type: GeocodesRequestFeature, desc: 'Data to be geocoded.', is_array: true })
+      expose(:geocodes, using: GeocodesRequestFeature, documentation: { type: GeocodesRequestFeature, desc: 'Data to be geocoded.', is_array: true, param_type: 'form' })
     end
   end
 end

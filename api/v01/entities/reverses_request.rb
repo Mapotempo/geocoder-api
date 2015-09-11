@@ -25,7 +25,7 @@ module Api
         'ReversesRequest'
       end
 
-      expose(:reverses, using: ReversesRequestFeature, documentation: { type: ReversesRequestFeature, desc: 'Data to be reversed.', is_array: true })
+      expose(:reverses, using: ReversesRequestFeature, documentation: { type: ReversesRequestFeature, desc: 'Data to be reversed.', is_array: true, param_type: 'form' })
     end
   end
 end

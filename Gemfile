@@ -7,11 +7,12 @@ gem 'rack-cors'
 
 gem 'grape'
 gem 'grape-entity'
-gem 'grape-swagger'
+gem 'grape-swagger', github: 'Mapotempo/grape-swagger'
 
 
 gem 'rest-client'
 gem 'border_patrol'
+gem 'activesupport'
 
 group :test do
   gem 'rack-test'

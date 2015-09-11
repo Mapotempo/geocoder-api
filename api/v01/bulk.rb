@@ -46,7 +46,9 @@ module Api
       resource :geocode do
         desc 'Geocode from bulk json address. From full text or splited in fields.', {
           nickname: 'geocodes',
-          params: GeocodesRequest.documentation,
+          params: GeocodesRequest.documentation.deep_merge(
+            geocodes: { required: true }
+          ),
           entity: [GeocodesRequest, GeocodesResult],
         }
         post do
@@ -67,7 +69,9 @@ module Api
       resource :reverse do
         desc 'Reverse geocode from bulk json address.', {
           nickname: 'reverses',
-          params: ReversesRequest.documentation,
+          params: ReversesRequest.documentation.deep_merge(
+            reverses: { required: true }
+          ),
           entity: [ReversesRequest, ReversesResult],
         }
         post do
