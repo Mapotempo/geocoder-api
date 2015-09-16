@@ -18,12 +18,16 @@
 require 'grape'
 require 'grape-swagger'
 require 'grape-entity'
+require 'grape_logging'
 
 require './api/api_v01'
 
 module Api
   class Root < Grape::API
     mount ApiV01
+
+    logger.formatter = GrapeLogging::Formatters::Default.new
+    use GrapeLogging::Middleware::RequestLogger, { logger: logger }
 
     desc 'Ping hook. Responds by "pong".'
     get '/ping' do
