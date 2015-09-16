@@ -23,7 +23,7 @@ require './api/v01/bulk'
 
 module Api
   module V01
-    class V01 < Grape::API
+    class Api < Grape::API
       before do
         if !::AddokWrapper::config[:api_keys].include?(params[:api_key])
           error!('401 Unauthorized', 401)
