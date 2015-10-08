@@ -46,7 +46,7 @@
         resp.features.forEach(function(feat) {
           if (feat.geometry && feat.geometry.coordinates) {
             markers.push(L.marker(feat.geometry.coordinates.reverse())
-              .bindPopup('<div>' + feat.properties.geocoding.name + '</div><div>' + feat.properties.geocoding.postcode + ' ' + feat.properties.geocoding.city + '</div><div>Score: ' + feat.properties.geocoding.score.toFixed(2) + '</div>'));
+              .bindPopup('<div>' + feat.properties.geocoding.name + '</div><div>' + (feat.properties.geocoding.postcode || '') + ' ' + feat.properties.geocoding.city + '</div><div>Score: ' + feat.properties.geocoding.score.toFixed(2) + '</div>'));
           }
         });
         if (markers.length) {
