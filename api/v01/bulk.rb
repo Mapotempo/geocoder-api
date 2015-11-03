@@ -29,6 +29,7 @@ module Api
     class Bulk < Grape::API
       content_type :json, 'application/json; charset=UTF-8'
       content_type :geojson, 'application/vnd.geo+json; charset=UTF-8'
+      content_type :xml, 'application/xml'
       formatter :geojson, GeoJsonFormatter
       default_format :json
       version '0.1', using: :path
