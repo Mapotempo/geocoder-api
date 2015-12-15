@@ -22,8 +22,9 @@ require 'ostruct'
 
 module Wrappers
   class Addok < Wrapper
-    def initialize(cache, url, boundary = nil)
+    def initialize(cache, url, search2steps = false, boundary = nil)
       super(cache, boundary)
+      @search2steps = search2steps
       @url = url
     end
 
@@ -94,8 +95,15 @@ module Wrappers
           lon: params['lng'],
           type: (params[:type] if ['house', 'street'].include?(params[:type]))
         }
+
+        if @search2steps && params[:city]
+          p[:q0] = params[:city]
+          method = '/search2steps'
+        else
+          method = '/search'
+        end
         p.compact!
-        response = RestClient.get(@url + '/search', {params: p}) { |response, request, result, &block|
+        response = RestClient.get(@url + method, {params: p}) { |response, request, result, &block|
           case response.code
           when 200
             response
