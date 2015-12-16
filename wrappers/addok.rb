@@ -86,9 +86,7 @@ module Wrappers
       key = [:addok, :geocode, Digest::MD5.hexdigest(Marshal.dump([@url, key_params.to_a.sort_by{ |i| i[0].to_s }]))]
       json = @cache.read(key)
       if !json
-        q = flatten_query(params, false)
         p = {
-          q: q,
           limit: limit,
           autocomplete: complete ? 1 : 0,
           lat: params['lat'],
@@ -96,10 +94,12 @@ module Wrappers
           type: (params[:type] if ['house', 'street'].include?(params[:type]))
         }
 
-        if @search2steps && params[:city]
+        if @search2steps && !params[:query] && params[:city]
           p[:q0] = params[:city]
+          p[:q] = [params[:housenumber], params[:street], params[:postcode]].select{ |i| not i.nil? }.join(' ')
           method = '/search2steps'
         else
+          p[:q] = flatten_query(params, false)
           method = '/search'
         end
         p.compact!
