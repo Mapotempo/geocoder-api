@@ -95,8 +95,8 @@ module Wrappers
         }
 
         if @search2steps && !params[:query] && params[:city]
-          p[:q0] = params[:city]
-          p[:q] = [params[:housenumber], params[:street], params[:postcode]].select{ |i| not i.nil? }.join(' ')
+          p[:q0] = [params[:postcode], params[:city]].compact.join(' ')
+          p[:q] = [params[:housenumber], params[:street], params[:postcode]].compact.join(' ')
           method = '/search2steps'
         else
           p[:q] = flatten_query(params, false)

@@ -93,7 +93,7 @@ module Wrappers
       if params[:query]
         params[:query]
       else
-        [params[:housenumber], params[:street], params[:postcode], params[:city], (params[:country] if with_country)].select{ |i| not i.nil? }.join(' ')
+        [params[:housenumber], params[:street], params[:postcode], params[:city], (params[:country] if with_country)].compact.join(' ')
       end
     end
 
