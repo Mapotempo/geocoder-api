@@ -50,7 +50,7 @@ module Api
           params: GeocodesRequest.documentation.deep_merge(
             geocodes: { required: true }
           ),
-          entity: [GeocodesRequest, GeocodesResult],
+          entity: [GeocodesResult, GeocodesRequest],
         }
         post do
           if !params.key?('geocodes') || !params['geocodes'].kind_of?(Array)
@@ -73,7 +73,7 @@ module Api
           params: ReversesRequest.documentation.deep_merge(
             reverses: { required: true }
           ),
-          entity: [ReversesRequest, ReversesResult],
+          entity: [ReversesResult, ReversesRequest],
         }
         post do
           if !params.key?('reverses') || !params['reverses'].kind_of?(Array)
