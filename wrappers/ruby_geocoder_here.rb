@@ -36,12 +36,12 @@ module Wrappers
       'state' => 'state',
       'county' => 'county',
       'city' => 'city',
-      'district' => nil, # HERE 'district' not at the rank in other geocoders
+      'district' => 'city', # HERE 'district' not at the rank in other geocoders
       'street' => 'street',
       'intersection' => 'intersection',
       'houseNumber' => 'house',
-      'postalCode' => nil,
-      'landmark' => nil
+      'postalCode' => 'city',
+      'landmark' => 'house'
     }
 
     def initialize(cache, boundary = nil)
