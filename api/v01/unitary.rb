@@ -15,15 +15,13 @@
 # along with Mapotempo. If not, see:
 # <http://www.gnu.org/licenses/agpl.html>
 #
-require 'grape'
-require 'grape-swagger'
-
+require './api/v01/api_base'
 require './api/geojson_formatter'
 require './api/v01/entities/geocode_result'
 
 module Api
   module V01
-    class Unitary < Grape::API
+    class Unitary < APIBase
       content_type :json, 'application/json; charset=UTF-8'
       content_type :geojson, 'application/vnd.geo+json; charset=UTF-8'
       content_type :xml, 'application/xml'
@@ -53,7 +51,7 @@ module Api
         get do
           params[:limit] = [params[:limit] || 10, 10].min
 
-          results = AddokWrapper::wrapper_geocode(params)
+          results = AddokWrapper::wrapper_geocode(APIBase.services(params[:api_key]), params)
           if results
             results[:geocoding][:version] = 'draft#namespace#score'
             present results, with: GeocodeResult
@@ -80,7 +78,7 @@ module Api
         }
         patch do
           params[:limit] = [params[:limit] || 10, 10].min
-          results = AddokWrapper::wrapper_complete(params)
+          results = AddokWrapper::wrapper_complete(APIBase.services(params[:api_key]), params)
           if results
             results[:geocoding][:version] = 'draft#namespace#score'
             present results, with: GeocodeResult
@@ -100,7 +98,7 @@ module Api
           requires :lng, type: Float, desc: 'Longitude.'
         }
         get do
-          results = AddokWrapper::wrapper_reverse(params)
+          results = AddokWrapper::wrapper_reverse(APIBase.services(params[:api_key]), params)
           if results
             results[:geocoding][:version] = 'draft#namespace#score'
             present results, with: GeocodeResult

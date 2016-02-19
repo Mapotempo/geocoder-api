@@ -15,9 +15,7 @@
 # along with Mapotempo. If not, see:
 # <http://www.gnu.org/licenses/agpl.html>
 #
-require 'grape'
-require 'grape-swagger'
-
+require './api/v01/api_base'
 require './api/geojson_formatter'
 require './api/v01/entities/geocodes_request'
 require './api/v01/entities/geocodes_result'
@@ -26,7 +24,7 @@ require './api/v01/entities/reverses_result'
 
 module Api
   module V01
-    class Bulk < Grape::API
+    class Bulk < APIBase
       content_type :json, 'application/json; charset=UTF-8'
       content_type :geojson, 'application/vnd.geo+json; charset=UTF-8'
       content_type :xml, 'application/xml'
@@ -46,7 +44,7 @@ module Api
           if !params.key?('geocodes') || !params['geocodes'].kind_of?(Array)
             error!('400 Bad Request. Missing or invalid field "geocodes".', 400)
           end
-          results = AddokWrapper::wrapper_geocodes(params['geocodes'])
+          results = AddokWrapper::wrapper_geocodes(APIBase.services(params[:api_key]), params[:geocodes])
           if results
             results = {geocodes: results}
             status 200
@@ -78,7 +76,7 @@ module Api
               param[:lng] = nil
             end
           }
-          results = AddokWrapper::wrapper_reverses(params['reverses'])
+          results = AddokWrapper::wrapper_reverses(APIBase.services(params[:api_key]), params[:reverses])
           if results
             results = {reverses: results}
             status 200

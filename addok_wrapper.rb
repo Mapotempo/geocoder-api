@@ -20,27 +20,27 @@ module AddokWrapper
     @@c
   end
 
-  def self.wrapper_geocode(params)
+  def self.wrapper_geocode(services, params)
     country = self.geocode_country(params[:country])
-    if @@c[:geocoders].key?(country)
-      @@c[:geocoders][country].geocode(params, params[:limit])
-    elsif @@c[:geocoder_fallback]
-      @@c[:geocoder_fallback].geocode(params, params[:limit])
+    if services[:geocoders].key?(country)
+      services[:geocoders][country].geocode(params, params[:limit])
+    elsif services[:geocoder_fallback]
+      services[:geocoder_fallback].geocode(params, params[:limit])
     end
   end
 
-  def self.wrapper_reverse(params)
-    wrapper = @@c[:geocoders].find{ |country, wrapper|
+  def self.wrapper_reverse(services, params)
+    wrapper = services[:geocoders].find{ |country, wrapper|
       wrapper.reverse?(params[:lat], params[:lng])
     }
     if !wrapper.nil?
       wrapper[1].reverse(params)
-    elsif @@c[:geocoder_fallback]
-      @@c[:geocoder_fallback].reverse(params)
+    elsif services[:geocoder_fallback]
+      services[:geocoder_fallback].reverse(params)
     end
   end
 
-  def self.wrapper_geocodes(list_params)
+  def self.wrapper_geocodes(services, list_params)
     by_country = list_params.each_with_index.group_by{ |params, index|
       self.geocode_country(params[:country]) if params[:country]
     }
@@ -49,10 +49,10 @@ module AddokWrapper
         params[:index] = index
         params
       }
-      results = if @@c[:geocoders].key?(country)
-        @@c[:geocoders][country].geocodes(list_params)
-      elsif @@c[:geocoder_fallback]
-        @@c[:geocoder_fallback].geocodes(list_params)
+      results = if services[:geocoders].key?(country)
+        services[:geocoders][country].geocodes(list_params)
+      elsif services[:geocoder_fallback]
+        services[:geocoder_fallback].geocodes(list_params)
       end
       results.each_with_index{ |result, i|
         result[:index] = list_params[i][:index]
@@ -61,12 +61,12 @@ module AddokWrapper
     }.flatten(1).sort_by{ |params| params[:index] }
   end
 
-  def self.wrapper_reverses(list_params)
+  def self.wrapper_reverses(services, list_params)
     list_params.each_with_index.group_by{ |params, index|
-      wrapper = @@c[:geocoders].find{ |country, wrapper|
+      wrapper = services[:geocoders].find{ |country, wrapper|
         wrapper.reverse?(params[:lat], params[:lng])
       }
-      (wrapper.nil? ? nil : wrapper[1]) || @@c[:geocoder_fallback]
+      (wrapper.nil? ? nil : wrapper[1]) || services[:geocoder_fallback]
     }.collect{ |wrapper, list_params|
       if !wrapper.nil?
         list_params.collect!{ |params, index|
@@ -82,12 +82,12 @@ module AddokWrapper
     }.flatten(1).sort_by{ |params| params[:index] }
   end
 
-  def self.wrapper_complete(params)
+  def self.wrapper_complete(services, params)
     country = self.geocode_country(params[:country])
-    if @@c[:geocoders].key?(country)
-      @@c[:geocoders][country].complete(params, params[:limit])
-    elsif @@c[:geocoder_fallback]
-      @@c[:geocoder_fallback].complete(params, params[:limit])
+    if services[:geocoders].key?(country)
+      services[:geocoders][country].complete(params, params[:limit])
+    elsif services[:geocoder_fallback]
+      services[:geocoder_fallback].complete(params, params[:limit])
     end
   end
 

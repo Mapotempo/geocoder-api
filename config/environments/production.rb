@@ -31,10 +31,18 @@ module AddokWrapper
   @@c = {
     product_title: 'Addok Wrapper geocoding API',
     product_contact: 'frederic@mapotempo.com',
-    geocoders: {
-      fra: ADDOK_FRA,
-    },
-    geocoder_fallback: DEMO,
-    api_keys: ['demo']
+    profiles: [{
+      api_keys: ['demo'],
+      geocoders: {
+        fra: ADDOK_FRA,
+      },
+      geocoder_fallback: DEMO
+    }]
   }
+
+  @@c[:api_keys] = Hash[@@c[:profiles].collect{ |profile|
+    profile[:api_keys].collect{ |api_key|
+      [api_key, profile]
+    }
+  }.flatten(1)]
 end
