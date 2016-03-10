@@ -35,7 +35,7 @@ module Api
           rack_response({error: error.message}.to_json, 400)
         else
           message = {error: error.class.name, detail: error.message}
-          if ['development'].include?(ENV['APP_ENV'])
+          if ['development', 'production'].include?(ENV['APP_ENV'])
             message[:trace] = error.backtrace
             STDERR.puts error.message
             STDERR.puts error.backtrace
