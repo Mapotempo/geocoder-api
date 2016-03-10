@@ -17,6 +17,7 @@
 #
 require './wrappers/wrapper'
 
+require 'csv'
 require 'rest-client'
 require 'ostruct'
 
