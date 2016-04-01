@@ -8,7 +8,7 @@ gem 'rack-cors'
 gem 'grape'
 gem 'grape_logging'
 gem 'grape-entity'
-gem 'grape-swagger', github: 'ruby-grape/grape-swagger' # FIXME wait v0.10.3
+gem 'grape-swagger'
 
 
 gem 'rest-client'
