@@ -55,13 +55,18 @@ module Wrappers
 
     def geocodes(list_params)
       csv_string = CSV.generate { |csv|
-        csv << ['q', 'r']
+        csv << ['q0', 'q', 'r']
         list_params.each{ |params|
-          csv << [flatten_query(params, false), params[:ref]]
+          p = flatten_param(params)
+          csv << [p[:q0], p[:q], params[:ref]]
         }
       }
 
-      addok_geocodes('/search/csv', ['q'], csv_string)
+      if @search2steps
+        addok_geocodes('/search2steps/csv', csv_string, ['q'], ['q0'])
+      else
+        addok_geocodes('/search/csv', csv_string, ['q'])
+      end
     end
 
     def reverses(list_params)
@@ -72,7 +77,7 @@ module Wrappers
         }
       }
 
-      addok_geocodes('/reverse/csv', nil, csv_string)
+      addok_geocodes('/reverse/csv', csv_string)
     end
 
     def complete(params, limit = 10)
@@ -80,6 +85,19 @@ module Wrappers
     end
 
     private
+
+    def flatten_param(params)
+      if @search2steps && !params[:query] && params[:city]
+        {
+          q0: [params[:postcode], params[:city]].compact.join(' '),
+          q: [params[:housenumber], params[:street], params[:postcode]].compact.join(' ')
+        }
+      else
+        {
+          q: flatten_query(params, false)
+        }
+      end
+    end
 
     def addok_geocode(params, limit, complete)
       key_params = {limit: limit, complete: complete}.merge(params).reject{ |k, v| k == 'api_key'}
@@ -93,17 +111,9 @@ module Wrappers
           lat: params['lat'],
           lon: params['lng'],
           type: (params[:type] if ['house', 'street'].include?(params[:type]))
-        }
+        }.merge(flatten_param(params)).compact
 
-        if @search2steps && !params[:query] && params[:city]
-          p[:q0] = [params[:postcode], params[:city]].compact.join(' ')
-          p[:q] = [params[:housenumber], params[:street], params[:postcode]].compact.join(' ')
-          method = '/search2steps'
-        else
-          p[:q] = flatten_query(params, false)
-          method = '/search'
-        end
-        p.compact!
+        method = p.key?(:q0) ? '/search2steps' : '/search'
         response = RestClient.get(@url + method, {params: p}) { |response, request, result, &block|
           case response.code
           when 200
@@ -153,14 +163,15 @@ module Wrappers
       json
     end
 
-    def addok_geocodes(url_part, columns, csv)
+    def addok_geocodes(url_part, csv, columns = nil, columns0 = nil)
       post = {
         delimiter: ',',
         encoding: 'utf-8',
         multipart: true,
-        data: FakeFileStringIO.new(csv, 'r')
-      }
-      post[:columns] = 'q' if columns
+        data: FakeFileStringIO.new(csv, 'r'),
+        columns: columns && columns.join(','),
+        columns0: columns0 && columns0.join(',')
+      }.compact
       response = RestClient::Request.execute(method: :post, url: @url + url_part, timeout: nil, payload: post) { |response, request, result, &block|
         case response.code
         when 200
@@ -184,7 +195,7 @@ module Wrappers
           geocoding: {
             ref: p['r'],
             score: p['result_score'], # Not in spec
-            type: p['result_type'] == 'housenumber' ? 'house' : p['type'], # Hack to match spec around addok return value
+            type: p['result_type'] == 'housenumber' ? 'house' : p['result_type'], # Hack to match spec around addok return value
             # accuracy: p['accuracy'],
             label: p['result_label'],
             name: p['result_name'],
