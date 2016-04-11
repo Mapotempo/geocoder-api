@@ -24,6 +24,8 @@ gem 'geocoder', github: 'Mapotempo/geocoder'
 gem 'sqlite3'
 gem 'redis-activesupport'
 
+gem 'sentry-raven'
+
 group :test do
   gem 'rack-test'
   gem 'minitest'
