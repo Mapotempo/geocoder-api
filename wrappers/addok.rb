@@ -111,7 +111,7 @@ module Wrappers
           lat: params['lat'],
           lon: params['lng'],
           type: (params[:type] if ['house', 'street'].include?(params[:type]))
-        }.merge(flatten_param(params)).compact
+        }.merge(flatten_param(params))
 
         method = p.key?(:q0) ? '/search2steps' : '/search'
         response = RestClient.get(@url + method, {params: p}) { |response, request, result, &block|
@@ -171,7 +171,7 @@ module Wrappers
         data: FakeFileStringIO.new(csv, 'r'),
         columns: columns && columns.join(','),
         columns0: columns0 && columns0.join(',')
-      }.compact
+      }
       response = RestClient::Request.execute(method: :post, url: @url + url_part, timeout: nil, payload: post) { |response, request, result, &block|
         case response.code
         when 200
