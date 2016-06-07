@@ -38,6 +38,32 @@ class Wrappers::AddokTest < Minitest::Test
     assert_equal 'house', g[:type]
   end
 
+  def test_geocode_with_address_and_bad_postal_code
+    rg = AddokWrapper::ADDOK_FRA
+    result = rg.geocode({housenumber: '26', street: 'Rue du 21 Juillet 1944', postcode: '1590'})
+    assert 0 < result[:features].size
+    g = result[:features][0][:properties][:geocoding]
+    assert_equal 'Dortan', g[:city]
+    assert_equal 'house', g[:type]
+  end
+
+  def test_geocode_with_country_and_bad_postal_code
+    rg = AddokWrapper::ADDOK_FRA
+    result = rg.geocode({housenumber: '26', street: 'Rue du 21 Juillet 1944', postcode: '1590', country: 'FR'})
+    assert 0 < result[:features].size
+    g = result[:features][0][:properties][:geocoding]
+    assert_equal 'Dortan', g[:city]
+    assert_equal 'house', g[:type]
+  end
+
+  def test_geocode_with_bad_postal_code
+    rg = AddokWrapper::ADDOK_FRA
+    result = rg.geocode({postcode: '1100', country: 'France'})
+    assert 0 < result[:features].size
+    g = result[:features][0][:properties][:geocoding]
+    assert_equal 'Oyonnax', g[:city]
+  end
+
   def test_reverses
     rg = AddokWrapper::ADDOK_FRA
     result = rg.reverses([{lat: 47.09305, lng: 5.48827}])

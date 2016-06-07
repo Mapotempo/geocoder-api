@@ -89,10 +89,20 @@ module Wrappers
 
     private
 
+    def clean_params(params)
+      if params[:country]
+        if params[:country].strip.upcase == 'FRANCE' || params[:country].strip.upcase == 'FR' || params[:country].strip.upcase == 'FRA'
+          params[:postcode] = '0' + params[:postcode] if params[:postcode] && params[:postcode].size == 4
+        end
+      end
+      params
+    end
+
     def flatten_query(params, with_country = true)
       if params[:query]
         params[:query]
       else
+        params = clean_params params
         [params[:housenumber], params[:street], params[:postcode], params[:city], (params[:country] if with_country)].compact.join(' ')
       end
     end
