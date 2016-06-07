@@ -172,7 +172,7 @@ module Wrappers
         data: FakeFileStringIO.new(csv, 'r'),
         columns: columns && columns.join(','),
         columns0: columns0 && columns0.join(',')
-      }
+      }.delete_if{ |k, v| v.nil? }
       response = RestClient::Request.execute(method: :post, url: @url + url_part, timeout: nil, payload: post) { |response, request, result, &block|
         case response.code
         when 200

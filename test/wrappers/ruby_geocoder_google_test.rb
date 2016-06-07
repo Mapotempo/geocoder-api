@@ -25,6 +25,6 @@ class Wrappers::RubyGeocoderGoogleTest < Minitest::Test
     result = rg.geocode({query: "Front Street, NYC"})
     assert result
     g = result[:features][0][:properties][:geocoding]
-    assert_equal 'NY', g[:city]
+    assert_equal 'New York', g[:city]
   end
 end
