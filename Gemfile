@@ -23,3 +23,7 @@ group :test do
 end
 
 gem 'geocoder'
+
+group :production do
+  gem 'redis-activesupport'
+end
