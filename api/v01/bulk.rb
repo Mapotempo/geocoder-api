@@ -24,12 +24,36 @@ require './api/v01/entities/reverses_result'
 
 module Api
   module V01
+    module CSVParser
+      def self.call(object, env)
+        {geocodes: CSV.parse(object, headers: true).collect(&:to_h)}
+      end
+    end
+
+    module CSVFormatter
+      def self.call(object, env)
+        if object[:geocodes].size > 0
+          CSV.generate{ |csv|
+            csv << object[:geocodes].first[:properties][:geocoding].keys + [:lat, :lng]
+            object[:geocodes].each{ |o|
+              csv << o[:properties][:geocoding].values + (o[:geometry] && o[:geometry][:coordinates] ? [o[:geometry][:coordinates][1], o[:geometry][:coordinates][0]] : [])
+            }
+          }
+        else
+         ''
+        end
+      end
+    end
+
     class Bulk < APIBase
       content_type :json, 'application/json; charset=UTF-8'
       content_type :geojson, 'application/vnd.geo+json; charset=UTF-8'
       content_type :xml, 'application/xml'
+      content_type :csv, 'text/csv; charset=UTF-8'
+      parser :csv, CSVParser
       formatter :geojson, GeoJsonFormatter
       default_format :json
+      formatter :csv, CSVFormatter
       version '0.1', using: :path
 
       resource :geocode do
@@ -48,7 +72,11 @@ module Api
           if results
             results = {geocodes: results}
             status 200
-            present results, with: GeocodesResult
+            if params['format'] != 'csv'
+              present results, with: GeocodesResult
+            else
+              results
+            end
           else
             error!('500 Internal Server Error', 500)
           end
