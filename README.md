@@ -141,4 +141,8 @@ http://geocode.mapotempo.com/0.1/reverse.json?api_key=demo&lat=44&lng=0
 
 Batch request
 -------------
-Batch convert a list in json format using POST request.
+Batch convert a list in json or CSV format using POST request.
+
+```
+curl -v -X POST -H "Content-Type: text/csv" --data-binary @in.csv http://localhost:8558/0.1/geocode.csv?api_key=demo > out.csv
+```
