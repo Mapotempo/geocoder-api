@@ -201,7 +201,7 @@ module Wrappers
             label: p['result_label'],
             name: p['result_name'],
             housenumber: p['result_housenumber'],
-            street: p['result_street'],
+            street: ['housenumber', 'street'].include?(p['result_type']) ? p['result_name'] : nil,
             postcode: p['result_postcode'],
             city: p['result_city'],
             district: p['result_district'],
