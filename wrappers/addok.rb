@@ -41,10 +41,8 @@ module Wrappers
           case response.code
           when 200
             response
-          when 400
-            raise response
           else
-            response.return!(request, result, &block)
+            raise response
           end
         }
         json = JSON.parse(response, object_class: OpenStruct)
@@ -119,10 +117,8 @@ module Wrappers
           case response.code
           when 200
             response
-          when 400
-            raise response
           else
-            response.return!(request, result, &block)
+            raise response
           end
         }
         json = JSON.parse(response, object_class: OpenStruct)
@@ -177,10 +173,8 @@ module Wrappers
         case response.code
         when 200
           response
-        when 400
-          raise response
         else
-          response.return!(request, result, &block)
+          raise response
         end
       }
       result = []
