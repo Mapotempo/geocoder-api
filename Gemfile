@@ -13,7 +13,7 @@ gem 'grape-swagger'
 
 gem 'rest-client'
 gem 'border_patrol'
-gem 'activesupport'
+gem 'activesupport', '<5' # Wait for Ruby version >= 2.2.2
 
 group :test do
   gem 'rack-test'
