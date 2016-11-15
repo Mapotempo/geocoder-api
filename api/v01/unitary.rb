@@ -32,7 +32,7 @@ module Api
       resource :geocode do
         desc 'Geocode an address. From full text or splited in fields', {
           nickname: 'geocode',
-          entity: GeocodeResult
+          success: GeocodeResult
         }
         params {
           requires :country, type: String, desc: 'Simple country name, ISO 3166-alpha-2 or ISO 3166-alpha-3.'
@@ -62,7 +62,7 @@ module Api
 
         desc 'Complete an address.', {
           nickname: 'complete',
-          entity: GeocodeResult
+          success: GeocodeResult
         }
         params {
           requires :country, type: String, desc: 'Simple country name, ISO 3166-alpha-2 or ISO 3166-alpha-3.'
@@ -91,7 +91,7 @@ module Api
       resource :reverse do
         desc 'Reverse geocode an address.', {
           nickname: 'reverse',
-          entity: GeocodeResult
+          success: GeocodeResult
         }
         params {
           requires :lat, type: Float, desc: 'Latitude.'

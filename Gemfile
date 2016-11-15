@@ -9,6 +9,7 @@ gem 'grape'
 gem 'grape_logging'
 gem 'grape-entity'
 gem 'grape-swagger'
+gem 'grape-swagger-entity'
 
 
 gem 'rest-client'
