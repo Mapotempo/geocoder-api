@@ -88,7 +88,7 @@ module Wrappers
       if @search2steps && !params[:query] && params[:city]
         {
           q0: [params[:postcode], params[:city]].compact.join(' '),
-          q: [params[:housenumber], params[:street], params[:postcode]].compact.join(' ')
+          q: [params[:housenumber], params[:street]].compact.join(' ')
         }
       else
         {
