@@ -26,7 +26,7 @@ module Api
 
     mount V01::Api
 
-    documentation_class = add_swagger_documentation base_path: (lambda do |request| "#{request.scheme}://#{request.host}:#{request.port}" end), hide_documentation_path: true, info: {
+    documentation_class = add_swagger_documentation hide_documentation_path: true, info: {
       title: ::AddokWrapper::config[:product_title],
       description: 'API access require an api_key. API results are geojson extended by geocodejson-spec on version draft#namespace#score.',
       contact: ::AddokWrapper::config[:product_contact]
