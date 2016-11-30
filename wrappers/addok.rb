@@ -52,7 +52,7 @@ module Wrappers
     end
 
     def geocodes(list_params)
-      csv_string = CSV.generate { |csv|
+      csv_string = CSV.generate(quote_char: "'") { |csv|
         csv << ['q0', 'q', 'r']
         list_params.each{ |params|
           p = flatten_param(params)
@@ -178,7 +178,7 @@ module Wrappers
         end
       }
       result = []
-      CSV.parse(response.force_encoding('utf-8'), headers: true) { |p|
+      CSV.parse(response.force_encoding('utf-8'), headers: true, quote_char: "'") { |p|
         result << map_from_csv(p)
       }
       result
