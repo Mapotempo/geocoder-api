@@ -71,4 +71,10 @@ class Wrappers::AddokTest < Minitest::Test
     g = result[0][:properties][:geocoding]
     assert_equal 'Dole', g[:city]
   end
+
+  def test_limit
+    rg = AddokWrapper::ADDOK_FRA
+    result = rg.geocode({city: 'Marseille', country: 'FR'}, limit = 15)
+    assert_equal 15, result[:features].size
+  end
 end
