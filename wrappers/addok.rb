@@ -163,6 +163,7 @@ module Wrappers
     def addok_geocodes(url_part, csv, columns = nil, columns0 = nil)
       post = {
         delimiter: ',',
+        quote: '"',
         encoding: 'utf-8',
         multipart: true,
         data: FakeFileStringIO.new(csv, 'r'),
