@@ -63,6 +63,12 @@ module Api
             geocodes: { required: true }
           ),
           success: GeocodesResult,
+          produces: [
+            'application/json; charset=UTF-8',
+            'application/vnd.geo+json; charset=UTF-8',
+            'application/xml',
+            'text/csv; charset=UTF-8'
+          ]
         }
         post do
           if !params.key?('geocodes') || !params['geocodes'].kind_of?(Array)
@@ -90,6 +96,12 @@ module Api
             reverses: { required: true }
           ),
           success: ReversesResult,
+          produces: [
+            'application/json; charset=UTF-8',
+            'application/vnd.geo+json; charset=UTF-8',
+            'application/xml',
+            'text/csv; charset=UTF-8'
+          ]
         }
         post do
           if !params.key?('reverses') || !params['reverses'].kind_of?(Array)

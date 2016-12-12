@@ -24,12 +24,30 @@ module Api
   class ApiV01 < Grape::API
     version '0.1', using: :path
 
+    content_type :json, 'application/json; charset=UTF-8'
+    content_type :geojson, 'application/vnd.geo+json; charset=UTF-8'
+    content_type :xml, 'application/xml'
+    content_type :csv, 'text/csv; charset=UTF-8'
+
     mount V01::Api
 
-    documentation_class = add_swagger_documentation hide_documentation_path: true, markdown: GrapeSwagger::Markdown::KramdownAdapter.new, info: {
-      title: ::AddokWrapper::config[:product_title],
-      description: 'API access require an api_key. API results are geojson extended by geocodejson-spec on version draft#namespace#score.',
-      contact: ::AddokWrapper::config[:product_contact]
-    }
+    documentation_class = add_swagger_documentation(
+      hide_documentation_path: true,
+      consumes: [
+        'application/json; charset=UTF-8',
+        'application/xml',
+      ],
+      produces: [
+        'application/json; charset=UTF-8',
+        'application/vnd.geo+json; charset=UTF-8',
+        'application/xml',
+      ],
+      markdown: GrapeSwagger::Markdown::KramdownAdapter.new,
+      info: {
+        title: ::AddokWrapper::config[:product_title],
+        contact: ::AddokWrapper::config[:product_contact],
+        description: 'API access require an api_key. API results are geojson extended by geocodejson-spec on version draft#namespace#score.'
+      }
+    )
   end
 end
