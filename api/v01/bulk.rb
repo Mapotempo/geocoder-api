@@ -21,6 +21,7 @@ require './api/v01/entities/geocodes_request'
 require './api/v01/entities/geocodes_result'
 require './api/v01/entities/reverses_request'
 require './api/v01/entities/reverses_result'
+require './api/v01/entities/status'
 
 module Api
   module V01
@@ -63,6 +64,9 @@ module Api
             geocodes: { required: true }
           ),
           success: GeocodesResult,
+          failures: [
+            {code: 400, model: Status}
+          ],
           produces: [
             'application/json; charset=UTF-8',
             'application/vnd.geo+json; charset=UTF-8',
@@ -72,7 +76,7 @@ module Api
         }
         post do
           if !params.key?('geocodes') || !params['geocodes'].kind_of?(Array)
-            error!('400 Bad Request. Missing or invalid field "geocodes".', 400)
+            error!({status: 'Missing or invalid field "geocodes".'}, 400)
           end
           results = AddokWrapper::wrapper_geocodes(APIBase.services(params[:api_key]), params[:geocodes])
           if results
