@@ -27,7 +27,13 @@ module Api
   module V01
     module CSVParser
       def self.call(object, env)
-        {geocodes: CSV.parse(object, headers: true).collect(&:to_h)}
+        {
+          geocodes: CSV.parse(object, headers: true).collect{ |row|
+            r = row.to_h
+            r['maybe_street'] = row.each.select{ |k, _| k == 'maybe_street' }.collect(&:last).select{ |t| t && t != '' }
+            r
+          }
+        }
       end
     end
 
@@ -82,8 +88,8 @@ module Api
           if results
             results = {geocodes: results}
             status 200
-            if params['format'] != 'csv'
-              present results, with: GeocodesResult
+            if params['format'] != :csv
+              present results # No do not use "with: GeocodesResult"
             else
               results
             end

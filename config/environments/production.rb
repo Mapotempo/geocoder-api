@@ -26,7 +26,7 @@ module AddokWrapper
   ActiveSupport::Cache.lookup_store :redis_store
   CACHE = ActiveSupport::Cache::RedisStore.new(namespace: 'addok', expires_in: 60*60*24*1)
 
-  ADDOK_FRA = Wrappers::Addok.new(CACHE, 'http://api-adresse.data.gouv.fr', false, 'france.kml')
+  ADDOK_FRA = Wrappers::Addok.new(CACHE, 'http://api-adresse.data.gouv.fr', 'france.kml')
   DEMO = Wrappers::Demo.new(CACHE)
 
   @@c = {

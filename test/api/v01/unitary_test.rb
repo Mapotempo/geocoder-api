@@ -51,6 +51,11 @@ class Api::V01::UnitaryTest < Minitest::Test
     assert !last_response.ok?, last_response.body
   end
 
+  def test_should_geocode_with_maybe_street
+    get '/0.1/geocode', {api_key: 'demo', maybe_street: ['foo', 'bar', 'Place Pey Berland'], city: 'Bordeaux', country: 'demo'}
+    assert last_response.ok?, last_response.body
+  end
+
   def test_should_reverse
     _test_should_reverse(0, 0)
     _test_should_reverse(46.57698, 0.33421)

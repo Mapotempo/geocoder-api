@@ -69,14 +69,16 @@ module Wrappers
 
     def geocode(params, limit = 10)
       key_params = {limit: limit}.merge(params).reject{ |k, v| k == 'api_key'}
-
       key = [:google, :geocode, Digest::MD5.hexdigest(Marshal.dump(key_params.to_a.sort_by{ |i| i[0].to_s }))]
+
       r = @cache.read(key)
       if !r
-        q = flatten_query(params)
         Geocoder::Configuration.lookup = :google
         Geocoder::Configuration.api_key = ::AddokWrapper::config[:ruby_geocode][Geocoder::Configuration.lookup]
-        response = Geocoder.search(q)
+        q, response = streets_loop(params, ->(r) { r.size > 0 && @@location_type[r[0].data['geometry']['location_type']] || 0 }) { | params|
+          q = flatten_query(params)
+          [q, Geocoder.search(q)]
+        }
         features = response.collect{ |r|
           a = r.data
           # https://developers.google.com/maps/documentation/geocoding/

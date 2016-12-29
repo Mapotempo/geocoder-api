@@ -112,5 +112,23 @@ module Wrappers
         @boundary.contains_point?(lng, lat)
       end
     end
+
+    def gen_streets(params)
+      (params[:street] && [params[:street]]) || params[:maybe_street] || [nil]
+    end
+
+    def streets_loop(params, max_by)
+      if params.key?(:q)
+        yield(params)
+      else
+        p = params.dup
+        gen_streets(params).collect{ |street|
+          p[:street] = street
+          yield(p)
+        }.max_by{ |r|
+          max_by.call(r[1])
+        } || [nil, []]
+      end
+    end
   end
 end

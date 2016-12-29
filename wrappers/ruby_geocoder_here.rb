@@ -49,23 +49,36 @@ module Wrappers
     end
 
     def geocode(params, limit = 10)
-      here_geocoder(flatten_query(params), limit)
+      here_geocoder(params, limit) { |params|
+        flatten_query(params)
+      }
     end
 
     def reverse(params)
-      here_geocoder([params[:lat], params[:lng]], 1)
+      here_geocoder(params, 1) { |prams|
+        [params[:lat], params[:lng]]
+      }
     end
 
     private
 
-    def here_geocoder(q, limit)
-      key = [:here, :geocode, Digest::MD5.hexdigest(Marshal.dump({q: q, limit: limit}.to_a.sort_by{ |i| i[0].to_s }))]
+    def match_quality(mq)
+      (mq['Country'] || 0) * 1000 + (mq['City'] || 0) * 100 + (mq['Street'] && mq['Street'][0] || 0) * 10 + (mq['HouseNumber'] || 0)
+    end
+
+    def here_geocoder(params, limit)
+      key_params = {limit: limit}.merge(params).reject{ |k, v| k == 'api_key'}
+      key = [:here, :geocode, Digest::MD5.hexdigest(Marshal.dump(key_params.to_a.sort_by{ |i| i[0].to_s }))]
+
       r = @cache.read(key)
       if !r
         Geocoder::Configuration.lookup = :here
         Geocoder::Configuration.api_key = ::AddokWrapper::config[:ruby_geocode][Geocoder::Configuration.lookup]
-        response = Geocoder.search(q, params: {maxresults: limit})
-        #Geocoder.search(nil, params: {maxresults: limit, city: params[:city], district: params[:district], housenumber: params[:housenumber], postalcode: params[:postcode], state: params[:state], street: params[:street]})
+        q, response = streets_loop(params, ->(r) { r.size > 0 && match_quality(r[0].data['MatchQuality']) || 0 }) { |params|
+          q = yield(params)
+          #Geocoder.search(nil, params: {maxresults: limit, city: params[:city], district: params[:district], housenumber: params[:housenumber], postalcode: params[:postcode], state: params[:state], street: params[:street]})
+          [q, Geocoder.search(q, params: {maxresults: limit})]
+        }
         features = response.collect{ |r|
           a = r.data
           # https://developer.here.com/rest-apis/documentation/geocoder/topics/resource-type-response-geocode.html

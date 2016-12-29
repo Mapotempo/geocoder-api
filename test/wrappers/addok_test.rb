@@ -38,6 +38,15 @@ class Wrappers::AddokTest < Minitest::Test
     assert_equal 'house', g[:type]
   end
 
+  def test_geocode_maybe_street
+    rg = AddokWrapper::ADDOK_FRA
+    result = rg.geocode({maybe_street: ['App 6', 'Rue Fondodege'], city: 'Bordeaux', country: 'France'})
+    assert result
+    g = result[:features][0][:properties][:geocoding]
+    assert_equal 'Bordeaux', g[:city]
+    assert_equal 'Rue Fondaudege', g[:street]
+  end
+
   def test_geocode_with_address_and_bad_postal_code
     rg = AddokWrapper::ADDOK_FRA
     result = rg.geocode({housenumber: '26', street: 'Rue du 21 Juillet 1944', postcode: '1590'})

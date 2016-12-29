@@ -37,10 +37,14 @@ module Api
         params {
           requires :country, type: String, desc: 'Simple country name, ISO 3166-alpha-2 or ISO 3166-alpha-3.'
           optional :street, type: String
+          optional :maybe_street, type: Array[String], desc: 'One undetermined entry of the array is the street, selects the good one for the geocoding process. Need to add an empty entry as alternative if you are unsure if there is a street in the list. Mutually exclusive field with street field.'
+          mutually_exclusive :street, :maybe_street
           optional :postcode, type: String
           optional :city, type: String
           optional :query, type: String, desc: 'Full text, free form, address search.'
           at_least_one_of :query, :postcode, :city
+          mutually_exclusive :query, :street
+          mutually_exclusive :query, :maybe_street
           mutually_exclusive :query, :postcode
           mutually_exclusive :query, :city
           optional :type, type: String, desc: 'Queried result type filter. One of "house", "street", "locality", "city", "region", "country".'

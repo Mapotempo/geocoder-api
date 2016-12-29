@@ -37,22 +37,31 @@ module Wrappers
     end
 
     def geocode(params, limit = 10)
-      opencagedata_geocoder(flatten_query(params), limit)
+      opencagedata_geocoder(params, limit) { |params|
+        flatten_query(params)
+      }
     end
 
     def reverse(params)
-      opencagedata_geocoder([params[:lat], params[:lng]], 1)
+      opencagedata_geocoder(params, 1) { |prams|
+        [params[:lat], params[:lng]]
+      }
     end
 
     private
 
-    def opencagedata_geocoder(q, limit)
-      key = [:opencagedata, :geocode, Digest::MD5.hexdigest(Marshal.dump({q: q, limit: limit}.to_a.sort_by{ |i| i[0].to_s }))]
+    def opencagedata_geocoder(params, limit)
+      key_params = {limit: limit}.merge(params).reject{ |k, v| k == 'api_key'}
+      key = [:opencagedata, :geocode, Digest::MD5.hexdigest(Marshal.dump(key_params.to_a.sort_by{ |i| i[0].to_s }))]
+
       r = @cache.read(key)
       if !r
         Geocoder::Configuration.lookup = :opencagedata
         Geocoder::Configuration.api_key = ::AddokWrapper::config[:ruby_geocode][Geocoder::Configuration.lookup]
-        response = Geocoder.search(q, params: {limit: limit})
+        q, response = streets_loop(params, ->(r) { r.size > 0 && r[0].data['confidence'] / 10.0 || 0 }) { |params|
+          q = yield(params)
+          [q, Geocoder.search(q, params: {maxresults: limit})]
+        }
         features = response.collect{ |r|
           a = r.data
           # http://geocoder.opencagedata.com/api.html
@@ -61,13 +70,13 @@ module Wrappers
             properties: {
               geocoding: {
                 score: a['confidence'] / 10.0,
-                type: c.key?('house_number') ? 'house' : c.key?('road') ? 'street' : c.key?('city') ? 'city' : c.key?('country') ? 'country' : nil,
+                type: c.key?('house_number') ? 'house' : c.key?('road') ? 'street' : c.key?('village') ? 'city' : c.key?('city') ? 'city' : c.key?('country') ? 'country' : nil,
                 label: a['formatted'],
                 name: nil,
                 housenumber: c['house_number'],
                 street: c['road'],
                 postcode: c['postcode'],
-                city: c['town'] || c['city'] || c['state_district'],
+                city: c['town'] || c['village'] || c['city'] || c['state_district'],
                 district: nil,
                 county: c['county'],
                 state: c['state'],

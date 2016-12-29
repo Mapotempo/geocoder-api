@@ -23,9 +23,8 @@ require 'ostruct'
 
 module Wrappers
   class Addok < Wrapper
-    def initialize(cache, url, search2steps = false, boundary = nil)
+    def initialize(cache, url, boundary = nil)
       super(cache, boundary)
-      @search2steps = search2steps
       @url = url
     end
 
@@ -60,11 +59,7 @@ module Wrappers
         }
       }
 
-      if @search2steps
-        addok_geocodes('/search2steps/csv', csv_string, ['q'], ['q0'])
-      else
-        addok_geocodes('/search/csv', csv_string, ['q'])
-      end
+      addok_geocodes('/search2steps/csv', csv_string, ['q0'], ['q'])
     end
 
     def reverses(list_params)
@@ -85,14 +80,18 @@ module Wrappers
     private
 
     def flatten_param(params)
-      if @search2steps && !params[:query] && params[:city]
+      if !params[:query] && params[:city]
         {
           q0: [params[:postcode], params[:city]].compact.join(' '),
-          q: [params[:housenumber], params[:street]].compact.join(' ')
+          q: gen_streets(params).collect{ |street| [params[:housenumber], street].compact.join(' ') }.join('|')
         }
       else
+        p = params.dup
         {
-          q: flatten_query(params, false)
+          q: gen_streets(params).collect{ |street|
+            p[:street] = street
+            flatten_query(p, false)
+          }.join('|')
         }
       end
     end
@@ -112,8 +111,7 @@ module Wrappers
           type: (params[:type] if ['house', 'street'].include?(params[:type]))
         }.merge(flatten_param(params))
 
-        method = p.key?(:q0) ? '/search2steps' : '/search'
-        response = RestClient.get(@url + method, {params: p}) { |response, request, result, &block|
+        response = RestClient.get(@url + '/search2steps', {params: p}) { |response, request, result, &block|
           case response.code
           when 200
             response
@@ -145,7 +143,7 @@ module Wrappers
           label: p['label'],
           name: p['name'],
           housenumber: p['housenumber'],
-          street: p['street'],
+          street: ['housenumber', 'street'].include?(p['type']) ? p['name'] : nil,
           postcode: p['postcode'],
           city: p['city'],
           district: p['district'],
@@ -160,7 +158,7 @@ module Wrappers
       json
     end
 
-    def addok_geocodes(url_part, csv, columns = nil, columns0 = nil)
+    def addok_geocodes(url_part, csv, columns0 = nil, columns = nil)
       post = {
         delimiter: ',',
         quote: '"',

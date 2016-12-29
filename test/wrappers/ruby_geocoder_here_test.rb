@@ -36,6 +36,15 @@ class Wrappers::RubyGeocoderHereTest < Minitest::Test
     assert_equal 'Москва', g[:city]
   end
 
+  def test_geocode_maybe_street
+    rg = AddokWrapper::HERE
+    result = rg.geocode({maybe_street: ['App 6', 'Rue Fondaudege'], city: 'Bordeaux', country: 'France'})
+    assert result
+    g = result[:features][0][:properties][:geocoding]
+    assert_equal 'Bordeaux', g[:city]
+    assert_equal 'Rue Fondaudège', g[:street]
+  end
+
   def test_reverse
     rg = AddokWrapper::HERE
     result = rg.reverse({lat: 42.90360, lng: -2.17306})

@@ -28,7 +28,7 @@ require './wrappers/demo'
 module AddokWrapper
   CACHE = ActiveSupport::Cache::NullStore.new
 
-  ADDOK_FRA = Wrappers::Addok.new(CACHE, 'http://api-adresse.data.gouv.fr', false, 'france.kml')
+  ADDOK_FRA = Wrappers::Addok.new(CACHE, 'http://api-adresse.data.gouv.fr', 'france.kml')
   GOOGLE = Wrappers::RubyGeocoderGoogle.new(CACHE)
   HERE = Wrappers::RubyGeocoderHere.new(CACHE)
   OPENCAGEDATA = Wrappers::RubyGeocoderOpencagedata.new(CACHE)

@@ -53,6 +53,8 @@ module AddokWrapper
         services[:geocoders][country].geocodes(list_params)
       elsif services[:geocoder_fallback]
         services[:geocoder_fallback].geocodes(list_params)
+      else
+        []
       end
       results.each_with_index{ |result, i|
         result[:index] = list_params[i][:index]
