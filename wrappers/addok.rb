@@ -50,16 +50,41 @@ module Wrappers
       map_spec(json)
     end
 
-    def geocodes(list_params)
-      csv_string = CSV.generate(quote_char: '"') { |csv|
-        csv << ['q0', 'q', 'r']
-        list_params.each{ |params|
-          p = flatten_param(params)
-          csv << [p[:q0], p[:q], params[:ref]]
-        }
-      }
+    GEOCODES_SLICE_SIZE = 1000
 
-      addok_geocodes('/search2steps/csv', csv_string, ['q0'], ['q'])
+    def geocodes(list_params)
+      slice_number = list_params.size / GEOCODES_SLICE_SIZE
+
+      list_params.each_slice(GEOCODES_SLICE_SIZE).each_with_index.collect{ |slice_params, slice|
+        results = []
+        csv_index = []
+        csv_string = CSV.generate(quote_char: '"') { |csv|
+          csv << ['q0', 'q', 'r']
+          slice_params.each_with_index{ |params, index|
+            p = flatten_param(params)
+
+            key = [:addok, :geocode, p]
+            r = @cache.read(key)
+            if !r
+              csv << [p[:q0], p[:q], params[:ref]]
+              csv_index << index
+            else
+              results[index] = r + [params[:ref]]
+            end
+          }
+        }
+        STDERR.puts "Addok Geocodes #{Thread.current.object_id}, slice #{slice}/#{slice_number}" if slice_number > 1
+
+        if !csv_index.empty?
+          addok_geocodes('/search2steps/csv', csv_string, ['q0'], ['q']).each{ |result|
+            index, p = csv_index.shift
+            results[index] = result
+            @cache.write([:addok, :geocode, p], result[0..1])
+          }
+        end
+
+        results
+      }.flatten(1)
     end
 
     def reverses(list_params)

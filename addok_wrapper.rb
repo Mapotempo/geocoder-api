@@ -58,6 +58,7 @@ module AddokWrapper
       end
       results.each_with_index{ |result, i|
         result[:index] = list_params[i][:index]
+        result[:properties][:geocoding][:source] = list_params[i]
       }
       results
     }.flatten(1).sort_by{ |params| params[:index] }

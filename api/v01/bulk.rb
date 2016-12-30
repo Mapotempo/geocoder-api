@@ -28,7 +28,8 @@ module Api
     module CSVParser
       def self.call(object, env)
         {
-          geocodes: CSV.parse(object, headers: true).collect{ |row|
+          # TODO use encoding from Content-Type or detect it.
+          geocodes: CSV.parse(object.force_encoding('utf-8'), headers: true).collect{ |row|
             r = row.to_h
             r['maybe_street'] = row.each.select{ |k, _| k == 'maybe_street' }.collect(&:last).select{ |t| t && t != '' }
             r
@@ -41,9 +42,12 @@ module Api
       def self.call(object, env)
         if object[:geocodes].size > 0
           CSV.generate{ |csv|
-            csv << object[:geocodes].first[:properties][:geocoding].keys + [:lat, :lng]
+            csv << (object[:geocodes].first[:properties][:geocoding][:source].keys - ['index', 'ref']).collect{ |k| 'source_' + k.to_s } +
+              (object[:geocodes].first[:properties][:geocoding].keys - [:source]) + [:lat, :lng]
             object[:geocodes].each{ |o|
-              csv << o[:properties][:geocoding].values + (o[:geometry] && o[:geometry][:coordinates] ? [o[:geometry][:coordinates][1], o[:geometry][:coordinates][0]] : [])
+              o[:properties][:geocoding][:source][:maybe_street] = o[:properties][:geocoding][:source][:maybe_street].join('|')
+              csv << o[:properties][:geocoding][:source].except('index', 'ref').values.collect{ |v| v.to_s.encode('utf-8') } +
+                o[:properties][:geocoding].except(:source).values + (o[:geometry] && o[:geometry][:coordinates] ? [o[:geometry][:coordinates][1], o[:geometry][:coordinates][0]] : [])
             }
           }
         else
