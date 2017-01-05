@@ -42,7 +42,6 @@ module Api
         'application/vnd.geo+json; charset=UTF-8',
         'application/xml',
       ],
-      markdown: GrapeSwagger::Markdown::KramdownAdapter.new,
       info: {
         title: ::AddokWrapper::config[:product_title],
         contact: ::AddokWrapper::config[:product_contact],
