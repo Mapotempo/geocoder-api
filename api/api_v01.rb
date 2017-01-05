@@ -44,7 +44,10 @@ module Api
       ],
       info: {
         title: ::AddokWrapper::config[:product_title],
-        contact: ::AddokWrapper::config[:product_contact],
+        contact_email: ::AddokWrapper::config[:product_contact_email],
+        contact_url: ::AddokWrapper::config[:product_contact_url],
+        license: 'GNU Affero General Public License 3',
+        license_url: 'https://raw.githubusercontent.com/Mapotempo/addok-wrapper/master/LICENSE',
         description: 'API access require an api_key. API results are geojson extended by geocodejson-spec on version draft#namespace#score.'
       }
     )

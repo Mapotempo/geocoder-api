@@ -36,7 +36,8 @@ module AddokWrapper
 
   @@c = {
     product_title: 'Addok Wrapper geocoding API',
-    product_contact: 'frederic@mapotempo.com',
+    product_contact_email: 'tech@mapotempo.com',
+    product_contact_url: 'https://github.com/Mapotempo/addok-wrapper',
     profiles: [{
       api_keys: ['demo'],
       geocoders: {
