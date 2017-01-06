@@ -23,9 +23,10 @@ require 'ostruct'
 
 module Wrappers
   class Addok < Wrapper
-    def initialize(cache, url, boundary = nil)
+    def initialize(cache, url, country, boundary = nil)
       super(cache, boundary)
       @url = url
+      @country = country
     end
 
     def geocode(params, limit = 10)
@@ -174,7 +175,7 @@ module Wrappers
           district: p['district'],
           county: p['county'],
           state: p['state'],
-          country: p['country'],
+          country: p['country'] || @country,
           admin: p['admin'],
           geohash: p['geohash'],
         }.select{ |k, v| not v.nil? }
@@ -225,7 +226,7 @@ module Wrappers
             district: p['result_district'],
             county: p['result_county'],
             state: p['result_state'],
-            country: p['result_country'],
+            country: p['result_country'] || @country,
             # admin: p['admin'],
             geohash: p['geohash'],
           },

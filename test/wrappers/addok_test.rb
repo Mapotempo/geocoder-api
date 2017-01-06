@@ -79,6 +79,7 @@ class Wrappers::AddokTest < Minitest::Test
     assert_equal 1, result.size
     g = result[0][:properties][:geocoding]
     assert_equal 'Dole', g[:city]
+    assert_equal 'France', g[:country]
   end
 
   def test_limit

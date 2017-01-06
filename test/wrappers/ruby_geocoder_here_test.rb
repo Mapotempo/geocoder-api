@@ -47,7 +47,7 @@ class Wrappers::RubyGeocoderHereTest < Minitest::Test
 
   def test_reverse
     rg = AddokWrapper::HERE
-    result = rg.reverse({lat: 42.90360, lng: -2.17306})
+    result = rg.reverse({lat: 42.89442, lng: -2.16792})
     assert_equal 1, result[:features].size
     g = result[:features][0][:properties][:geocoding]
     assert_equal 'Alsasua', g[:city]
