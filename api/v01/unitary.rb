@@ -27,7 +27,6 @@ module Api
       content_type :xml, 'application/xml'
       formatter :geojson, GeoJsonFormatter
       default_format :json
-      version '0.1', using: :path
 
       resource :geocode do
         desc 'Geocode an address. From full text or splited in fields', {

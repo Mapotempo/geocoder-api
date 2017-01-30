@@ -65,7 +65,6 @@ module Api
       formatter :geojson, GeoJsonFormatter
       default_format :json
       formatter :csv, CSVFormatter
-      version '0.1', using: :path
 
       resource :geocode do
         desc 'Geocode from bulk json address. From full text or splited in fields.', {
