@@ -22,6 +22,7 @@ require './wrappers/addok'
 require './wrappers/ruby_geocoder_opencagedata'
 require './wrappers/demo'
 require './wrappers/ruby_geocoder_here'
+require './wrappers/esri'
 
 
 module AddokWrapper
@@ -30,6 +31,7 @@ module AddokWrapper
   ADDOK_FRA = Wrappers::Addok.new(CACHE, 'http://api-adresse.data.gouv.fr', 'France', 'france.kml')
   OPENCAGEDATA = Wrappers::RubyGeocoderOpencagedata.new(CACHE)
   HERE = Wrappers::RubyGeocoderHere.new(CACHE)
+  ESRI = Wrappers::Esri.new(nil, nil, CACHE)
 
   @@c = {
     product_title: 'Addok Wrapper geocoding API',
