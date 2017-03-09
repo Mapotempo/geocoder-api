@@ -179,7 +179,7 @@ module Wrappers
           country: p['country'] || @country,
           admin: p['admin'],
           geohash: p['geohash'],
-        }.select{ |k, v| not v.nil? }
+        }.delete_if{ |k, v| v.nil? || v == '' }
       }
 
       json
@@ -231,7 +231,7 @@ module Wrappers
             country: p['result_country'] || @country,
             # admin: p['admin'],
             geohash: p['geohash'],
-          },
+          }.delete_if{ |k, v| v.nil? || v == '' },
         },
         geometry: (!p['longitude'].nil? && !p['latitude'].nil?) ? {
           type: 'Point',

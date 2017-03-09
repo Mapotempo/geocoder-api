@@ -98,7 +98,7 @@ module Wrappers
                 county: additional_data['CountyName'],
                 state: additional_data['StateName'],
                 country: additional_data['CountryName'],
-              }
+              }.delete_if{ |k, v| v.nil? || v == '' }
             },
             type: 'Feature',
             geometry: {
