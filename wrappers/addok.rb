@@ -19,6 +19,7 @@ require './wrappers/wrapper'
 
 require 'csv'
 require 'rest-client'
+#RestClient.log = $stdout
 require 'ostruct'
 
 module Wrappers
@@ -164,7 +165,7 @@ module Wrappers
         p = features['properties']
         features['properties']['geocoding'] = {
           score: p['score'], # Not in spec
-          type: p['type'] == 'housenumber' ? 'house' : p['type'], # Hack to match spec around addok return value
+          type: p['type'] == 'housenumber' ? 'house' : p['type'] == 'municipality' ? 'city' : p['type'], # Hack to match spec around addok return value
           # accuracy: p['accuracy'],
           label: p['label'],
           name: p['name'],
@@ -172,7 +173,7 @@ module Wrappers
           street: p['street'] || (p['type'] == 'street' && p['name']) || nil,
           locality: p['locality'] || (p['type'] == 'locality' && p['name']) || nil,
           postcode: p['postcode'],
-          city: p['city'],
+          city: p['city'] || p['municipality'], # Addok 0.5 (old BAN) / Addok 1.0 (new BAN)
           district: p['district'],
           county: p['county'],
           state: p['state'],
@@ -216,7 +217,7 @@ module Wrappers
           geocoding: {
             ref: p['r'],
             score: p['result_score'], # Not in spec
-            type: p['result_type'] == 'housenumber' ? 'house' : p['result_type'], # Hack to match spec around addok return value
+            type: p['result_type'] == 'housenumber' ? 'house' : p['type'] == 'municipality' ? 'city' : p['result_type'], # Hack to match spec around addok return value
             # accuracy: p['accuracy'],
             label: p['result_label'],
             name: p['result_name'],
@@ -224,7 +225,7 @@ module Wrappers
             street: p['result_street'] || (p['result_type'] == 'street' && p['result_name']) || nil,
             locality: p['result_locality'] || (p['result_type'] == 'locality' && p['result_name']) || nil,
             postcode: p['result_postcode'],
-            city: p['result_city'],
+            city: p['result_city'] || p['result_municipality'], # Addok 0.5 (old BAN) / Addok 1.0 (new BAN)
             district: p['result_district'],
             county: p['result_county'],
             state: p['result_state'],
@@ -245,7 +246,7 @@ module Wrappers
 
   class FakeFileStringIO < StringIO
     def path
-      ''
+      'a' # Addok require a non-empty name
     end
   end
 end
