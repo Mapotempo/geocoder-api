@@ -25,9 +25,10 @@ require './wrappers/esri'
 require './wrappers/ruby_geocoder_opencagedata'
 require './wrappers/demo'
 
+require './lib/cache_manager'
 
 module AddokWrapper
-  CACHE = ActiveSupport::Cache::NullStore.new
+  CACHE = CacheManager.new(ActiveSupport::Cache::NullStore.new)
 
   ADDOK_FRA = Wrappers::Addok.new(CACHE, 'http://api-adresse.data.gouv.fr', 'France', 'france.kml')
   GOOGLE = Wrappers::RubyGeocoderGoogle.new(CACHE)

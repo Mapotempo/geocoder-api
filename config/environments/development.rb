@@ -24,9 +24,10 @@ require './wrappers/demo'
 require './wrappers/ruby_geocoder_here'
 require './wrappers/esri'
 
+require './lib/cache_manager'
 
 module AddokWrapper
-  CACHE = ActiveSupport::Cache::FileStore.new(File.join(Dir.tmpdir, 'addok'), namespace: 'addok', expires_in: 60*60*24*1)
+  CACHE = CacheManager.new(ActiveSupport::Cache::FileStore.new(File.join(Dir.tmpdir, 'addok'), namespace: 'addok', expires_in: 60*60*24*1))
 
   ADDOK_FRA = Wrappers::Addok.new(CACHE, 'http://api-adresse.data.gouv.fr', 'France', 'france.kml')
   OPENCAGEDATA = Wrappers::RubyGeocoderOpencagedata.new(CACHE)

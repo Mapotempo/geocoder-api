@@ -21,10 +21,12 @@ require 'tmpdir'
 require './wrappers/addok'
 require './wrappers/demo'
 
+require './lib/cache_manager'
+
 
 module AddokWrapper
   ActiveSupport::Cache.lookup_store :redis_store
-  CACHE = ActiveSupport::Cache::RedisStore.new(namespace: 'addok', expires_in: 60*60*24*1)
+  CACHE = CacheManager.new(ActiveSupport::Cache::RedisStore.new(namespace: 'addok', expires_in: 60*60*24*1))
 
   ADDOK_FRA = Wrappers::Addok.new(CACHE, 'http://api-adresse.data.gouv.fr', 'France', 'france.kml')
   DEMO = Wrappers::Demo.new(CACHE)
