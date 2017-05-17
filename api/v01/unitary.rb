@@ -40,6 +40,7 @@ module Api
           mutually_exclusive :street, :maybe_street
           optional :postcode, type: String
           optional :city, type: String
+          optional :state, type: String
           optional :query, type: String, desc: 'Full text, free form, address search.'
           at_least_one_of :query, :postcode, :city
           mutually_exclusive :query, :street
@@ -73,6 +74,7 @@ module Api
           optional :street, type: String
           optional :postcode, type: String
           optional :city, type: String
+          optional :state, type: String
           optional :query, type: String, desc: 'Full text, free form, address search.'
           optional :type, type: String, desc: 'Queried result type filter. One of "house", "street", "locality", "city", "region", "country".'
           optional :lat, type: Float, desc: 'Prioritize results around this latitude.'
