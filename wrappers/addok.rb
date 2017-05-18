@@ -59,17 +59,17 @@ module Wrappers
 
       list_params.each_slice(GEOCODES_SLICE_SIZE).each_with_index.collect{ |slice_params, slice|
         results = []
-        csv_index = []
+        csv_index_p = []
         csv_string = CSV.generate(quote_char: '"') { |csv|
           csv << ['q0', 'q', 'r']
           slice_params.each_with_index{ |params, index|
             p = flatten_param(params)
 
-            key = [:addok, :geocode, p]
+            key = [:addok, :geocode, Digest::MD5.hexdigest(Marshal.dump(p))]
             r = @cache.read(key)
             if !r
               csv << [p[:q0], p[:q], params[:ref]]
-              csv_index << index
+              csv_index_p << [index, p]
             else
               results[index] = r + [params[:ref]]
             end
@@ -77,11 +77,11 @@ module Wrappers
         }
         STDERR.puts "Addok Geocodes #{Thread.current.object_id}, slice #{slice}/#{slice_number}" if slice_number > 1
 
-        if !csv_index.empty?
+        if !csv_index_p.empty?
           addok_geocodes('/search2steps/csv', csv_string, ['q0'], ['q']).each{ |result|
-            index, p = csv_index.shift
+            index, p = csv_index_p.shift
             results[index] = result
-            @cache.write([:addok, :geocode, p], result[0..1])
+            @cache.write([:addok, :geocode, Digest::MD5.hexdigest(Marshal.dump(p))], result[0..1])
           }
         end
 
