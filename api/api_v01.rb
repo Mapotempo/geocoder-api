@@ -42,6 +42,7 @@ module Api
         'application/vnd.geo+json; charset=UTF-8',
         'application/xml',
       ],
+      doc_version: nil,
       info: {
         title: ::AddokWrapper::config[:product_title],
         contact_email: ::AddokWrapper::config[:product_contact_email],
