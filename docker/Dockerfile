@@ -5,7 +5,7 @@ LABEL maintainer="Mapotempo <contact@mapotempo.com>"
 ENV RAILS_ENV production
 ENV REDIS_HOST redis-server
 
-ADD .. /srv/app
+ADD . /srv/app
 
 # Install app
 RUN apt-get update && \
