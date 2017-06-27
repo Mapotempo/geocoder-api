@@ -5,8 +5,8 @@ services:
       context: ..
       dockerfile: docker/Dockerfile
     image: mapotempo/geocoder-wrapper:latest
-    #volumes:
-    #    - ./production.rb:/srv/app/config/environments/production.rb
+    volumes:
+        - ./production.rb:/srv/app/config/environments/production.rb
     links:
       - redis-cache
       - addok
