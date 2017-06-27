@@ -3,6 +3,7 @@ FROM mapotempo/nginx-passenger:latest
 LABEL maintainer="Mapotempo <contact@mapotempo.com>"
 
 ENV RAILS_ENV production
+ENV REDIS_HOST redis-server
 
 ADD .. /srv/app
 
