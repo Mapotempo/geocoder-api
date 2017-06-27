@@ -4,6 +4,12 @@
 # import os
 # from pathlib import Path
 
+REDIS = {
+    'host': 'redis-server',
+    'port': 6379,
+    'db': 0
+}
+
 BUCKET_MIN = 20
 
 SYNONYMS_PATH = None
