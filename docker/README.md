@@ -1,5 +1,5 @@
 Deploy geocoder using docker-compose
-####################################
+====================================
 
     # Copy production configuration file
     cp ../config/environments/production.rb
