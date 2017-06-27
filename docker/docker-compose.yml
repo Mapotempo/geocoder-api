@@ -1,0 +1,30 @@
+version: '2'
+services:
+  wrapper:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: mapotempo/geocoder-wrapper:latest
+    #volumes:
+    #    - ./production.rb:/srv/app/config/environments/production.rb
+    links:
+      - redis-cache
+      - addok
+
+  addok:
+    build: addok
+    image: mapotempo/addok:latest
+    links:
+      - redis-server
+      
+  redis-cache:
+    image: redis:alpine
+
+  redis-server:
+    image: redis:alpine
+    volumes:
+      - data:/data
+    command: --appendonly yes
+
+volumes:
+    data:

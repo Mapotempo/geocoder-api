@@ -1,0 +1,4 @@
+.git
+docker/Dockerfile
+docker/docker-compose.yml
+docker/addok
