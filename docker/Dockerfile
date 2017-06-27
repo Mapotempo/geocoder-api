@@ -13,7 +13,6 @@ RUN apt-get update && \
             zlib1g && \
     cd /srv/app && \
     bundle install --full-index --without test development && \
-    (cd contrib && sh ./osm2france+dom-geojson.sh) && \
     \
 # Fix permissions
     chown -R www-data:www-data . && \
@@ -24,5 +23,7 @@ RUN apt-get update && \
     apt-get clean && \
     echo -n > /var/lib/apt/extended_states && \
     rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/*
+
+VOLUME /srv/app/poly
 
 WORKDIR /srv/app
