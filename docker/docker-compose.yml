@@ -5,6 +5,8 @@ services:
       context: ..
       dockerfile: docker/Dockerfile
     image: mapotempo/geocoder-wrapper:latest
+    ports:
+      - "80:80"
     volumes:
         - ./production.rb:/srv/app/config/environments/production.rb
         - ./poly:/srv/app/poly
