@@ -27,4 +27,4 @@ EXPOSE 7878
 
 ENTRYPOINT ["gunicorn"]
 
-CMD ["--bind", "0.0.0.0:7878", "--env", "ADDOK_CONFIG_MODULE=/etc/addok/config.py", "--timeout", "7200", "--workers", "8", "addok.http.wsgi"]
+CMD ["--bind", "0.0.0.0:7878", "--timeout", "7200", "--workers", "8", "addok.http.wsgi"]
