@@ -21,7 +21,7 @@ RUN apt-get -q update && \
     echo -n > /var/lib/apt/extended_states && \
     rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/*
 
-ADD config.conf /etc/addok/config.conf
+ADD addok.conf /etc/addok/addok.conf
 
 EXPOSE 7878
 
