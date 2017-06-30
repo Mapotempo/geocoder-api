@@ -180,6 +180,7 @@ module Wrappers
           country: p['country'] || @country,
           admin: p['admin'],
           geohash: p['geohash'],
+          id: p['id'],
         }.delete_if{ |k, v| v.nil? || v == '' }
       }
 
@@ -232,6 +233,7 @@ module Wrappers
             country: p['result_country'] || @country,
             # admin: p['admin'],
             geohash: p['geohash'],
+            id: p['id'],
           }.delete_if{ |k, v| v.nil? || v == '' },
         },
         geometry: (!p['longitude'].nil? && !p['latitude'].nil?) ? {
