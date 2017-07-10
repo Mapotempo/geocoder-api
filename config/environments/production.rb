@@ -19,6 +19,8 @@ require 'active_support'
 require 'tmpdir'
 
 require './wrappers/addok'
+require './wrappers/ruby_geocoder_here'
+require './wrappers/ruby_geocoder_opencagedata'
 require './wrappers/demo'
 
 require './lib/cache_manager'
@@ -29,6 +31,7 @@ module AddokWrapper
   CACHE = CacheManager.new(ActiveSupport::Cache::RedisStore.new(ENV['REDIS_HOST'] || 'localhost', namespace: 'addok', expires_in: 60*60*24*1))
 
   ADDOK_FRA = Wrappers::Addok.new(CACHE, 'http://api-adresse.data.gouv.fr', 'France', 'france.kml')
+  HERE = Wrappers::RubyGeocoderHere.new(CACHE)
   DEMO = Wrappers::Demo.new(CACHE)
 
   @@c = {
@@ -41,7 +44,12 @@ module AddokWrapper
         fra: ADDOK_FRA,
       },
       geocoder_fallback: DEMO
-    }]
+    }],
+    ruby_geocode: {
+      # Set the appropriate authentication if required
+      here: ['APP_ID', 'APP_CODE'],
+      opencagedata: 'API_KEY'
+    }
   }
 
   @@c[:api_keys] = Hash[@@c[:profiles].collect{ |profile|
