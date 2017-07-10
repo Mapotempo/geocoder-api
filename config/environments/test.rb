@@ -30,7 +30,7 @@ require './lib/cache_manager'
 module AddokWrapper
   CACHE = CacheManager.new(ActiveSupport::Cache::NullStore.new)
 
-  ADDOK_FRA = Wrappers::Addok.new(CACHE, 'http://api-adresse.data.gouv.fr', 'France', 'france.kml')
+  ADDOK_FRA = Wrappers::Addok.new(CACHE, 'http://api-adresse.data.gouv.fr', 'France', 'poly/france.kml')
   GOOGLE = Wrappers::RubyGeocoderGoogle.new(CACHE)
   HERE = Wrappers::RubyGeocoderHere.new(CACHE)
   ESRI = Wrappers::Esri.new(nil, nil, CACHE)
@@ -47,7 +47,12 @@ module AddokWrapper
         fra: ADDOK_FRA,
       },
       geocoder_fallback: DEMO
-    }]
+    }],
+    ruby_geocode: {
+      # Set the appropriate authentication if required
+      here: ['APP_ID', 'APP_CODE'],
+      opencagedata: 'API_KEY'
+    }
   }
 
   @@c[:api_keys] = Hash[@@c[:profiles].collect{ |profile|

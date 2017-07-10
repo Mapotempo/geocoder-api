@@ -30,7 +30,7 @@ module AddokWrapper
   ActiveSupport::Cache.lookup_store :redis_store
   CACHE = CacheManager.new(ActiveSupport::Cache::RedisStore.new(ENV['REDIS_HOST'] || 'localhost', namespace: 'addok', expires_in: 60*60*24*1))
 
-  ADDOK_FRA = Wrappers::Addok.new(CACHE, 'http://api-adresse.data.gouv.fr', 'France', 'france.kml')
+  ADDOK_FRA = Wrappers::Addok.new(CACHE, 'http://api-adresse.data.gouv.fr', 'France', 'poly/france.kml')
   HERE = Wrappers::RubyGeocoderHere.new(CACHE)
   DEMO = Wrappers::Demo.new(CACHE)
 
