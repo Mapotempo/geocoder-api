@@ -71,7 +71,8 @@ module Wrappers
               csv << [p[:q0], p[:q], params[:ref]]
               csv_index_p << [index, p]
             else
-              results[index] = r + [params[:ref]]
+              r[:ref] = params[:ref]
+              results[index] = r
             end
           }
         }
@@ -81,7 +82,7 @@ module Wrappers
           addok_geocodes('/search2steps/csv', csv_string, ['q0'], ['q']).each{ |result|
             index, p = csv_index_p.shift
             results[index] = result
-            @cache.write([:addok, :geocode, Digest::MD5.hexdigest(Marshal.dump(p))], result[0..1])
+            @cache.write([:addok, :geocode, Digest::MD5.hexdigest(Marshal.dump(p))], result)
           }
         end
 
