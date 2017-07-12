@@ -41,13 +41,13 @@ module Api
     module CSVFormatter
       def self.call(object, env)
         if object[:geocodes].size > 0
+          keys = [:score, :type, :accuracy, :label, :name, :housenumber, :street, :locality, :postcode, :city, :district, :county, :state, :country, :admin, :geohash, :id]
           CSV.generate{ |csv|
-            csv << (object[:geocodes].first[:properties][:geocoding][:source].keys - ['index', 'ref']).collect{ |k| 'source_' + k.to_s } +
-              (object[:geocodes].first[:properties][:geocoding].keys - [:source]) + [:lat, :lng]
+            csv << (object[:geocodes].first[:properties][:geocoding][:source].keys - ['index', 'ref']).collect{ |k| 'source_' + k.to_s } + keys + [:lat, :lng]
             object[:geocodes].each{ |o|
               o[:properties][:geocoding][:source][:maybe_street] = o[:properties][:geocoding][:source][:maybe_street].join('|')
               csv << o[:properties][:geocoding][:source].except('index', 'ref').values.collect{ |v| v.to_s.encode('utf-8') } +
-                o[:properties][:geocoding].except(:source).values + (o[:geometry] && o[:geometry][:coordinates] ? [o[:geometry][:coordinates][1], o[:geometry][:coordinates][0]] : [])
+                keys.collect{ |k| o[:properties][:geocoding][k] } + (o[:geometry] && o[:geometry][:coordinates] ? [o[:geometry][:coordinates][1], o[:geometry][:coordinates][0]] : [])
             }
           }
         else
