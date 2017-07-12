@@ -24,6 +24,6 @@ end
 
 gem 'geocoder'
 
-group :production do
+#group :production do
   gem 'redis-activesupport'
-end
+#end
