@@ -31,7 +31,7 @@ services:
     image: redis:${REDIS_VERSION:-3.2-alpine}
     volumes:
       - data:/data
-    command: --appendonly yes
+    command: redis-server --save ""
 
 volumes:
     data:

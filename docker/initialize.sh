@@ -6,3 +6,4 @@ docker-compose -p geocoder run --volume $PWD/data:/data --entrypoint /bin/bash a
 
 docker-compose -p geocoder exec addok addok ngrams
 
+docker-compose -p geocoder exec redis-server redis-cli BGSAVE
