@@ -24,6 +24,8 @@ module Api
         'GeocodeResultPropertiesGeocoding'
       end
 
+      ## Spec from https://github.com/geocoders/geocodejson-spec
+
       # Not in spec
       expose_not_nil(:score, documentation: { type: Float, desc: 'Quality of result. 1 better, 0 worst.' })
       # Not in spec
@@ -41,6 +43,8 @@ module Api
       expose_not_nil(:housenumber, documentation: { type: String, desc: 'Housenumber of the place.' })
       # OPTIONAL.
       expose_not_nil(:street, documentation: { type: String, desc: 'Street of the place.' })
+      # Not in spec
+      expose_not_nil(:locality, documentation: { type: String, desc: 'Locality of the place.' })
       # OPTIONAL.
       expose_not_nil(:postcode, documentation: { type: String, desc: 'Postcode of the place.' })
       # OPTIONAL.
@@ -57,8 +61,8 @@ module Api
       expose_not_nil(:admin, documentation: { type: String, desc: 'Administratives boundaries the feature is included in as defined in http://wiki.osm.org/wiki/Key:admin_level#admin_level' })
       # OPTIONAL.
       expose_not_nil(:geohash, documentation: { type: String, desc: 'Geohash encoding of coordinates (see http://geohash.org/site/tips.html).' })
-      # OPTIONAL.
-      expose_not_nil(:id, documentation: { type: String, desc: 'ID of the place. In France you can retrieve Insee code.' })
+      # Not in spec
+      expose_not_nil(:id, documentation: { type: String, desc: 'ID of the place. Internal ID, uniq for each place or address number.' })
     end
   end
 end
