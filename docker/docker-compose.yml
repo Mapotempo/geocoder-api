@@ -4,7 +4,7 @@ services:
     build:
       context: ..
       dockerfile: docker/Dockerfile
-    image: mapotempo/geocoder-wrapper:latest
+    image: mapotempo/geocoder-wrapper:${MAPOTEMPO_VERSION:-latest}
     ports:
       - "8081:80" # HOST:CONTAINER, edit only HOST part
     volumes:
@@ -24,11 +24,11 @@ services:
       - redis-server
 
   redis-cache:
-    image: redis:alpine
+    image: redis:${REDIS_VERSION:-3.2-alpine}
     command: redis-server --save ""
 
   redis-server:
-    image: redis:alpine
+    image: redis:${REDIS_VERSION:-3.2-alpine}
     volumes:
       - data:/data
     command: --appendonly yes
