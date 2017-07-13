@@ -43,10 +43,10 @@ module Api
         if object[:geocodes].size > 0
           keys = [:score, :type, :accuracy, :label, :name, :housenumber, :street, :locality, :postcode, :city, :district, :county, :state, :country, :admin, :geohash, :id]
           CSV.generate{ |csv|
-            csv << (object[:geocodes].first[:properties][:geocoding][:source].keys - ['index', 'ref']).collect{ |k| 'source_' + k.to_s } + keys + [:lat, :lng]
+            csv << (object[:geocodes].first[:properties][:geocoding][:source].keys - ['index']).collect{ |k| 'source_' + k.to_s } + keys + [:lat, :lng]
             object[:geocodes].each{ |o|
               o[:properties][:geocoding][:source][:maybe_street] = o[:properties][:geocoding][:source][:maybe_street].join('|')
-              csv << o[:properties][:geocoding][:source].except('index', 'ref').values.collect{ |v| v.to_s.encode('utf-8') } +
+              csv << o[:properties][:geocoding][:source].except('index').values.collect{ |v| v.to_s.encode('utf-8') } +
                 keys.collect{ |k| o[:properties][:geocoding][k] } + (o[:geometry] && o[:geometry][:coordinates] ? [o[:geometry][:coordinates][1], o[:geometry][:coordinates][0]] : [])
             }
           }
