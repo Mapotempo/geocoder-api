@@ -19,7 +19,7 @@ services:
 
   addok:
     build: addok
-    image: mapotempo/addok:latest
+    image: mapotempo/addok:${ADDOK_VERSION:-1.0.0}
     links:
       - redis-server
 
