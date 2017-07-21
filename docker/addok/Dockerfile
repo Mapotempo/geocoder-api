@@ -12,6 +12,7 @@ RUN apt-get -q update && \
     pip install git+https://github.com/Mapotempo/addok_france_clean && \
     pip install git+https://github.com/Mapotempo/addok_search2steps && \
     pip install git+https://github.com/Mapotempo/addok_usage_name_BAN_FR && \
+    pip install git+https://github.com/Mapotempo/addok_score_preprocessed_query && \
     mkdir /etc/addok && \
     \
 # Cleanup Debian packages
