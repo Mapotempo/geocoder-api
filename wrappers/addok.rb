@@ -203,7 +203,7 @@ module Wrappers
         when 200
           response
         else
-          raise response
+          raise [response.code, response].select{ |t| t && t != '' }.join(' ')
         end
       }
       result = []
