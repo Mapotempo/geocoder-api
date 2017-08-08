@@ -16,7 +16,7 @@ docker volume rm ${PROJECT}_data
 docker-compose -p ${PROJECT} up -d redis-server
 
 wget https://bano.openstreetmap.fr/BAN_odbl/BAN_odbl.json.bz2 -O data/BAN_odbl.json.bz2
-docker-compose -p ${PROJECT} run --volume $PWD/data:/data --entrypoint /bin/bash addok -c "bzcat data/BAN_odbl.json.bz2 | addok batch"
+docker-compose -p ${PROJECT} run --volume $PWD/data:/data --entrypoint /bin/bash addok -c "bzcat data/BAN_odbl.json.bz2 | jq -c 'del(.housenumbers[]?.id)' | addok batch"
 
 docker-compose -p ${PROJECT} run --volume $PWD/data:/data --entrypoint /bin/bash addok -c "ls data/*.json | xargs cat | addok batch"
 

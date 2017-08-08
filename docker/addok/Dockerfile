@@ -6,7 +6,7 @@ ARG ADDOK_VERSION
 ENV ADDOK_VERSION ${ADDOK_VERSION:-1.0.0}
 
 RUN apt-get -q update && \
-    apt-get -qy install redis-tools && \
+    apt-get -qy install redis-tools jq && \
     \
     pip install gunicorn addok==${ADDOK_VERSION} addok-fr==${ADDOK_VERSION} addok-france==${ADDOK_VERSION} addok-csv==${ADDOK_VERSION} && \
     pip install git+https://github.com/Mapotempo/addok_france_clean && \
