@@ -234,7 +234,7 @@ module Wrappers
             country: p['result_country'] || @country,
             # admin: p['admin'],
             geohash: p['geohash'],
-            id: p['id'],
+            id: p['result_id'],
           }.delete_if{ |k, v| v.nil? || v == '' },
         },
         geometry: (!p['longitude'].nil? && !p['latitude'].nil?) ? {
