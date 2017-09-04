@@ -4,7 +4,7 @@ services:
     build:
       context: ..
       dockerfile: docker/Dockerfile
-    image: mapotempo/geocoder-wrapper:${MAPOTEMPO_VERSION:-latest}
+    image: mapotempo/geocoder-wrapper:${MAPOTEMPO_VERSION:-55.0.0}
     ports:
       - "8081:80" # HOST:CONTAINER, edit only HOST part
     volumes:
@@ -20,7 +20,7 @@ services:
 
   addok:
     build: addok
-    image: mapotempo/addok:${ADDOK_VERSION:-1.0.0}-${ADDOK_VERSION_BUILD:-2}
+    image: mapotempo/addok:${ADDOK_VERSION:-1.0.2}-${ADDOK_VERSION_BUILD:-1}
     links:
       - redis-server
 

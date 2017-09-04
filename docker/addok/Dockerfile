@@ -3,16 +3,23 @@ FROM python:3.4
 LABEL maintainer="Mapotempo <contact@mapotempo.com>"
 
 ARG ADDOK_VERSION
-ENV ADDOK_VERSION ${ADDOK_VERSION:-1.0.0}
+ENV ADDOK_VERSION ${ADDOK_VERSION:-1.0.2}
+ENV ADDOK_FR_VERSION 1.0.1
+ENV ADDOK_FRANCE_VERSION 1.1.0
+ENV ADDOK_CSV_VERSION 1.0.1
+ENV ADDOK_FRANCE_CLEAN_VERSION 1.0.0
+ENV ADDOK_SEARCH_2_STEPS_VERSION 1.0.0
+ENV ADDOK_USAGE_NAME_BAN_FR_VERSION 1.0.0
+ENV ADDOK_SCORE_PREPROCESSSED_QUERY_VERSION 1.0.0
 
 RUN apt-get -q update && \
     apt-get -qy install redis-tools jq && \
     \
-    pip install gunicorn addok==${ADDOK_VERSION} addok-fr==${ADDOK_VERSION} addok-france==${ADDOK_VERSION} addok-csv==${ADDOK_VERSION} && \
-    pip install git+https://github.com/Mapotempo/addok_france_clean && \
-    pip install git+https://github.com/Mapotempo/addok_search2steps && \
-    pip install git+https://github.com/Mapotempo/addok_usage_name_BAN_FR && \
-    pip install git+https://github.com/Mapotempo/addok_score_preprocessed_query && \
+    pip install gunicorn addok==${ADDOK_VERSION} addok-fr==${ADDOK_FR_VERSION} addok-france==${ADDOK_FRANCE_VERSION} addok-csv==${ADDOK_CSV_VERSION} && \
+    pip install git+https://github.com/Mapotempo/addok_france_clean@v${ADDOK_FRANCE_CLEAN_VERSION} && \
+    pip install git+https://github.com/Mapotempo/addok_search2steps@v${ADDOK_SEARCH_2_STEPS_VERSION} && \
+    pip install git+https://github.com/Mapotempo/addok_usage_name_BAN_FR@v${ADDOK_USAGE_NAME_BAN_FR_VERSION} && \
+    pip install git+https://github.com/Mapotempo/addok_score_preprocessed_query@v${ADDOK_SCORE_PREPROCESSSED_QUERY_VERSION} && \
     mkdir /etc/addok && \
     \
 # Cleanup Debian packages
