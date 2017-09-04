@@ -3,7 +3,7 @@ FROM python:3.4
 LABEL maintainer="Mapotempo <contact@mapotempo.com>"
 
 ARG ADDOK_VERSION
-ENV ADDOK_VERSION ${ADDOK_VERSION:-1.0.0}
+ENV ADDOK_VERSION ${ADDOK_VERSION:-1.0.2}
 
 RUN apt-get -q update && \
     apt-get -qy install redis-tools jq && \
