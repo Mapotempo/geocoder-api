@@ -25,7 +25,7 @@ module Api
       private
 
       def self.services(api_key)
-        ::AddokWrapper::config[:api_keys][api_key]
+        ::GeocoderWrapper::config[:api_keys][api_key]
       end
     end
   end

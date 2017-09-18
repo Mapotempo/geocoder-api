@@ -4,11 +4,11 @@ Using Docker Compose to deploy Mapotempo Geocoder environment
 Building images
 ---------------
 
-The following commands will get the source code and build the addok-wrapper
+The following commands will get the source code and build the geocoder-api
 and needed images:
 
-    git clone https://github.com/mapotempo/addok-wrapper
-    cd addok-wrapper/docker
+    git clone https://github.com/mapotempo/geocoder-api
+    cd geocoder-api/docker
     docker-compose build
 
 Publishing images
@@ -25,8 +25,8 @@ Running on a docker host
 
 First, we need to retrieve the source code and the prebuilt images:
 
-    git clone https://github.com/mapotempo/addok-wrapper
-    cd addok-wrapper/docker
+    git clone https://github.com/mapotempo/geocoder-api
+    cd geocoder-api/docker
     docker-compose pull
 
 Then use the configuration file and edit it to match your needs:

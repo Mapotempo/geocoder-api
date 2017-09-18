@@ -55,7 +55,7 @@ module Api
         get do
           params[:limit] = [params[:limit] || 10, 10].min
 
-          results = AddokWrapper::wrapper_geocode(APIBase.services(params[:api_key]), params)
+          results = GeocoderWrapper::wrapper_geocode(APIBase.services(params[:api_key]), params)
           if results
             results[:geocoding][:version] = 'draft#namespace#score'
             present results, with: GeocodeResult
@@ -83,7 +83,7 @@ module Api
         }
         patch do
           params[:limit] = [params[:limit] || 10, 10].min
-          results = AddokWrapper::wrapper_complete(APIBase.services(params[:api_key]), params)
+          results = GeocoderWrapper::wrapper_complete(APIBase.services(params[:api_key]), params)
           if results
             results[:geocoding][:version] = 'draft#namespace#score'
             present results, with: GeocodeResult
@@ -103,7 +103,7 @@ module Api
           requires :lng, type: Float, desc: 'Longitude.'
         }
         get do
-          results = AddokWrapper::wrapper_reverse(APIBase.services(params[:api_key]), params)
+          results = GeocoderWrapper::wrapper_reverse(APIBase.services(params[:api_key]), params)
           if results
             results[:geocoding][:version] = 'draft#namespace#score'
             present results, with: GeocodeResult

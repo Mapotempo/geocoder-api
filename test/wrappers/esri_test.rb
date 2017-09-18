@@ -20,7 +20,7 @@ require './test/test_helper'
 
 class Wrappers::RubyGeocoderEsriTest < Minitest::Test
   def test_geocodes_from_full_text
-    rg = AddokWrapper::ESRI
+    rg = GeocoderWrapper::ESRI
     result = rg.geocodes([{query: '50 Bv de la Plage, Arcachon'}])
     assert 0 < result.size
     g = result[0][:properties][:geocoding]
@@ -28,7 +28,7 @@ class Wrappers::RubyGeocoderEsriTest < Minitest::Test
   end
 
   def test_geocodes_from_part
-    rg = AddokWrapper::ESRI
+    rg = GeocoderWrapper::ESRI
     result = rg.geocodes([{housenumber: '50', street: 'Bv de la Plage', city: 'Arcachon'}])
     assert 0 < result.size
     g = result[0][:properties][:geocoding]
@@ -37,7 +37,7 @@ class Wrappers::RubyGeocoderEsriTest < Minitest::Test
   end
 
   def test_geocode_from_full_text
-    rg = AddokWrapper::ESRI
+    rg = GeocoderWrapper::ESRI
     result = rg.geocode({query: 'ул. Неглинная, д.4, Москва, 109012'})
     assert 0 < result[:features].size
     g = result[:features][0][:properties][:geocoding]
@@ -45,7 +45,7 @@ class Wrappers::RubyGeocoderEsriTest < Minitest::Test
   end
 
   def test_geocode_from_part
-    rg = AddokWrapper::ESRI
+    rg = GeocoderWrapper::ESRI
     result = rg.geocode({housenumber: '4', street: 'ул. Неглинная', city: 'Москва'})
     assert 0 < result[:features].size
     g = result[:features][0][:properties][:geocoding]
@@ -53,7 +53,7 @@ class Wrappers::RubyGeocoderEsriTest < Minitest::Test
   end
 
   def test_geocode_maybe_street
-    rg = AddokWrapper::ESRI
+    rg = GeocoderWrapper::ESRI
     result = rg.geocode({maybe_street: ['App 6', 'Rue Fondaudege'], city: 'Bordeaux', country: 'France'})
     assert result
     g = result[:features][0][:properties][:geocoding]
@@ -62,7 +62,7 @@ class Wrappers::RubyGeocoderEsriTest < Minitest::Test
   end
 
   def test_reverse
-    rg = AddokWrapper::ESRI
+    rg = GeocoderWrapper::ESRI
     result = rg.reverse({lat: 42.89442, lng: -2.16792})
     assert_equal 1, result[:features].size
     g = result[:features][0][:properties][:geocoding]

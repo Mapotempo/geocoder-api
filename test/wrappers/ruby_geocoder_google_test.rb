@@ -21,7 +21,7 @@ require './test/test_helper'
 class Wrappers::RubyGeocoderGoogleTest < Minitest::Test
 
   def test_geocode_from_full_text
-    rg = AddokWrapper::GOOGLE
+    rg = GeocoderWrapper::GOOGLE
     result = rg.geocode({query: 'Front Street, NYC'})
     assert result
     g = result[:features][0][:properties][:geocoding]
@@ -29,7 +29,7 @@ class Wrappers::RubyGeocoderGoogleTest < Minitest::Test
   end
 
   def test_geocode_maybe_street
-    rg = AddokWrapper::GOOGLE
+    rg = GeocoderWrapper::GOOGLE
     result = rg.geocode({maybe_street: ['App 6', 'Rue Fondodege'], city: 'Bordeaux', country: 'France'})
     assert result
     g = result[:features][0][:properties][:geocoding]

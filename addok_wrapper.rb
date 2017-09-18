@@ -15,7 +15,7 @@
 # along with Mapotempo. If not, see:
 # <http://www.gnu.org/licenses/agpl.html>
 #
-module AddokWrapper
+module GeocoderWrapper
   def self.config
     @@c
   end

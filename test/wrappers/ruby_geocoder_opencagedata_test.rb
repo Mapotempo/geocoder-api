@@ -21,7 +21,7 @@ require './test/test_helper'
 class Wrappers::RubyGeocoderOpencagedataTest < Minitest::Test
 
   def test_geocode_from_full_text
-    rg = AddokWrapper::OPENCAGEDATA
+    rg = GeocoderWrapper::OPENCAGEDATA
     result = rg.geocode({query: '1 Front Street, NYC'})
     assert 0 < result[:features].size
     g = result[:features][0][:properties][:geocoding]
@@ -30,7 +30,7 @@ class Wrappers::RubyGeocoderOpencagedataTest < Minitest::Test
   end
 
   def test_geocode_from_part
-    rg = AddokWrapper::OPENCAGEDATA
+    rg = GeocoderWrapper::OPENCAGEDATA
     result = rg.geocode({street: 'Via del Parlamento', city: 'Roma'})
     assert 0 < result[:features].size
     g = result[:features][0][:properties][:geocoding]
@@ -39,7 +39,7 @@ class Wrappers::RubyGeocoderOpencagedataTest < Minitest::Test
   end
 
   def test_geocode_maybe_street
-    rg = AddokWrapper::OPENCAGEDATA
+    rg = GeocoderWrapper::OPENCAGEDATA
     result = rg.geocode({maybe_street: ['App 6', 'Rue Fondaudege'], city: 'Bordeaux', country: 'France'})
     assert result
     g = result[:features][0][:properties][:geocoding]
@@ -48,7 +48,7 @@ class Wrappers::RubyGeocoderOpencagedataTest < Minitest::Test
   end
 
   def test_reverse
-    rg = AddokWrapper::OPENCAGEDATA
+    rg = GeocoderWrapper::OPENCAGEDATA
     result = rg.reverse({lat: 42.90360, lng: -2.17306})
     assert_equal 1, result[:features].size
     g = result[:features][0][:properties][:geocoding]

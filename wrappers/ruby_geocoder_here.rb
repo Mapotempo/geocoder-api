@@ -73,7 +73,7 @@ module Wrappers
       r = @cache.read(key)
       if !r
         Geocoder::Configuration.lookup = :here
-        Geocoder::Configuration.api_key = ::AddokWrapper::config[:ruby_geocode][Geocoder::Configuration.lookup]
+        Geocoder::Configuration.api_key = ::GeocoderWrapper::config[:ruby_geocode][Geocoder::Configuration.lookup]
         q, response = streets_loop(params, ->(r) { r.size > 0 && match_quality(r[0].data['MatchQuality']) || 0 }) { |params|
           q = yield(params)
           #Geocoder.search(nil, params: {maxresults: limit, city: params[:city], district: params[:district], housenumber: params[:housenumber], postalcode: params[:postcode], state: params[:state], street: params[:street]})

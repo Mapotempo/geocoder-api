@@ -1,5 +1,5 @@
-Addok Wrapper
-================
+Geocoder API
+============
 Offers an unified API for multiple [Addok](https://github.com/etalab/addok) geocoder and other geocoders based on countries distribution.
 Build in Ruby with a [Grape](https://github.com/intridea/grape) REST [swagger](http://swagger.io/) API compatible with [geocodejson-spec](https://github.com/yohanboniface/geocodejson-spec).
 
@@ -8,7 +8,7 @@ Installation
 
 If you need to create a kml, install package containing ogr2ogr exec from system package (GDAL).
 
-In addok-wrapper as root directory:
+In geocoder-api as root directory:
 
 ```
 bundle install

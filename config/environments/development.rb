@@ -26,8 +26,8 @@ require './wrappers/esri'
 
 require './lib/cache_manager'
 
-module AddokWrapper
-  CACHE = CacheManager.new(ActiveSupport::Cache::FileStore.new(File.join(Dir.tmpdir, 'addok'), namespace: 'addok', expires_in: 60*60*24*1))
+module GeocoderWrapper
+  CACHE = CacheManager.new(ActiveSupport::Cache::FileStore.new(File.join(Dir.tmpdir, 'geocoder'), namespace: 'geocoder', expires_in: 60*60*24*1))
 
   ADDOK_FRA = Wrappers::Addok.new(CACHE, 'http://api-adresse.data.gouv.fr', 'France', 'poly/france.kml')
   OPENCAGEDATA = Wrappers::RubyGeocoderOpencagedata.new(CACHE)
@@ -35,9 +35,9 @@ module AddokWrapper
   ESRI = Wrappers::Esri.new(nil, nil, CACHE)
 
   @@c = {
-    product_title: 'Addok Wrapper geocoding API',
+    product_title: 'Geocoder API',
     product_contact_email: 'tech@mapotempo.com',
-    product_contact_url: 'https://github.com/Mapotempo/addok-wrapper',
+    product_contact_url: 'https://github.com/Mapotempo/geocoder-api',
     profiles: [{
       api_keys: ['demo'],
       geocoders: {

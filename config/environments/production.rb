@@ -26,18 +26,18 @@ require './wrappers/demo'
 require './lib/cache_manager'
 
 
-module AddokWrapper
+module GeocoderWrapper
   ActiveSupport::Cache.lookup_store :redis_store
-  CACHE = CacheManager.new(ActiveSupport::Cache::RedisStore.new(host: ENV['REDIS_HOST'] || 'localhost', namespace: 'router', expires_in: 60*60*24*1, raise_errors: true))
+  CACHE = CacheManager.new(ActiveSupport::Cache::RedisStore.new(host: ENV['REDIS_HOST'] || 'localhost', namespace: 'geocoder', expires_in: 60*60*24*1, raise_errors: true))
 
   ADDOK_FRA = Wrappers::Addok.new(CACHE, 'http://api-adresse.data.gouv.fr', 'France', 'poly/france.kml')
   HERE = Wrappers::RubyGeocoderHere.new(CACHE)
   DEMO = Wrappers::Demo.new(CACHE)
 
   @@c = {
-    product_title: 'Addok Wrapper geocoding API',
+    product_title: 'Geocoder API',
     product_contact_email: 'tech@mapotempo.com',
-    product_contact_url: 'https://github.com/Mapotempo/addok-wrapper',
+    product_contact_url: 'https://github.com/Mapotempo/geocoder-api',
     profiles: [{
       api_keys: ['demo'],
       geocoders: {

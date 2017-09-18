@@ -27,7 +27,7 @@ require './wrappers/demo'
 
 require './lib/cache_manager'
 
-module AddokWrapper
+module GeocoderWrapper
   CACHE = CacheManager.new(ActiveSupport::Cache::NullStore.new)
 
   ADDOK_FRA = Wrappers::Addok.new(CACHE, 'http://api-adresse.data.gouv.fr', 'France', 'poly/france.kml')
@@ -38,9 +38,9 @@ module AddokWrapper
   DEMO = Wrappers::Demo.new(CACHE)
 
   @@c = {
-    product_title: 'Addok Wrapper geocoding API',
+    product_title: 'Geocoder API',
     product_contact_email: 'tech@mapotempo.com',
-    product_contact_url: 'https://github.com/Mapotempo/addok-wrapper',
+    product_contact_url: 'https://github.com/Mapotempo/geocoder-api',
     profiles: [{
       api_keys: ['demo'],
       geocoders: {

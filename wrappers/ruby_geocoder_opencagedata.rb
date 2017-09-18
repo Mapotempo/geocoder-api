@@ -57,7 +57,7 @@ module Wrappers
       r = @cache.read(key)
       if !r
         Geocoder::Configuration.lookup = :opencagedata
-        Geocoder::Configuration.api_key = ::AddokWrapper::config[:ruby_geocode][Geocoder::Configuration.lookup]
+        Geocoder::Configuration.api_key = ::GeocoderWrapper::config[:ruby_geocode][Geocoder::Configuration.lookup]
         q, response = streets_loop(params, ->(r) { r.size > 0 && r[0].data['confidence'] / 10.0 || 0 }) { |params|
           q = yield(params)
           [q, Geocoder.search(q, params: {maxresults: limit})]

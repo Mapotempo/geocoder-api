@@ -87,7 +87,7 @@ module Api
           if !params.key?('geocodes') || !params['geocodes'].kind_of?(Array)
             error!({status: 'Missing or invalid field "geocodes".'}, 400)
           end
-          results = AddokWrapper::wrapper_geocodes(APIBase.services(params[:api_key]), params[:geocodes])
+          results = GeocoderWrapper::wrapper_geocodes(APIBase.services(params[:api_key]), params[:geocodes])
           if results
             results = {geocodes: results}
             status 200
@@ -129,7 +129,7 @@ module Api
               param[:lng] = nil
             end
           }
-          results = AddokWrapper::wrapper_reverses(APIBase.services(params[:api_key]), params[:reverses])
+          results = GeocoderWrapper::wrapper_reverses(APIBase.services(params[:api_key]), params[:reverses])
           if results
             results = {reverses: results}
             status 200
