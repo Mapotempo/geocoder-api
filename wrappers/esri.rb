@@ -107,7 +107,7 @@ module Wrappers
             json = JSON.parse(response)
             if json.key?('error')
               if [498, 499].include?(json['error']['code'])
-                raise new EsriOAuthTokenError
+                raise EsriOAuthTokenError.new
               else
                 raise json['error']['message']
               end
@@ -216,7 +216,7 @@ module Wrappers
             if json.key?('error')
               # Terminate the batch geocoding process
               if [498, 499].include?(json['error']['code'])
-                raise new EsriOAuthTokenError
+                raise EsriOAuthTokenError.new
               else
                 raise json['error']['message']
               end
@@ -295,7 +295,7 @@ module Wrappers
           json = JSON.parse(response)
           if json.key?('error')
             if [498, 499].include?(json['error']['code'])
-              raise new EsriOAuthTokenError
+              raise EsriOAuthTokenError.new
             else
               raise json['error']['message']
             end
