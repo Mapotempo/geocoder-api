@@ -171,7 +171,7 @@ module Wrappers
           label: p['label'],
           name: p['name'],
           housenumber: p['housenumber'],
-          street: p['street'] || (p['type'] == 'street' && p['name']) || nil,
+          street: p['street'] || (['street', 'housenumber'].include?(p['type']) && p['name']) || nil,
           locality: p['locality'] || (p['type'] == 'locality' && p['name']) || nil,
           postcode: p['postcode'],
           city: p['city'] || p['municipality'], # Addok 0.5 (old BAN) / Addok 1.0 (new BAN)
@@ -224,7 +224,7 @@ module Wrappers
             label: p['result_label'],
             name: p['result_name'],
             housenumber: p['result_housenumber'],
-            street: p['result_street'] || (p['result_type'] == 'street' && p['result_name']) || nil,
+            street: p['result_street'] || (['street', 'housenumber'].include?(p['result_type']) && p['result_name']) || nil,
             locality: p['result_locality'] || (p['result_type'] == 'locality' && p['result_name']) || nil,
             postcode: p['result_postcode'],
             city: p['result_city'] || p['result_municipality'], # Addok 0.5 (old BAN) / Addok 1.0 (new BAN)
