@@ -11,6 +11,7 @@ gem 'grape-entity'
 gem 'grape-swagger'
 gem 'grape-swagger-entity'
 
+gem 'rack-contrib'
 gem 'rest-client'
 gem 'border_patrol'
 gem 'activesupport', '<5' # Wait for Ruby version >= 2.2.2

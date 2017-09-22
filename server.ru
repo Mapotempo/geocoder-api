@@ -22,6 +22,7 @@ Dir[File.dirname(__FILE__) + '/config/initializers/*.rb'].each {|file| require f
 require './addok_wrapper'
 require './api/root'
 require 'rack/cors'
+require 'rack/contrib/try_static'
 
 use Rack::Cors do
   allow do
@@ -31,3 +32,9 @@ use Rack::Cors do
 end
 
 run Api::Root
+
+# Serve files from the public directory
+use Rack::TryStatic,
+  root: 'public',
+  urls: %w[/],
+  try: ['.html', 'geocode.html', '/geocode.html', 'reverse.html', '/reverse.html']

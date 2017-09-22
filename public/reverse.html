@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Map</title>
-  <link rel="stylesheet" href="http://leafletjs.com/dist/leaflet.css" />
+  <title>Reverse Geocoding</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
+    integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ=="
+    crossorigin=""/>
 </head>
 <body>
   <div>
@@ -10,11 +12,13 @@
   </div>
   <div id="map" style="width: 600px; height: 400px"></div>
   <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-  <script src="http://leafletjs.com/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"
+    integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
+    crossorigin=""></script>
   <script>
   var map = L.map('map').setView([44.837778, -0.579197], 13);
 
-  var map_layer_url = 'http://{s}.tiles.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6IlhHVkZmaW8ifQ.hAMX5hSW-QnTeRCMAy9A8Q';
+  var map_layer_url = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png';
   var map_attribution = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, Tiles by MapBox';
   L.tileLayer(map_layer_url, {
     maxZoom: 18,
@@ -28,7 +32,7 @@
       map.removeLayer(marker)
     marker = null;
     $.ajax({
-      url: "http://localhost:8558/0.1/reverse.json?api_key=demo",
+      url: "/0.1/reverse.json?api_key=demo",
       method: 'GET',
       data: {
         lat: e.latlng.lat,
