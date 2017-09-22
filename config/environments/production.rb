@@ -32,6 +32,7 @@ module GeocoderWrapper
   CACHE = CacheManager.new(ActiveSupport::Cache::RedisStore.new(host: ENV['REDIS_HOST'] || 'localhost', namespace: 'geocoder', expires_in: 60*60*24*1, raise_errors: true))
 
   ADDOK_FR = Wrappers::Addok.new(CACHE, 'http://addok-fr:7878', 'France', 'poly/france.kml')
+  ADDOK_LU = Wrappers::Addok.new(CACHE, 'http://addok-lu:7878', 'Luxemburg', 'poly/luxemburg.kml', PointInPolygon.new('./poly/luxemburg.sqlite'))
   HERE = Wrappers::RubyGeocoderHere.new(CACHE)
   DEMO = Wrappers::Demo.new(CACHE)
 
@@ -43,6 +44,7 @@ module GeocoderWrapper
       api_keys: ['demo'],
       geocoders: {
         fra: ADDOK_FR,
+        lux: ADDOK_LU,
       },
       geocoder_fallback: DEMO
     }],

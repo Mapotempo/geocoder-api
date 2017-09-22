@@ -99,6 +99,10 @@ module GeocoderWrapper
   def self.geocode_country(name)
     if ['france', 'fra', 'fr'].include?(name.strip.downcase)
       :fra
+    elsif ['luxembourg', 'luxemburg', 'lux', 'lu'].include?(name.strip.downcase)
+      :lux
+    else
+      name.to_sym
     end
   end
 end
