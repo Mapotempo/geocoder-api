@@ -24,6 +24,7 @@ require './wrappers/ruby_geocoder_opencagedata'
 require './wrappers/demo'
 
 require './lib/cache_manager'
+require './lib/point_in_polygon'
 
 
 module GeocoderWrapper

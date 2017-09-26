@@ -24,6 +24,7 @@ group :test do
 end
 
 gem 'geocoder'
+gem 'sqlite3'
 
 #group :production do
   gem 'redis-activesupport'

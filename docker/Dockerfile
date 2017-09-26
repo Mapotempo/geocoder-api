@@ -10,7 +10,8 @@ ADD . /srv/app
 # Install app
 RUN apt-get update && \
     apt-get install -y git build-essential zlib1g-dev gdal-bin \
-            zlib1g && \
+            zlib1g libsqlite3-mod-spatialite libsqlite3-dev \
+            libspatialite-dev && \
     cd /srv/app && \
     bundle install --full-index --without test development && \
     \
@@ -18,7 +19,8 @@ RUN apt-get update && \
     chown -R www-data:www-data . && \
     \
 # Cleanup Debian packages
-    apt-get remove -y git build-essential zlib1g-dev gdal-bin && \
+    apt-get remove -y git build-essential zlib1g-dev gdal-bin \
+            libsqlite3-dev libspatialite-dev && \
     apt-get autoremove -y && \
     apt-get clean && \
     echo -n > /var/lib/apt/extended_states && \

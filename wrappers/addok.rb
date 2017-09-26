@@ -24,10 +24,11 @@ require 'ostruct'
 
 module Wrappers
   class Addok < Wrapper
-    def initialize(cache, url, country, boundary = nil)
+    def initialize(cache, url, country, boundary = nil, point_in_polygon = nil)
       super(cache, boundary)
       @url = url
       @country = country
+      @point_in_polygon = point_in_polygon
     end
 
     def geocode(params, limit = 10)
@@ -47,8 +48,15 @@ module Wrappers
           end
         }
         json = JSON.parse(response, object_class: OpenStruct)
+
+        # Fallback to point in polygon
+        if json[:features].empty? && @point_in_polygon
+          json = @point_in_polygon.pick(params[:lng], params[:lat])
+        end
+
         @cache.write(key, json)
       end
+
       map_spec(json)
     end
 
