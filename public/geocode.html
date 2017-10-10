@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>Gecode</title>
-  <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
     integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ=="
     crossorigin=""/>
@@ -16,16 +16,16 @@
     </form>
   </div>
   <div id="map" style="width: 600px; height: 400px"></div>
-  <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
-  <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+  <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
   <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"
     integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
     crossorigin=""></script>
   <script>
   var map = L.map('map').setView([44.837778, -0.579197], 13);
 
-  var map_layer_url = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png';
-  var map_attribution = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
+  var map_layer_url = 'https://{s}.tile.osm.org/{z}/{x}/{y}.png';
+  var map_attribution = 'Map data &copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors';
   L.tileLayer(map_layer_url, {
     maxZoom: 18,
     attribution: map_attribution
@@ -75,7 +75,7 @@
       markers.length = 0;
       markersGroup.clearLayers();
       $.ajax({
-        url: "http://localhost:8558/0.1/geocode.json?api_key=demo",
+        url: "https://localhost:8558/0.1/geocode.json?api_key=demo",
         dataType: "json",
         method: 'PATCH',
         data: {
