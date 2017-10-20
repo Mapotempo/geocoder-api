@@ -5,4 +5,5 @@
   - addok-fr.conf if now outsite the image and mounted as volume
   - Add configuration and container for Luxemburg
   - Add demo html pages on path /
-  - Docker: Use Debian 9
+  - Use Debian 9
+  - Persist Addok Redis data to volume on host directory

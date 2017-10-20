@@ -31,12 +31,13 @@ services:
     links:
       - redis-server-fr
     volumes:
-        - ./addok-fr.conf:/etc/addok/addok.conf
+      - ./addok-fr.conf:/etc/addok/addok.conf
+      - ./addresses-fr:/addresses
 
   redis-server-fr:
     image: redis:${REDIS_VERSION:-3.2-alpine}
     volumes:
-      - data-fr:/data
+      - ./data-fr:/data
     command: redis-server --save ""
 
   # Luxemburg
@@ -47,14 +48,11 @@ services:
     links:
       - redis-server-lu
     volumes:
-        - ./addok-lu.conf:/etc/addok/addok.conf
+      - ./addok-lu.conf:/etc/addok/addok.conf
+      - ./addresses-lu:/addresses
 
   redis-server-lu:
     image: redis:${REDIS_VERSION:-3.2-alpine}
     volumes:
-      - data-lu:/data
+      - ./data-lu:/data
     command: redis-server --save ""
-
-volumes:
-    data-fr:
-    data-lu:
