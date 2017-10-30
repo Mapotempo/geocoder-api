@@ -55,7 +55,7 @@ module Wrappers
     end
 
     def reverse(params)
-      here_geocoder(params, 1) { |prams|
+      here_geocoder(params, 1) { |params|
         [params[:lat], params[:lng]]
       }
     end

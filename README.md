@@ -1,6 +1,6 @@
 Geocoder API
 ============
-Offers an unified API for multiple [Addok](https://github.com/etalab/addok) geocoder and other geocoders based on countries distribution.
+Offers an unified API for multiple geocoders like [Addok](https://github.com/etalab/addok), OpenCageData, Here, Google based on countries distribution.
 Build in Ruby with a [Grape](https://github.com/intridea/grape) REST [swagger](http://swagger.io/) API compatible with [geocodejson-spec](https://github.com/yohanboniface/geocodejson-spec).
 
 Installation

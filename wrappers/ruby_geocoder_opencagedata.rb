@@ -43,7 +43,7 @@ module Wrappers
     end
 
     def reverse(params)
-      opencagedata_geocoder(params, 1) { |prams|
+      opencagedata_geocoder(params, 1) { |params|
         [params[:lat], params[:lng]]
       }
     end
