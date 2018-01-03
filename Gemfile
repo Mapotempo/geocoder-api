@@ -27,5 +27,7 @@ gem 'geocoder'
 gem 'sqlite3'
 
 #group :production do
-  gem 'redis-activesupport'
+gem 'redis', '< 4' # Waiting Ruby 2.2 (dependency from resque)
+gem 'redis-store', '~> 1.4.1' # Ensure redis-store dependency is at least 1.4.1 for CVE-2017-1000248 correction
+gem 'redis-activesupport'
 #end
