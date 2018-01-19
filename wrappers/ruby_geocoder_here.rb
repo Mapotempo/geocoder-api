@@ -69,10 +69,10 @@ module Wrappers
     def here_geocoder(params, limit)
       key_params = {limit: limit}.merge(params).reject{ |k, v| k == 'api_key'}
       key = [:here, :geocode, Digest::MD5.hexdigest(Marshal.dump(key_params.to_a.sort_by{ |i| i[0].to_s }))]
-
       r = @cache.read(key)
       if !r
         Geocoder::Configuration.lookup = :here
+        Geocoder::Configuration.use_https = true
         Geocoder::Configuration.api_key = ::GeocoderWrapper::config[:ruby_geocode][Geocoder::Configuration.lookup]
         q, response = streets_loop(params, ->(r) { r.size > 0 && match_quality(r[0].data['MatchQuality']) || 0 }) { |params|
           q = yield(params)
