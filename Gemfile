@@ -1,4 +1,5 @@
 source 'https://rubygems.org'
+ruby '2.3.3'
 
 gem 'rack'
 gem 'rakeup'
@@ -14,7 +15,7 @@ gem 'grape-swagger-entity'
 gem 'rack-contrib'
 gem 'rest-client'
 gem 'border_patrol'
-gem 'activesupport', '<5' # Wait for Ruby version >= 2.2.2
+gem 'activesupport'
 
 group :test do
   gem 'rack-test'
@@ -28,7 +29,5 @@ gem 'geocoder'
 gem 'sqlite3'
 
 #group :production do
-gem 'redis', '< 4' # Waiting Ruby 2.2 (dependency from resque)
-gem 'redis-store', '~> 1.4.1' # Ensure redis-store dependency is at least 1.4.1 for CVE-2017-1000248 correction
 gem 'redis-activesupport'
 #end
