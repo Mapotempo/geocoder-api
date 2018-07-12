@@ -130,5 +130,12 @@ module Wrappers
         } || [nil, []]
       end
     end
+
+    protected
+
+    def version(query = nil)
+      GeocoderWrapper::version
+    end
   end
+
 end

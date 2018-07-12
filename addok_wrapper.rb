@@ -94,6 +94,10 @@ module GeocoderWrapper
     end
   end
 
+  def self.version
+    'Wrapper:1.0.0'
+  end
+
   private
 
   def self.geocode_country(name)

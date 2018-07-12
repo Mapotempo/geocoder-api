@@ -17,7 +17,6 @@
 #
 require './test/test_helper'
 
-
 class Wrappers::RubyGeocoderOpencagedataTest < Minitest::Test
 
   def test_geocode_from_full_text
@@ -54,4 +53,12 @@ class Wrappers::RubyGeocoderOpencagedataTest < Minitest::Test
     g = result[:features][0][:properties][:geocoding]
     assert_equal 'Altsasu/Alsasua', g[:city]
   end
-end
+
+  def test_return_geocoder_and_wrapper_version
+    rg = GeocoderWrapper::OPENCAGEDATA
+    result = rg.geocode({city: 'Marseille', country: 'FR'}, limit = 1)
+    v = result[:features][0][:properties][:geocoding][:geocoder_version]
+    assert v.include? GeocoderWrapper::version
+    assert v.include? 'opencagedata'
+  end
+end if ENV['OPENCAGE_API']

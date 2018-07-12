@@ -36,4 +36,12 @@ class Wrappers::RubyGeocoderGoogleTest < Minitest::Test
     assert_equal 'Bordeaux', g[:city]
     assert_equal 'Rue Fondaudège', g[:street]
   end
-end
+
+  def test_return_geocoder_and_wrapper_version
+    rg = GeocoderWrapper::GOOGLE
+    result = rg.geocode({city: 'Marseille', country: 'FR'}, limit = 1)
+    v = result[:features][0][:properties][:geocoding][:geocoder_version]
+    assert v.include? GeocoderWrapper::version
+    assert v.include? 'google'
+  end
+end if ENV['GOOGLE_API']

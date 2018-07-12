@@ -173,6 +173,8 @@ module Wrappers
       json['features'].collect{ |features|
         p = features['properties']
         features['properties']['geocoding'] = {
+          version: json['version'],
+          geocoder_version: version,
           score: p['score'], # Not in spec
           type: {'housenumber' => 'house', 'municipality' => 'city'}[p['type']] || p['type'], # Hack to match spec around addok return value
           # accuracy: p['accuracy'],
@@ -192,7 +194,6 @@ module Wrappers
           id: p['id'] || p['citycode'],
         }.delete_if{ |k, v| v.nil? || v == '' }
       }
-
       json
     end
 
@@ -206,6 +207,7 @@ module Wrappers
         columns: columns && columns.join(','),
         columns0: columns0 && columns0.join(',')
       }.delete_if{ |k, v| v.nil? }
+
       response = RestClient::Request.execute(method: :post, url: @url + url_part, timeout: nil, payload: post) { |response, request, result, &block|
         case response.code
         when 200
@@ -216,7 +218,8 @@ module Wrappers
       }
       result = []
       CSV.parse(response.force_encoding('utf-8'), headers: true, quote_char: '"') { |p|
-        result << map_from_csv(p)
+        map = map_from_csv(p)
+        result << map
       }
       result
     end
@@ -225,6 +228,7 @@ module Wrappers
       {
         properties: {
           geocoding: {
+            geocoder_version: version,
             ref: p['r'],
             score: p['result_score'], # Not in spec
             type: {'housenumber' => 'house', 'municipality' => 'city'}[p['result_type']] || p['result_type'], # Hack to match spec around addok return value
@@ -252,6 +256,13 @@ module Wrappers
         type: 'Feature'
       }
     end
+
+    protected
+
+    def version(query = nil)
+      "#{super} - addok:1.0.2"
+    end
+
   end
 
 

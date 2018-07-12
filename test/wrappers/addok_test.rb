@@ -87,4 +87,13 @@ class Wrappers::AddokTest < Minitest::Test
     result = rg.geocode({city: 'Marseille', country: 'FR'}, limit = 15)
     assert_equal 15, result[:features].size
   end
-end
+
+  def test_return_geocoder_and_wrapper_version
+    rg = GeocoderWrapper::ADDOK_FRA
+    result = rg.geocode({city: 'Marseille', country: 'FR'}, limit = 1)
+    v = result[:features][0][:properties][:geocoding][:geocoder_version]
+    assert v.include? GeocoderWrapper::version
+    assert v.include? 'addok'
+  end
+
+end if ENV['ADDOK_API']

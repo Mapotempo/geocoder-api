@@ -19,6 +19,7 @@ require './test/test_helper'
 
 
 class Wrappers::RubyGeocoderEsriTest < Minitest::Test
+
   def test_geocodes_from_full_text
     rg = GeocoderWrapper::ESRI
     result = rg.geocodes([{query: '50 Bv de la Plage, Arcachon'}])
@@ -68,4 +69,13 @@ class Wrappers::RubyGeocoderEsriTest < Minitest::Test
     g = result[:features][0][:properties][:geocoding]
     assert_equal 'Alsasua', g[:city]
   end
-end
+
+
+  def test_return_geocoder_and_wrapper_version
+    rg = GeocoderWrapper::ESRI
+    result = rg.geocode({city: 'Marseille', country: 'FR'}, limit = 1)
+    v = result[:features][0][:properties][:geocoding][:geocoder_version]
+    assert v.include? GeocoderWrapper::version
+    assert v.include? 'esri'
+  end
+end if ENV['ESRI_API']

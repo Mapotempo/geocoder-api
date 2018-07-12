@@ -86,6 +86,7 @@ module Wrappers
           {
             properties: {
               geocoding: {
+                geocoder_version: version(q),
                 score: a['Relevance'],
                 type: @@match_level[a['MatchLevel']],
                 label: a['Location']['Address']['Label'],
@@ -126,6 +127,19 @@ module Wrappers
         h[ad['key']] = ad['value']
       }
       h
+    end
+
+    protected
+
+    def version(query = nil)
+      if query != nil
+        version_regexp = %r{\/\d+\.\d+\/}
+        q = Geocoder::Query.new(query)
+        full_url = Geocoder::Lookup.get(:here).query_url(q)
+        "#{super} - here:#{full_url[version_regexp].tr('/', '')}"
+      else
+        "#{super} - here"
+      end
     end
   end
 end

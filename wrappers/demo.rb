@@ -32,6 +32,7 @@ module Wrappers
     @@feature = {
       properties: {
         geocoding: {
+          geocoder_version: 'demo',
           score: 0, # Not in spec
           type: 'house',
           accuracy: 20,
@@ -79,6 +80,12 @@ module Wrappers
       r = @@header.dup
       r[:features] = ([@@feature] * limit).collect(&:dup)
       r
+    end
+
+    protected
+
+    def version(query = nil)
+      "#{super} - demo"
     end
   end
 end

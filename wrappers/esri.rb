@@ -124,6 +124,7 @@ module Wrappers
       geojson[:features] = json['candidates'] && json['candidates'].collect{ |a| {
         properties: {
           geocoding: {
+            geocoder_version: version,
             score: a['score'] / 100 * 0.9,
             type: @@match_level[a['attributes']['Addr_type']],
             label: a['address'],
@@ -238,6 +239,7 @@ module Wrappers
               a && {
                 properties: {
                   geocoding: {
+                    geocoder_version: version,
                     ref: param[:ref],
                     score: a['score'] / 100 * 0.9,
                     type: @@match_level[a['attributes']['Addr_type']],
@@ -309,6 +311,7 @@ module Wrappers
       geojson[:features] = a && [{
         properties: {
           geocoding: {
+            geocoder_version: version,
 #            type: @@match_level[a['Addr_type']],
             label: a['Match_addr'],
 #            name: a['StAddr'], ############" or or or
@@ -365,6 +368,12 @@ module Wrappers
           @oauth_token = nil
         end
       }
+    end
+
+    protected
+
+    def version(query = nil)
+      "#{super} - esri"
     end
   end
 

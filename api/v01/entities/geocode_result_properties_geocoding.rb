@@ -27,6 +27,8 @@ module Api
       ## Spec from https://github.com/geocoders/geocodejson-spec
 
       # Not in spec
+      expose_not_nil(:geocoder_version, documentation: { type: String, desc: 'Geocoder and wrapper version' })
+      # Not in spec
       expose_not_nil(:score, documentation: { type: Float, desc: 'Quality of result. 1 better, 0 worst.' })
       # Not in spec
       expose_not_nil(:ref, documentation: { type: Float, desc: 'Row Ref from bulk request.' })

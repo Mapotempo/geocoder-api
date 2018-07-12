@@ -69,6 +69,7 @@ module Wrappers
           f = {
             properties: {
               geocoding: {
+                geocoder_version: version(q),
                 score: a['confidence'] / 10.0,
                 type: c.key?('house_number') ? 'house' : c.key?('road') ? 'street' : c.key?('village') ? 'city' : c.key?('city') ? 'city' : c.key?('country') ? 'country' : nil,
                 label: a['formatted'],
@@ -101,6 +102,19 @@ module Wrappers
       end
 
       r
+    end
+
+    protected
+
+    def version(query = nil)
+      if query != nil
+        version_regexp = %r{\/v\d+\/}
+        q = Geocoder::Query.new(query)
+        full_url = Geocoder::Lookup.get(:opencagedata).query_url(q)
+        "#{super} - opencagedata:#{full_url[version_regexp].tr('/', '')}"
+      else
+        "#{super} - opencagedata"
+      end
     end
   end
 end

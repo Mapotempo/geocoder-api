@@ -52,4 +52,13 @@ class Wrappers::RubyGeocoderHereTest < Minitest::Test
     g = result[:features][0][:properties][:geocoding]
     assert_equal 'Alsasua', g[:city]
   end
-end
+
+  def test_return_geocoder_and_wrapper_version
+    rg = GeocoderWrapper::HERE
+    result = rg.geocode({city: 'Marseille', country: 'FR'}, limit = 1)
+    v = result[:features][0][:properties][:geocoding][:geocoder_version]
+    assert v.include? GeocoderWrapper::version
+    assert v.include? 'here'
+  end
+
+end if ENV['HERE_API']

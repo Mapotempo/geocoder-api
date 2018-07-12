@@ -89,7 +89,7 @@ module Api
           end
           results = GeocoderWrapper::wrapper_geocodes(APIBase.services(params[:api_key]), params[:geocodes])
           if results
-            results = {geocodes: results}
+            results = { geocodes: results }
             status 200
             if params['format'] != :csv
               present results # No do not use "with: GeocodesResult"
@@ -131,7 +131,7 @@ module Api
           }
           results = GeocoderWrapper::wrapper_reverses(APIBase.services(params[:api_key]), params[:reverses])
           if results
-            results = {reverses: results}
+            results = { reverses: results }
             status 200
             present results, with: ReversesResult
           else

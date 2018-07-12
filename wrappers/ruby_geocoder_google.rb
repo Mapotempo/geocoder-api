@@ -86,6 +86,7 @@ module Wrappers
           {
             properties: {
               geocoding: {
+                geocder_version: version,
                 score: @@location_type[a['geometry']['location_type']],
                 type: @@type[a['type']],
                 label: a['formatted_address'],
@@ -131,6 +132,12 @@ module Wrappers
         h[address_component['types'][0]] = address_component['short_name']
       }
       h
+    end
+
+    protected
+
+    def version(query = nil)
+      "#{super} - google"
     end
   end
 end
