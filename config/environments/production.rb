@@ -46,7 +46,11 @@ module GeocoderWrapper
         fra: ADDOK_FR,
         lux: ADDOK_LU,
       },
-      geocoder_fallback: DEMO
+      geocoder_fallback: DEMO,
+      map: {
+        url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        options: { zoom: 18, attribution: 'Map data &copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors' }
+      }
     }],
     ruby_geocode: {
       # Set the appropriate authentication if required

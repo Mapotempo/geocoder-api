@@ -20,6 +20,7 @@ require 'grape-swagger'
 
 require './api/v01/unitary'
 require './api/v01/bulk'
+require './api/v01/map'
 
 module Api
   module V01
@@ -48,6 +49,7 @@ module Api
 
       mount Unitary
       mount Bulk
+      mount Map
     end
   end
 end

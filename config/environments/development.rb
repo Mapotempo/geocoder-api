@@ -45,7 +45,11 @@ module GeocoderWrapper
       geocoders: {
         fra: ADDOK_FRA,
       },
-      geocoder_fallback: OPENCAGEDATA
+      geocoder_fallback: OPENCAGEDATA,
+      map: {
+        url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        options: { zoom: 18, attribution: 'Map data &copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors' }
+      }
     }],
     ruby_geocode: {
       # Set the appropriate authentication if required

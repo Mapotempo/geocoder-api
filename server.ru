@@ -23,6 +23,7 @@ require './addok_wrapper'
 require './api/root'
 require 'rack/cors'
 require 'rack/contrib/try_static'
+require 'tilt'
 
 use Rack::Cors do
   allow do
@@ -38,3 +39,7 @@ use Rack::TryStatic,
   root: 'public',
   urls: %w[/],
   try: ['.html', 'geocode.html', '/geocode.html', 'reverse.html', '/reverse.html']
+
+use Rack::Config do |env|
+  env['api.tilt.root'] = File.expand_path('public')
+end

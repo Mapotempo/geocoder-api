@@ -25,6 +25,7 @@ group :test do
   gem 'simplecov', require: false
 end
 
+gem 'grape-erb'
 gem 'geocoder'
 gem 'sqlite3'
 
