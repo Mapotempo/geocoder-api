@@ -50,7 +50,7 @@ Usage
 The API is defined in Swagger format at
 http://localhost:8558/swagger_doc
 and can be tested with Swagger-UI
-http://swagger.mapotempo.com/?url=http://geocode.mapotempo.com/swagger_doc
+https://swagger.mapotempo.com/?url=https://geocode.mapotempo.com/swagger_doc
 
 Geocoding and Address completion
 ---------------------------------
@@ -111,7 +111,7 @@ Returns geocodejson (and geojson) valid result:
 
 Reverse:
 ```
-http://geocode.mapotempo.com/0.1/reverse.json?api_key=demo&lat=44&lng=0
+http://localhost:8558/0.1/reverse.json?api_key=demo&lat=44&lng=0
 ```
 
 ```
@@ -155,3 +155,14 @@ Batch convert a list in json or CSV format using POST request.
 ```
 curl -v -X POST -H "Content-Type: text/csv" --data-binary @in.csv http://localhost:8558/0.1/geocode.csv?api_key=demo > out.csv
 ```
+
+Examples
+========
+
+Geocode
+-------
+[Geocode full text address](http://geocode.mapotempo.com/geocode.html)
+
+Reverse geocode
+---------------
+[Get address from lat/lng](http://geocode.mapotempo.com/reverse.html)

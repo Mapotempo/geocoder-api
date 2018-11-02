@@ -49,7 +49,38 @@ module Api
         contact_url: ::GeocoderWrapper::config[:product_contact_url],
         license: 'GNU Affero General Public License 3',
         license_url: 'https://raw.githubusercontent.com/Mapotempo/geocoder-api/master/LICENSE',
-        description: 'API access require an api_key. API results are geojson extended by geocodejson-spec on version draft#namespace#score.'
+        description: '
+## Technical access
+
+### Swagger descriptor
+
+This REST API is described with Swagger. The Swagger descriptor defines the request end-points, the parameters and the return values. The API can be addressed by HTTP request or with a generated client using the Swagger descriptor.
+
+### API key
+
+All access to the API are subject to an `api_key` parameter in order to authenticate the user.
+Usage: `http://geocode.mapotempo.com/0.1/geocode?api_key=***`
+
+### Return
+
+API results are geojson extended by geocodejson-spec on version draft#namespace#score.
+
+### Javascript sdk
+
+A Javascript sdk `map.js?api_key=***` is available to display geocoded result on a map. See examples below.
+Default base map layer tiles are provided by Open Street Map with [usage limitations](https://operations.osmfoundation.org/policies/tiles/).
+Other map layers are availables if you need.
+
+## Examples
+
+### Geocode
+
+[Geocode full text address](http://geocode.mapotempo.com/geocode.html)
+
+### Reverse geocode
+
+[Get address from lat/lng](http://geocode.mapotempo.com/reverse.html)
+        '
       }
     )
   end
