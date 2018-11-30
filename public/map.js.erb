@@ -18,12 +18,12 @@
 
 "use strict"
 
-L.mapotempo = (function () {
+L.mapotempo = (function() {
   return new (function Mapotempo() {
     this._map;
 
     // Map initialization
-    this.map = function (id, option) {
+    this.map = function(id, option) {
       this._map = new L.Map(id, option);
 
       // Set leaflet tile layer depending on api_key

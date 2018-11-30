@@ -6,16 +6,17 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
     integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ=="
     crossorigin=""/>
+  <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-  <div>
-    <form>
-      <input type="textfield" id="q" name="q" placeholder="Search for an address..." style="margin-left: 40px;"></input>
-      <input type="textfield" id="country" name="country" value="France"></input>
-      <input type="button" id="submit" name="submit" value="Gecode"></input>
+  <div class="form-wrapper">
+    <form id="geocoder-form">
+      <input type="text" id="q" name="q" placeholder="Search for an address..." />
+      <input type="text" id="country" name="country" value="France" />
+      <button type="submit" id="submit" name="submit">Geocode</button>
     </form>
   </div>
-  <div id="map" style="width: 600px; height: 400px"></div>
+  <div id="map"></div>
   <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
   <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
   <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"
@@ -23,89 +24,108 @@
     crossorigin=""></script>
   <script type="text/javascript" src='0.1/map.js?api_key=demo'></script>
   <script>
-  var map = L.mapotempo.map('map').setView([44.837778, -0.579197], 13);
+var map = L.mapotempo.map('map').setView([44.837778, -0.579197], 13);
 
-  var markers = [];
-  var markersGroup = L.layerGroup();
+var markers = [];
+var markersGroup = L.layerGroup();
 
-  $('#submit').click(function() {
+$('#geocoder-form').on('submit', function(e) {
+  e.preventDefault();
+  $.ajax({
+    url: "0.1/geocode.json?api_key=demo",
+    method: 'GET',
+    data: {
+      country: $('#country').val(),
+      query: $('#q').val()
+    },
+    context: document.body
+  }).done(function(resp) {
+    geocodeHandler(resp);
+  });
+});
+
+$("#q").autocomplete({
+  source: function(request, response) {
     markers.length = 0;
     markersGroup.clearLayers();
+    $.ajax({
+      url: "0.1/geocode.json?api_key=demo",
+      dataType: "json",
+      method: 'PATCH',
+      data: {
+        country: $('#country').val(),
+        query: request.term
+      },
+      context: document.body,
+      success: function(data) {
+        response(data.features.map(function(feature) {
+          return feature.properties.geocoding;
+        }));
+      }
+    }).done(function(resp) {
+      geocodeHandler(resp);
+    });
+  },
+  minLength: 3,
+  delay: 500,
+  select: function(e, ui) {
     $.ajax({
       url: "0.1/geocode.json?api_key=demo",
       method: 'GET',
       data: {
         country: $('#country').val(),
-        query: $('#q').val()
+        query: ui.item.value
+      },
+      success: function(data) {
+        return data.features.map(function(feature) {
+          return feature.properties.geocoding;
+        });
       },
       context: document.body
     }).done(function(resp) {
-      if (resp.features.length) {
-        resp.features.forEach(function(feat) {
-          if (feat.geometry && feat.geometry.coordinates) {
-            markers.push(L.marker(feat.geometry.coordinates.reverse())
-              .bindPopup('<div>' + feat.properties.geocoding.name + '</div><div>' + (feat.properties.geocoding.postcode || '') + ' ' + feat.properties.geocoding.city + '</div><div>Score: ' + feat.properties.geocoding.score.toFixed(2) + '</div>'));
-          }
-        });
-        if (markers.length) {
-          markersGroup = L.layerGroup(markers);
-          markersGroup.addTo(map);
-          var bounds = new L.LatLngBounds(markers.map(function(marker) {
-            return marker.getLatLng()
-          }));
-          map.fitBounds(bounds);
-        }
-      }
-      else {
-        alert( "No result");
-      }
-    }).fail(function(resp) {
-      alert( "An error has occured: " + JSON.stringify(resp) );
+      geocodeHandler(resp);
     });
-  });
+  }
+});
 
-  $("#q").autocomplete({
-    source: function(request, response) {
-      markers.length = 0;
-      markersGroup.clearLayers();
-      $.ajax({
-        url: "0.1/geocode.json?api_key=demo",
-        dataType: "json",
-        method: 'PATCH',
-        data: {
-          country: $('#country').val(),
-          query: request.term
-        },
-        success: function(data) {
-          response(data.features.map(function(feature) {
-            return feature.properties.geocoding
-          }));
-        }
-      }).done(function(resp) {
-        if (resp.features.length) {
-          resp.features.forEach(function(feat) {
-            if (feat.geometry && feat.geometry.coordinates) {
-              markers.push(L.marker(feat.geometry.coordinates.reverse())
-                .bindPopup('<div>' + feat.properties.geocoding.name + '</div><div>' + feat.properties.geocoding.postcode + ' ' + feat.properties.geocoding.city + '</div><div>Score: ' + feat.properties.geocoding.score.toFixed(2) + '</div>'));
-            }
-          });
-          if (markers.length) {
-            markersGroup = L.layerGroup(markers);
-            markersGroup.addTo(map);
-            var bounds = new L.LatLngBounds(markers.map(function(marker) {
-              return marker.getLatLng()
-            }));
-            map.fitBounds(bounds);
-          }
-        }
-        else {
-          alert( "No result");
-        }
+var geocodeHandler = function geocodeHandler(resp) {
+  markers.length = 0;
+  markersGroup.clearLayers();
+  if (resp.features.length) {
+    resp.features.forEach(function(feat) {
+      if (feat.geometry && feat.geometry.coordinates) {
+        markers.push(L.marker(feat.geometry.coordinates.reverse())
+          .bindPopup('<div>' + feat.properties.geocoding.name + '</div><div>' + (feat.properties.geocoding.postcode || '') + ' ' + feat.properties.geocoding.city + '</div><div>Score: ' + feat.properties.geocoding.score.toFixed(2) + '</div>'));
+      }
+    });
+    if (markers.length) {
+      markersGroup = L.layerGroup(markers);
+      markersGroup.addTo(map);
+      var bounds = new L.LatLngBounds(markers.map(function(marker) {
+        return marker.getLatLng();
+      }));
+      L.Icon.Default.extend({});
+      markers[0]
+        .setIcon(new L.Icon({
+          iconUrl: 'marker-icon-yellow.png',
+          shadowUrl: 'marker-shadow.png',
+          iconSize: [25, 41],
+          iconAnchor: [12, 41],
+          popupAnchor: [1, -34],
+          tooltipAnchor: [16, -28],
+          shadowSize: [41, 41]
+        }))
+        .setZIndexOffset(1000)
+        .openPopup();
+      map.fitBounds(bounds, {
+        padding: [30, 30]
       });
-    },
-    minLength: 3
-  });
-
+    }
+  }
+  else {
+    alert("No result");
+  }
+};
   </script>
 </body>
 </html>

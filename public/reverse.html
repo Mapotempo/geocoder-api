@@ -5,52 +5,56 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
     integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ=="
     crossorigin=""/>
+  <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-  <div>
-    Click on the map to find address!
+  <div class="reverse-info">
+    <p>
+      Click on the map to find address!
+    </p>
   </div>
-  <div id="map" style="width: 600px; height: 400px"></div>
+  <div id="map" style="width: 100%; height: 100%"></div>
   <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
   <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"
     integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
     crossorigin=""></script>
     <script type="text/javascript" src='0.1/map.js?api_key=demo'></script>
   <script>
-  var map = L.mapotempo.map('map').setView([44.837778, -0.579197], 13);
+var map = L.mapotempo.map('map').setView([44.837778, -0.579197], 13);
 
-  var marker = undefined;
+var marker = undefined;
 
-  map.on('click', function(e) {
-    if (marker)
-      map.removeLayer(marker)
-    marker = null;
-    $.ajax({
-      url: "0.1/reverse.json?api_key=demo",
-      method: 'GET',
-      data: {
-        lat: e.latlng.lat,
-        lng: e.latlng.lng
-      },
-      context: document.body
-    }).done(function(resp) {
-      if (resp.features.length) {
-        resp.features.forEach(function(feat) {
-          if (feat.geometry && feat.geometry.coordinates) {
-            marker = L.marker(feat.geometry.coordinates.reverse())
-              .addTo(map)
-              .bindPopup('<div>' + feat.properties.geocoding.name + '</div><div>' + feat.properties.geocoding.postcode + ' ' + feat.properties.geocoding.city + '</div><div>Score: ' + feat.properties.geocoding.score.toFixed(2) + '</div>')
-              .openPopup();
-          }
-        });
-      }
-      else {
-        alert( "No result");
-      }
-    }).fail(function(resp) {
-      alert( "An error has occured: " + JSON.stringify(resp) );
-    });
+map.on('click', function(e) {
+  if (marker) {
+    map.removeLayer(marker);
+  }
+  marker = null;
+  $.ajax({
+    url: "0.1/reverse.json?api_key=demo",
+    method: 'GET',
+    data: {
+      lat: e.latlng.lat,
+      lng: e.latlng.lng
+    },
+    context: document.body
+  }).done(function(resp) {
+    if (resp.features.length) {
+      resp.features.forEach(function(feat) {
+        if (feat.geometry && feat.geometry.coordinates) {
+          marker = L.marker(feat.geometry.coordinates.reverse())
+            .addTo(map)
+            .bindPopup('<div>' + feat.properties.geocoding.name + '</div><div>' + feat.properties.geocoding.postcode + ' ' + feat.properties.geocoding.city + '</div><div>Score: ' + feat.properties.geocoding.score.toFixed(2) + '</div>')
+            .openPopup();
+        }
+      });
+    }
+    else {
+      alert("No result");
+    }
+  }).fail(function(resp) {
+    alert("An error has occured: " + JSON.stringify(resp));
   });
+});
 
   </script>
 </body>

@@ -1,0 +1,51 @@
+#map {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  z-index: -1;
+}
+
+.form-wrapper, .reverse-info {
+  left: 50px;
+  position: absolute;
+  margin-top: 3px;
+}
+
+.reverse-info {
+  border: 2px solid #13B0CA;
+  background-clip: padding-box;
+  background-color: white;
+}
+
+.reverse-info > p {
+  margin-left: 15px;
+  margin-right: 15px;
+  font-weight: 600;
+  color: #2D2D2D;
+}
+
+input {
+  height: 25px;
+  border-radius: 0px;
+  border: 1px solid #13B0CA;
+  padding-left: 10px;
+}
+
+button {
+  font-weight: 600;
+  height: 29px;
+  color: white;
+  border-radius: 0px;
+  border: 1px solid #13CA89;
+  background-color: #13CA89;
+  text-shadow: 1px 1px 1px rgba(0,0,0,0.2);
+}
+
+button[type="submit"]:hover {
+  cursor: pointer;
+}
+input[type=text]:focus {
+  border:2px solid #13CA89;
+}

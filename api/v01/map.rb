@@ -19,6 +19,8 @@
 module Api
   module V01
     class Map < APIBase
+      require 'grape-erb'
+
       content_type :js, 'text/javascript'
       formatter :js, Grape::Formatter::Erb
       default_format :js
