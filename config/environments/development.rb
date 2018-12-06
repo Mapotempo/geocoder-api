@@ -23,6 +23,7 @@ require './wrappers/ruby_geocoder_opencagedata'
 require './wrappers/demo'
 require './wrappers/ruby_geocoder_here'
 require './wrappers/esri'
+require './wrappers/ign'
 
 require './lib/cache_manager'
 require './lib/point_in_polygon'
@@ -35,6 +36,7 @@ module GeocoderWrapper
   OPENCAGEDATA = Wrappers::RubyGeocoderOpencagedata.new(CACHE)
   HERE = Wrappers::RubyGeocoderHere.new(CACHE)
   ESRI = Wrappers::Esri.new(nil, nil, CACHE)
+  IGN = Wrappers::Ign.new(ENV['IGN_API_KEY'], CACHE)
 
   @@c = {
     product_title: 'Geocoder API',

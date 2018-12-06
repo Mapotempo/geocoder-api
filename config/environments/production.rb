@@ -22,6 +22,7 @@ require './wrappers/addok'
 require './wrappers/ruby_geocoder_here'
 require './wrappers/ruby_geocoder_opencagedata'
 require './wrappers/demo'
+require './wrappers/ign'
 
 require './lib/cache_manager'
 require './lib/point_in_polygon'
@@ -35,6 +36,7 @@ module GeocoderWrapper
   ADDOK_LU = Wrappers::Addok.new(CACHE, 'http://addok-lu:7878', 'Luxemburg', 'poly/luxemburg.kml', PointInPolygon.new('./poly/luxemburg.sqlite'))
   HERE = Wrappers::RubyGeocoderHere.new(CACHE)
   DEMO = Wrappers::Demo.new(CACHE)
+  IGN = Wrappers::Ign.new(ENV['IGN_API_KEY'], CACHE)
 
   @@c = {
     product_title: 'Geocoder API',
