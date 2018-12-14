@@ -260,7 +260,7 @@ module Wrappers
     protected
 
     def version(query = nil)
-      "#{super} - addok:1.0.2"
+      "#{super} - addok:1.1.0-rc1"
     end
 
   end
