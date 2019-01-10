@@ -100,7 +100,7 @@ module Wrappers
 
     def flatten_query(params, with_country = true)
       if params[:query]
-        params[:query]
+        with_country && !params[:query].include?(params[:country]) ? params[:query] + ' ' + params[:country] : params[:query]
       else
         params = clean_params params
         [params[:housenumber], params[:street], params[:postcode], params[:city], (params[:country] if with_country)].compact.join(' ')
