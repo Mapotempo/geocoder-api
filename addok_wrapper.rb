@@ -95,7 +95,7 @@ module GeocoderWrapper
   end
 
   def self.version
-    'Wrapper:1.0.0'
+    'Wrapper:1.0.1'
   end
 
   private
