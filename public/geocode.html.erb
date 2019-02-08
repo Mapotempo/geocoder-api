@@ -9,6 +9,8 @@
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
+<div>
+</div>
   <div class="form-wrapper">
     <form id="geocoder-form">
       <input type="text" id="q" name="q" placeholder="Search for an address..." />
@@ -22,7 +24,7 @@
   <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"
     integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
     crossorigin=""></script>
-  <script type="text/javascript" src='0.1/map.js?api_key=demo'></script>
+  <script type="text/javascript" src='0.1/map.js?api_key=<%= params['api_key'] || 'demo' %>'></script>
   <script>
 var map = L.mapotempo.map('map').setView([44.837778, -0.579197], 13);
 
@@ -32,7 +34,7 @@ var markersGroup = L.layerGroup();
 $('#geocoder-form').on('submit', function(e) {
   e.preventDefault();
   $.ajax({
-    url: "0.1/geocode.json?api_key=demo",
+    url: "0.1/geocode.json?api_key=<%= params['api_key'] || 'demo' %>",
     method: 'GET',
     data: {
       country: $('#country').val(),
@@ -49,7 +51,7 @@ $("#q").autocomplete({
     markers.length = 0;
     markersGroup.clearLayers();
     $.ajax({
-      url: "0.1/geocode.json?api_key=demo",
+      url: "0.1/geocode.json?api_key=<%= params['api_key'] || 'demo' %>",
       dataType: "json",
       method: 'PATCH',
       data: {
@@ -70,7 +72,7 @@ $("#q").autocomplete({
   delay: 500,
   select: function(e, ui) {
     $.ajax({
-      url: "0.1/geocode.json?api_key=demo",
+      url: "0.1/geocode.json?api_key=<%= params['api_key'] || 'demo' %>",
       method: 'GET',
       data: {
         country: $('#country').val(),

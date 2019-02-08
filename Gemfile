@@ -5,6 +5,7 @@ gem 'rack'
 gem 'rakeup'
 gem 'puma'
 gem 'rack-cors'
+gem 'rack-server-pages', '~> 0.1.0'
 
 gem 'grape'
 gem 'grape_logging'
@@ -16,6 +17,7 @@ gem 'rack-contrib'
 gem 'rest-client'
 gem 'border_patrol'
 gem 'activesupport'
+gem 'byebug'
 
 group :test do
   gem 'rack-test'

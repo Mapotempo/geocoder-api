@@ -24,6 +24,13 @@ require './api/root'
 require 'rack/cors'
 require 'rack/contrib/try_static'
 require 'tilt'
+require 'rack-server-pages'
+
+use Rack::ServerPages do |config|
+  config.view_path = 'public'
+end
+
+run Rack::ServerPages::NotFound
 
 use Rack::Cors do
   allow do
@@ -33,12 +40,6 @@ use Rack::Cors do
 end
 
 run Api::Root
-
-# Serve files from the public directory
-use Rack::TryStatic,
-  root: 'public',
-  urls: %w[/],
-  try: ['.html', 'geocode.html', '/geocode.html', 'reverse.html', '/reverse.html']
 
 use Rack::Config do |env|
   env['api.tilt.root'] = File.expand_path('public')

@@ -7,7 +7,10 @@
     crossorigin=""/>
   <link rel="stylesheet" href="/style.css">
 </head>
+
 <body>
+<div>
+</div>
   <div class="reverse-info">
     <p>
       Click on the map to find address!
@@ -18,7 +21,7 @@
   <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"
     integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
     crossorigin=""></script>
-    <script type="text/javascript" src='0.1/map.js?api_key=demo'></script>
+    <script type="text/javascript" src='0.1/map.js?api_key=<%= params['api_key'] || 'demo' %>'></script>
   <script>
 var map = L.mapotempo.map('map').setView([44.837778, -0.579197], 13);
 
@@ -30,7 +33,7 @@ map.on('click', function(e) {
   }
   marker = null;
   $.ajax({
-    url: "0.1/reverse.json?api_key=demo",
+    url: "0.1/reverse.json?api_key=<%= params['api_key'] || 'demo' %>",
     method: 'GET',
     data: {
       lat: e.latlng.lat,
