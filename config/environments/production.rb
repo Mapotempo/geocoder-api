@@ -29,6 +29,7 @@ require './lib/point_in_polygon'
 
 
 module GeocoderWrapper
+  Geocoder::Configuration.always_raise = :all
   ActiveSupport::Cache.lookup_store :redis_store
   CACHE = CacheManager.new(ActiveSupport::Cache::RedisStore.new(host: ENV['REDIS_HOST'] || 'localhost', namespace: 'geocoder', expires_in: 60*60*24*1, raise_errors: true))
 

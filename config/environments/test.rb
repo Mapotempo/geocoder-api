@@ -30,6 +30,7 @@ require './lib/point_in_polygon'
 
 
 module GeocoderWrapper
+  Geocoder::Configuration.always_raise = :all
   CACHE = CacheManager.new(ActiveSupport::Cache::NullStore.new)
 
   ADDOK_FRA = Wrappers::Addok.new(CACHE, 'http://api-adresse.data.gouv.fr', 'France', 'poly/france.kml', PointInPolygon.new('./poly/france-ile-de-batz.sqlite'))
