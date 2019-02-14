@@ -118,7 +118,7 @@ module Wrappers
     end
 
     def streets_loop(params, max_by)
-      if params.key?(:q)
+      if params.key?(:query)
         yield(params)
       else
         p = params.dup

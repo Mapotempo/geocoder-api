@@ -48,6 +48,12 @@ module Wrappers
       super(cache, boundary)
     end
 
+    def complete(params, limit = 10)
+      here_geocoder(params, limit, true) { |params|
+        flatten_query(params)
+      }
+    end
+
     def geocode(params, limit = 10)
       here_geocoder(params, limit) { |params|
         flatten_query(params)
@@ -62,56 +68,30 @@ module Wrappers
 
     private
 
-    def match_quality(mq)
+    def match_quality(r)
+      mq = r[0].data['MatchQuality']
+      return unless !mq.nil?
       (mq['Country'] || 0) * 1000 + (mq['City'] || 0) * 100 + (mq['Street'] && mq['Street'][0] || 0) * 10 + (mq['HouseNumber'] || 0)
     end
 
-    def here_geocoder(params, limit)
-      key_params = {limit: limit}.merge(params).reject{ |k, v| k == 'api_key'}
+    def here_geocoder(params, limit, complete = false)
+      key_params = {limit: limit}.merge(params).reject{ |k, _v| k == 'api_key' }
       key = [:here, :geocode, Digest::MD5.hexdigest(Marshal.dump(key_params.to_a.sort_by{ |i| i[0].to_s }))]
       r = @cache.read(key)
       if !r
         Geocoder::Configuration.lookup = :here
         Geocoder::Configuration.use_https = true
         Geocoder::Configuration.api_key = ::GeocoderWrapper::config[:ruby_geocode][Geocoder::Configuration.lookup]
-        q, response = streets_loop(params, ->(r) { r.size > 0 && match_quality(r[0].data['MatchQuality']) || 0 }) { |params|
+
+        q, response = streets_loop(params, ->(r) { r.size > 0 && match_quality(r) || 0 }) { |params|
           q = yield(params)
           #Geocoder.search(nil, params: {maxresults: limit, city: params[:city], district: params[:district], housenumber: params[:housenumber], postalcode: params[:postcode], state: params[:state], street: params[:street]})
-          [q, Geocoder.search(q, params: {maxresults: limit})]
+          [q, Geocoder.search(q, params: {maxresults: limit}, complete: complete)]
         }
         features = response.collect{ |r|
-          a = r.data
           # https://developer.here.com/rest-apis/documentation/geocoder/topics/resource-type-response-geocode.html
-          additional_data = parse_address_additional_data(a['Location']['Address']['AdditionalData'])
-          {
-            properties: {
-              geocoding: {
-                geocoder_version: version(q),
-                score: a['Relevance'],
-                type: @@match_level[a['MatchLevel']],
-                label: a['Location']['Address']['Label'],
-                name: a['Location']['Address']['Name'],
-                housenumber: [a['Location']['Address']['HouseNumber'], a['Location']['Address']['Building']].select{ |i| i }.join(' '),
-                street: a['Location']['Address']['Street'],
-                postcode: a['Location']['Address']['PostalCode'],
-                city: a['Location']['Address']['City'],
-                #district: a['Location']['Address']['District'], # In HERE API district is a city district
-                county: additional_data['CountyName'],
-                state: additional_data['StateName'],
-                country: additional_data['CountryName'],
-              }.delete_if{ |k, v| v.nil? || v == '' }
-            },
-            type: 'Feature',
-            geometry: {
-              coordinates: [
-                a['Location']['DisplayPosition']['Longitude'],
-                a['Location']['DisplayPosition']['Latitude']
-              ],
-              type: 'Point'
-            }
-          }
+          format_features(q, r.data, complete)
         }
-
         r = @@header.dup
         r[:geocoding][:query] = q
         r[:features] = features
@@ -127,6 +107,63 @@ module Wrappers
         h[ad['key']] = ad['value']
       }
       h
+    end
+
+    def format_features(q, data, complete = false)
+      complete ? autocomplete_features(q, data) : features(q, data)
+    end
+
+    def features(q, data)
+      additional_data = parse_address_additional_data(data['Location']['Address']['AdditionalData'])
+      house_number = [data['Location']['Address']['HouseNumber'], data['Location']['Address']['Building']].select{ |i| i }.join(' ')
+      {
+        properties: {
+          geocoding: {
+            geocoder_version: version(q),
+            score: data['Relevance'],
+            type: @@match_level[data['MatchLevel']],
+            label: data['Location']['Address']['Label'],
+            name: "#{house_number} #{data['Location']['Address']['Street']}".strip,
+            housenumber: house_number,
+            street: data['Location']['Address']['Street'],
+            postcode: data['Location']['Address']['PostalCode'],
+            city: data['Location']['Address']['City'],
+            #district: a['Location']['Address']['District'], # In HERE API district is a city district
+            county: additional_data['CountyName'],
+            state: additional_data['StateName'],
+            country: additional_data['CountryName'],
+          }.delete_if{ |_k, v| v.nil? || v == '' }
+        },
+        type: 'Feature',
+        geometry: {
+          coordinates: [
+            data['Location']['DisplayPosition']['Longitude'],
+            data['Location']['DisplayPosition']['Latitude']
+          ],
+          type: 'Point'
+        }
+      }
+    end
+
+    def autocomplete_features(q, data)
+      {
+        properties: {
+          geocoding: {
+            geocoder_version: version(q),
+            type: @@match_level[data['matchLevel']],
+            label: data['label'],
+            name: "#{data['address']['houseNumber']} #{data['address']['street']}".strip,
+            housenumber: data['address']['houseNumber'],
+            street: data['address']['street'],
+            postcode: data['address']['postalCode'],
+            city: data['address']['city'],
+            district: data['address']['district'], # In HERE API district is a city district
+            county: data['address']['county'],
+            state: data['address']['stateName'],
+            country: data['address']['country'],
+          }.delete_if{ |_k, v| v.nil? || v == '' }
+        }
+      }
     end
 
     protected
