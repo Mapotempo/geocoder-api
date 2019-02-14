@@ -1,3 +1,9 @@
+GIT
+  remote: git://github.com/Mapotempo/geocoder.git
+  revision: eeb898b1ab6e7c072efe9618042988e6439cfbc7
+  specs:
+    geocoder (1.5.1)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -25,7 +31,6 @@ GEM
       unf (>= 0.0.5, < 1.0.0)
     equalizer (0.0.11)
     erubis (2.7.0)
-    geocoder (1.4.0)
     grape (0.18.0)
       activesupport
       builder
@@ -132,7 +137,7 @@ DEPENDENCIES
   activesupport
   border_patrol
   byebug
-  geocoder
+  geocoder!
   grape
   grape-entity
   grape-erb

@@ -28,7 +28,7 @@ group :test do
 end
 
 gem 'grape-erb'
-gem 'geocoder'
+gem 'geocoder', github: 'Mapotempo/geocoder'
 gem 'sqlite3'
 
 #group :production do
