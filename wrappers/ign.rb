@@ -5,6 +5,15 @@ include REXML
 
 module Wrappers
   class Ign < Wrapper
+    @@header = {
+      type: 'FeatureCollection',
+      geocoding: {
+        licence: 'IGN',
+        attribution: 'IGN',
+        query: nil,
+      },
+      features: []
+    }
 
     MATCHTYPE = { 'street number' => 'house', 'street enhanced' => 'street' }.freeze
 
