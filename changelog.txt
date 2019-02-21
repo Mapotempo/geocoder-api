@@ -1,0 +1,9 @@
+# 1.0.2
+- here complete implementation
+- demo with different api key
+- raise error (for instance with a bad api key in geocoder gem)
+
+# 1.0.1
+- always add country to query for best results (for instance with here)
+- change score in search2steps to improve results for merged cities
+- refactoring demo pages
