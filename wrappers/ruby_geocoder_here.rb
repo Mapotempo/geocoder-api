@@ -146,22 +146,25 @@ module Wrappers
     end
 
     def autocomplete_features(q, data)
+      h = {}
+      data["address"].each { |k, v| h[k] = v } if data.key?("address")
+      name = "#{h['houseNumber'].nil? ?  '' : h['houseNumber']} #{h['street'].nil? ? '' : h['street']}".strip
       {
         properties: {
           geocoding: {
             geocoder_version: version(q),
             type: @@match_level[data['matchLevel']],
             label: data['label'],
-            name: "#{data['address']['houseNumber']} #{data['address']['street']}".strip,
-            housenumber: data['address']['houseNumber'],
-            street: data['address']['street'],
-            postcode: data['address']['postalCode'],
-            city: data['address']['city'],
-            district: data['address']['district'], # In HERE API district is a city district
-            county: data['address']['county'],
-            state: data['address']['stateName'],
-            country: data['address']['country'],
-          }.delete_if{ |_k, v| v.nil? || v == '' }
+            name: name == '' ? nil : name,
+            housenumber: h['houseNumber'],
+            street: h['street'],
+            postcode: h['postalCode'],
+            city: h['city'],
+            district: h['district'], # In HERE API district is a city district
+            county: h['county'],
+            state: h['stateName'],
+            country: h['country'],
+          }.delete_if{ |k, v| v.nil? || v == '' }
         }
       }
     end
