@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/Mapotempo/geocoder.git
-  revision: eeb898b1ab6e7c072efe9618042988e6439cfbc7
+  revision: c08ea9182060268c311dcad8fe910c364715acc5
   specs:
     geocoder (1.5.1)
 
