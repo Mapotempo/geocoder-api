@@ -56,7 +56,10 @@ module Api
           params[:limit] = [params[:limit] || 10, 10].min
 
           results = GeocoderWrapper::wrapper_geocode(APIBase.services(params[:api_key]), params)
-          if results
+          if results && results[:error]
+            message = JSON.parse(results[:response].body)["description"]
+            error!(message, results[:response].code)
+          elsif results
             results[:geocoding][:version] = 'draft#namespace#score'
             present results, with: GeocodeResult
           else

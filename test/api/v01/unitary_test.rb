@@ -76,6 +76,12 @@ class Api::V01::UnitaryTest < Minitest::Test
     _test_geocode_encoding('fra')
   end
 
+  def test_geocode_addok_missing_query
+    get '/0.1/geocode', {api_key: 'demo', query: '', country: 'fr', limit: 2}
+    assert !last_response.ok?
+    assert_equal "Missing query", JSON.parse(last_response.body)["error"]
+  end
+
   private
 
   def _test_geocode_from_full_text(country)

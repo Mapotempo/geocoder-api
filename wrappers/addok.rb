@@ -151,6 +151,8 @@ module Wrappers
           case response.code
           when 200
             response
+          when 400
+            return { error: true, response: response }
           else
             raise response
           end
