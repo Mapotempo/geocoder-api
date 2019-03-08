@@ -99,11 +99,13 @@ module Wrappers
     end
 
     def flatten_query(params, with_country = true)
+      #country field can be nil in case of bulk geocode
+      country = params[:country].nil? ? '' : params[:country]
       if params[:query]
-        with_country && !params[:query].include?(params[:country]) ? params[:query] + ' ' + params[:country] : params[:query]
+        with_country && !params[:query].include?(country) ? params[:query] + ' ' + country : params[:query]
       else
         params = clean_params params
-        [params[:housenumber], params[:street], params[:postcode], params[:city], (params[:country] if with_country)].compact.join(' ')
+        [params[:housenumber], params[:street], params[:postcode], params[:city], (country if with_country)].compact.join(' ')
       end
     end
 
