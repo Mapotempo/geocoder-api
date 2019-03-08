@@ -35,13 +35,13 @@ module Api
         }
         params {
           requires :country, type: String, desc: 'Simple country name, ISO 3166-alpha-2 or ISO 3166-alpha-3.'
-          optional :street, type: String
+          optional :street, type: String, allow_blank: false
           optional :maybe_street, type: Array[String], desc: 'One undetermined entry of the array is the street, selects the good one for the geocoding process. Need to add an empty entry as alternative if you are unsure if there is a street in the list. Mutually exclusive field with street field.'
           mutually_exclusive :street, :maybe_street
-          optional :postcode, type: String
-          optional :city, type: String
+          optional :postcode, type: String, allow_blank: false
+          optional :city, type: String, allow_blank: false
           optional :state, type: String
-          optional :query, type: String, desc: 'Full text, free form, address search.'
+          optional :query, type: String, allow_blank: false, desc: 'Full text, free form, address search.'
           at_least_one_of :query, :postcode, :city
           mutually_exclusive :query, :street
           mutually_exclusive :query, :maybe_street
@@ -54,7 +54,6 @@ module Api
         }
         get do
           params[:limit] = [params[:limit] || 10, 10].min
-
           results = GeocoderWrapper::wrapper_geocode(APIBase.services(params[:api_key]), params)
           if results && results[:error]
             message = JSON.parse(results[:response].body)["description"]
