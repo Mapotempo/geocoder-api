@@ -147,7 +147,8 @@ module Wrappers
           type: (params[:type] if ['house', 'street'].include?(params[:type]))
         }.merge(flatten_param(params))
 
-        response = RestClient.get(@url + '/search2steps', {params: p}) { |response, request, result, &block|
+        search = ENV['APP_ENV'] == 'development' ? '/search' : '/search2steps'
+        response = RestClient.get(@url + search, {params: p}) { |response, request, result, &block|
           case response.code
           when 200
             response
