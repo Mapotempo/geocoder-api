@@ -15,9 +15,10 @@
 # along with Mapotempo. If not, see:
 # <http://www.gnu.org/licenses/agpl.html>
 #
-require './wrappers/wrapper'
-
 require 'geocoder'
+require 'rest-client'
+require './wrappers/wrapper'
+# RestClient.log = $stdout
 
 module Wrappers
   class RubyGeocoderHere < Wrapper
@@ -44,6 +45,8 @@ module Wrappers
       'landmark' => 'house'
     }
 
+    @@batch_url = 'https://batch.geocoder.api.here.com/6.2/jobs'
+
     def initialize(cache, boundary = nil)
       super(cache, boundary)
     end
@@ -66,12 +69,113 @@ module Wrappers
       }
     end
 
+    def geocodes(params)
+      payload = ['recId|searchText|country'];
+      payload << params.each_with_index.map do |current, idx|
+        "#{idx}|#{flatten_query build_search_text_param(current)}|#{current[:country]}"
+      end
+      here_geocoder_batch payload
+    end
+
     private
 
     def match_quality(r)
       mq = r[0].data['MatchQuality']
       return unless !mq.nil?
       (mq['Country'] || 0) * 1000 + (mq['City'] || 0) * 100 + (mq['Street'] && mq['Street'][0] || 0) * 10 + (mq['HouseNumber'] || 0)
+    end
+
+    def here_geocoder_batch(payload)
+
+      outcols = %w[
+        displayLatitude
+        displayLongitude
+        locationLabel
+        houseNumber
+        street
+        district
+        city
+        postalCode
+        county
+        state
+        country
+        relevance
+        addressAdditionalData
+        matchLevel
+        addressDetailsBuilding
+      ].join(',')
+
+      app_id = ::GeocoderWrapper::config[:ruby_geocode][:here][0]
+      app_code = ::GeocoderWrapper::config[:ruby_geocode][:here][1]
+
+      RestClient::Request.execute(
+        method: :post,
+        url: @@batch_url,
+        payload: payload.flatten.join("\n"),
+        headers: {
+          params: {
+            gen: 8,
+            app_id: app_id,
+            app_code: app_code,
+            action: 'run',
+            header: true,
+            indelim: '|',
+            outdelim: '|',
+            outcols: outcols,
+            outputCombined: true
+          },
+          content_type: '*'
+        }
+      ) do |response|
+        case response.code
+        when 200
+            root = Document.new(response.body).root
+            job_id = root.elements['Response/MetaInfo/RequestId'].text
+
+            status_url = "#{@@batch_url}/#{job_id}"
+            status = nil
+
+            until status && %w[completed failed].include?(status)
+              response = RestClient::Request.execute(
+                method: :get,
+                url: status_url,
+                headers: {
+                  params: {
+                    app_id: app_id,
+                    app_code: app_code,
+                    action: 'status'
+                  }
+                }
+              )
+
+              root = Document.new(response.body).root
+              status = root.elements['Response/Status'].text
+            end
+
+            raise response if status == 'failed'
+
+            result_url = "#{@@batch_url}/#{job_id}/result"
+            response = RestClient::Request.execute(
+              method: :get,
+              url: result_url,
+              headers: {
+                params: {
+                  app_id: app_id,
+                  app_code: app_code,
+                  outputcompressed: false
+                },
+                content_type: 'application/octet-stream'
+              }
+            )
+
+            results = response.body.split("\n")
+            headers = results.shift
+
+            batch_features(map_results(headers, results))
+        else
+          raise response
+        end
+      end
     end
 
     def here_geocoder(params, limit, complete = false)
@@ -88,10 +192,12 @@ module Wrappers
           #Geocoder.search(nil, params: {maxresults: limit, city: params[:city], district: params[:district], housenumber: params[:housenumber], postalcode: params[:postcode], state: params[:state], street: params[:street]})
           [q, Geocoder.search(q, params: {maxresults: limit}, complete: complete)]
         }
+
         features = response.collect{ |r|
           # https://developer.here.com/rest-apis/documentation/geocoder/topics/resource-type-response-geocode.html
           format_features(q, r.data, complete)
         }
+
         r = @@header.dup
         r[:geocoding][:query] = q
         r[:features] = features
@@ -164,9 +270,70 @@ module Wrappers
             county: h['county'],
             state: h['stateName'],
             country: h['country'],
-          }.delete_if{ |k, v| v.nil? || v == '' }
+          }.delete_if{ |_, v| v.nil? || v == '' }
         }
       }
+    end
+
+    def map_results(headers, results)
+      headers = headers.split('|')
+      results.map do |row|
+        h = {}
+        rowData = row.split('|')
+        headers.each_with_index do |header, idx|
+          h[header] = rowData[idx]
+        end
+        h
+      end
+    end
+
+    def parse_batch_additional_data(address_additional_data)
+      address_additional_data.split('; ').each_with_object({}) do |current, acc|
+        splited_data = current.split('=')
+        acc[splited_data[0]] = splited_data[1]
+        acc
+      end
+    end
+
+    def batch_features(data)
+      data.map do |d|
+        if d['matchLevel'] == 'NOMATCH'
+          {
+            properties: {
+              geocoding: {
+              }
+            }
+          }
+        else
+          additional_data = parse_batch_additional_data d['addressAdditionalData']
+          {
+            properties: {
+              geocoding: {
+                geocoder_version: version,
+                score: d['relevance'].to_f,
+                type: @@match_level[d['matchLevel']],
+                label: d['locationLabel'],
+                name: "#{d['houseNumber']} #{d['street']}".strip,
+                housenumber: d['houseNumber'],
+                postcode: d['postalCode'],
+                city: d['city'],
+                # district: d['district'],
+                county: d['county'],
+                state: d['state'],
+                country: additional_data['countryName']
+              }.delete_if{ |_k, v| v.nil? || v == '' }
+            },
+            type: 'Feature',
+            geometry: {
+              coordinates: [
+                d['displayLongitude'].to_f,
+                d['displayLatitude'].to_f
+              ],
+              type: 'Point'
+            }
+          }
+        end
+      end
     end
 
     protected
@@ -181,5 +348,16 @@ module Wrappers
         "#{super} - here"
       end
     end
+
+    def build_search_text_param(param)
+      if param.key?(:query)
+        param
+      else
+        p = param.dup
+        gen_streets(param).collect{ |street| p[:street] = street }
+        p
+      end
+    end
+
   end
 end
