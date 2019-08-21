@@ -18,6 +18,8 @@
 require 'active_support'
 require 'tmpdir'
 
+require './wrappers/ruby_geocoder/ruby_geocoder_opencagedata'
+require './wrappers/ruby_geocoder/ruby_geocoder_here'
 require './wrappers/addok'
 require './wrappers/ruby_geocoder_opencagedata'
 require './wrappers/demo'

@@ -19,7 +19,7 @@ ENV['APP_ENV'] ||= 'development'
 Bundler.require
 require File.expand_path('../config/environments/' + ENV['APP_ENV'], __FILE__)
 Dir[File.dirname(__FILE__) + '/config/initializers/*.rb'].each {|file| require file }
-require './addok_wrapper'
+require './geocoder_wrapper'
 require './api/root'
 require 'rack/cors'
 require 'rack/contrib/try_static'

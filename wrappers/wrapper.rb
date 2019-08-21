@@ -22,12 +22,10 @@ module Wrappers
   class Wrapper
     def initialize(cache, boundary = nil)
       @cache = cache
-      if boundary
-        @boundary = BorderPatrol.parse_kml(File.read(boundary))
-      end
+      @boundary = BorderPatrol.parse_kml(File.read(boundary)) unless boundary.nil?
     end
 
-    def geocode(params, limit = 10)
+    def geocode(_params, _limit = 10)
       raise NotImplementedError
     end
 
@@ -39,17 +37,14 @@ module Wrappers
       end
     end
 
-    def reverse(params)
+    def reverse(_params)
       raise NotImplementedError
     end
 
     def geocodes(list_params)
-      list_params.collect{ |params|
-        features = geocode(params, limit = 1)[:features]
-        if features.size > 0
-          features[0][:properties][:geocoding][:ref] = params['ref']
-          features[0]
-        else
+      geocodes = list_params.collect do |params|
+        features = geocode(params, 1)[:features]
+        if features.size.zero?
           {
             properties: {
               geocoding: {
@@ -57,16 +52,18 @@ module Wrappers
               }
             }
           }
+        else
+          features[0][:properties][:geocoding][:ref] = params['ref']
+          features[0]
         end
-      }.select{ |p|
-        !p.nil?
-      }
+      end
+      geocodes.reject(&:nil?)
     end
 
     def reverses(list_params)
-      list_params.collect{ |params|
+      collected_results = list_params.collect do |params|
         features = reverse(params)[:features]
-        if features.size > 0
+        if features.size.positive?
           features[0][:properties][:geocoding][:ref] = params['ref']
           features[0]
         else
@@ -78,22 +75,19 @@ module Wrappers
             }
           }
         end
-      }.select{ |p|
-        !p.nil?
-      }
+      end
+      collected_results.reject(&:nil?)
     end
 
-    def complete(params, limit = 10)
+    def complete(_params, _limit = 10)
       raise NotImplementedError
     end
 
     private
 
     def clean_params(params)
-      if params[:country]
-        if params[:country].strip.upcase == 'FRANCE' || params[:country].strip.upcase == 'FR' || params[:country].strip.upcase == 'FRA'
+      if params[:country] && %w[FRANCE FR FRA].any? { |country| params[:country].strip.casecmp(country).zero? }
           params[:postcode] = '0' + params[:postcode] if params[:postcode] && params[:postcode].size == 4
-        end
       end
       params
     end
@@ -135,8 +129,8 @@ module Wrappers
 
     protected
 
-    def version(query = nil)
-      GeocoderWrapper::version
+    def version(_query = nil)
+      GeocoderWrapper.version
     end
   end
 
