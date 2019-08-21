@@ -1,3 +1,5 @@
+require './wrappers/wrapper'
+
 module Wrappers
   class RubyGeocoder < Wrapper
     def initialize(cache, boundary = nil)
