@@ -24,5 +24,8 @@
       crossorigin=""></script>
     <script type="text/javascript" src='0.1/map.js?api_key=<%= params['api_key'] || 'demo' %>'></script>
     <script type="text/javascript" src='js/geocode.js'></script>
+    <script >
+      initializeGeocode("<%= params['api_key'] || 'demo' %>")
+    </script>
   </body>
 </html>
