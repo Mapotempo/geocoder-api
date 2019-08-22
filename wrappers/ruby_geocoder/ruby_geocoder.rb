@@ -14,6 +14,10 @@ module Wrappers
       make_request params, limit: limit
     end
 
+    def complete(params, limit = 10)
+      make_request params, limit: limit, complete: true
+    end
+
     def make_request(params, options = {})
       key_params = build_key_params(params, options)
       cached_data = read_cache(key_params)
