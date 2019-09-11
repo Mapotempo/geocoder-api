@@ -42,7 +42,7 @@ module Api
           optional :city, type: String, allow_blank: false
           optional :state, type: String
           optional :query, type: String, allow_blank: false, desc: 'Full text, free form, address search.'
-          at_least_one_of :query, :postcode, :city
+          at_least_one_of :query, :postcode, :city, :street
           mutually_exclusive :query, :street
           mutually_exclusive :query, :maybe_street
           mutually_exclusive :query, :postcode
