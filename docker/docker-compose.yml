@@ -42,8 +42,7 @@ services:
   addok-fr:
     image: ${REGISTRY}mapotempo/addok:${ADDOK_VERSION:-1.1.0-rc1}
     volumes:
-      - /srv/docker-data/geocoder-api/addok-fr.conf:/etc/addok/addok.conf
-      - /srv/docker-data/geocoder-api/addresses-fr:/addresses
+      - ./geocoder-api/addresses-fr:/addresses
     environment:
       ADDOK_HOST: "redis-server-fr"
       ADDOK_ATTRIBUTION: "BANO"
@@ -60,7 +59,7 @@ services:
   redis-server-fr:
     image: redis:${REDIS_VERSION:-3.2-alpine}
     volumes:
-      - /srv/docker-data/geocoder-api/data-fr:/data
+      - ./data-fr:/data
     command: redis-server --save ""
     deploy:
       restart_policy:
@@ -72,8 +71,7 @@ services:
   addok-lu:
     image: ${REGISTRY}mapotempo/addok:${ADDOK_VERSION:-1.1.0-rc1}
     volumes:
-      - /srv/docker-data/geocoder-api/addok-lu.conf:/etc/addok/addok.conf
-      - /srv/docker-data/geocoder-api/addresses-lu:/addresses
+      - ./geocoder-api/addresses-lu:/addresses
     environment:
       ADDOK_HOST: "redis-server-lu"
       ADDOK_ATTRIBUTION: "Grand-Duché of Luxembourg"
@@ -90,7 +88,7 @@ services:
   redis-server-lu:
     image: redis:${REDIS_VERSION:-3.2-alpine}
     volumes:
-      - /srv/docker-data/geocoder-api/data-lu:/data
+      - ./data-lu:/data
     command: redis-server --save ""
     deploy:
       restart_policy:
