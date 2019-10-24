@@ -1,30 +1,36 @@
-version: '3.3'
+version: '3.7'
 services:
-  wrapper:
-    build:
-      context: ..
-      dockerfile: docker/Dockerfile
-    image: mapotempo/geocoder-wrapper:${MAPOTEMPO_VERSION:-57.0.0}
+  api:
+    image: ${REGISTRY}mapotempo-${EDT:-ce}/geocoder-api:${GEOCODER_VERSION:-latest}
     ports:
-      - "8081:80" # HOST:CONTAINER, edit only HOST part
+      - 8558:8558
     volumes:
-        - ./production.rb:/srv/app/config/environments/production.rb
-        - ./access.rb:/srv/app/config/access.rb
-        - ./poly:/srv/app/poly
-    restart: always
-    links:
-      - redis-cache
-      - redis-count
-      - addok-fr
-      - addok-lu
+      - ./production.rb:/srv/app/config/environments/production.rb
+      - ./access.rb:/srv/app/config/access.rb
+      - ./poly:/srv/app/poly
+    deploy:
+      update_config:
+        order: start-first
+      restart_policy:
+        condition: any
     environment:
       APP_ENV: production # Swith to "development" for more traces
       REDIS_HOST: redis-cache
       REDIS_COUNT_HOST: redis-count
+    networks:
+      - base
+      - addok_fr
+      - addok_lu
+      - redis_cache
 
   redis-cache:
     image: redis:${REDIS_VERSION:-3.2-alpine}
     command: redis-server --save ""
+    deploy:
+      restart_policy:
+        condition: any
+    networks:
+      - redis_cache
 
   redis-count:
     image: redis:${REDIS_VERSION:-3.2-alpine}
@@ -33,35 +39,63 @@ services:
     command: redis-server --appendonly yes
 
   # France
-
   addok-fr:
-    build: addok
-    image: mapotempo/addok:${ADDOK_VERSION:-1.0.2}-${ADDOK_VERSION_BUILD:-1}
-    links:
-      - redis-server-fr
+    image: ${REGISTRY}mapotempo/addok:${ADDOK_VERSION:-1.1.0-rc1}
     volumes:
-      - ./addok-fr.conf:/etc/addok/addok.conf
-      - ./addresses-fr:/addresses
+      - /srv/docker-data/geocoder-api/addok-fr.conf:/etc/addok/addok.conf
+      - /srv/docker-data/geocoder-api/addresses-fr:/addresses
+    deploy:
+      update_config:
+        order: start-first
+      restart_policy:
+        condition: any
+    networks:
+      - addok_fr
+      - redis_server_fr
 
   redis-server-fr:
     image: redis:${REDIS_VERSION:-3.2-alpine}
     volumes:
-      - ./data-fr:/data
+      - /srv/docker-data/geocoder-api/data-fr:/data
     command: redis-server --save ""
+    deploy:
+      restart_policy:
+        condition: any
+    networks:
+      - redis_server_fr
 
   # Luxemburg
-
   addok-lu:
-    build: addok
-    image: mapotempo/addok:${ADDOK_VERSION:-1.0.2}-${ADDOK_VERSION_BUILD:-1}
-    links:
-      - redis-server-lu
+    image: ${REGISTRY}mapotempo/addok:${ADDOK_VERSION:-1.1.0-rc1}
     volumes:
-      - ./addok-lu.conf:/etc/addok/addok.conf
-      - ./addresses-lu:/addresses
+      - /srv/docker-data/geocoder-api/addok-lu.conf:/etc/addok/addok.conf
+      - /srv/docker-data/geocoder-api/addresses-lu:/addresses
+    deploy:
+      update_config:
+        order: start-first
+      restart_policy:
+        condition: any
+    networks:
+      - addok_lu
+      - redis_server_lu
 
   redis-server-lu:
     image: redis:${REDIS_VERSION:-3.2-alpine}
     volumes:
-      - ./data-lu:/data
+      - /srv/docker-data/geocoder-api/data-lu:/data
     command: redis-server --save ""
+    deploy:
+      restart_policy:
+        condition: any
+    networks:
+      - redis_server_lu
+
+networks:
+  redis_cache:
+  addok_fr:
+  redis_server_fr:
+  addok_lu:
+  redis_server_lu:
+  base:
+    external: ${EXTERNAL_NETWORK:-false}
+    driver: overlay

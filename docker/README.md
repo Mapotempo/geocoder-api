@@ -1,50 +1,37 @@
-Using Docker Compose to deploy Mapotempo Geocoder environment
-=============================================================
+# Using Docker Compose to deploy Mapotempo Geocoder environment
 
-Building images
----------------
+## Building images
 
-The following commands will get the source code and build the geocoder-api
-and needed images:
+```
+export REGISTRY='registry.mapotempo.com/'
+```
 
-    git clone https://github.com/mapotempo/geocoder-api
-    cd geocoder-api/docker
-    docker-compose build
+### geocoder
+```
+docker build -f ./docker/Dockerfile -t ${REGISTRY}mapotempo-ce/geocoder-api:latest .
+```
 
-Publishing images
------------------
+### addok
+```
+docker build -f ./docker/addok/Dockerfile -t ${REGISTRY}mapotempo/addok:latest .
+```
 
-To pull them from another host, we need to push the built images to
-hub.docker.com:
+## Running services
+This project uses swarm to launch
 
-    docker login
-    docker-compose push
+```
+docker swarm init
+```
 
-Running on a docker host
-------------------------
+**Deploy the services (Access it via http://localhost:8083)**
 
-First, we need to retrieve the source code and the prebuilt images:
+```
+export PROJECT_NAME=geocoder
+mkdir -p ./docker/redis
+docker stack deploy -c ./docker/docker-compose.yml ${PROJECT_NAME}
+```
 
-    git clone https://github.com/mapotempo/geocoder-api
-    cd geocoder-api/docker
-    docker-compose pull
-
-Then use the configuration file and edit it to match your needs:
-
-    # Copy production configuration file
-    cp ../config/environments/production.rb ./
-
-    # Customize production.rb with your settings
-    # On line 31 change `france.kml` to `poly/france.kml` (or anything else.)
-
-    # Get france.kml and put it in `poly` directory.
-
-Finally run the services:
-
-    docker-compose -p geocoder up -d
-
-Initialization
---------------
+## Initialization
 
 After the first deployment, you need to initialize Addok database.
 
@@ -52,4 +39,6 @@ First, download and put json files in `data` directory. You may may to prefix th
 
 Then run the initialization script:
 
-    ./initialize.sh geocoder
+```
+./initialize.sh ${PROJECT_NAME}
+```
