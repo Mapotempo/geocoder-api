@@ -78,8 +78,8 @@ class Api::V01::UnitaryTest < Minitest::Test
 
   def test_geocode_addok_missing_query
     get '/0.1/geocode', {api_key: 'demo', query: '', country: 'fr', limit: 2}
-    assert !last_response.ok?
-    assert_equal "Missing query", JSON.parse(last_response.body)["error"]
+    assert_equal last_response.status, 400
+    assert_equal "query is empty", JSON.parse(last_response.body)["message"]
   end
 
   private

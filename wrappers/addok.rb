@@ -87,7 +87,8 @@ module Wrappers
         STDERR.puts "Addok Geocodes #{Thread.current.object_id}, slice #{slice}/#{slice_number}" if slice_number > 1
 
         if !csv_index_p.empty?
-          addok_geocodes('/search2steps/csv', csv_string, ['q0'], ['q']).each{ |result|
+          search = ENV['APP_ENV'] != 'production' ? '/search' : '/search2steps'
+          addok_geocodes("#{search}/csv", csv_string, ['q0'], ['q']).each{ |result|
             index, p = csv_index_p.shift
             results[index] = result
             @cache.write([:addok, :geocode, Digest::MD5.hexdigest(Marshal.dump(p))], result)
@@ -147,7 +148,7 @@ module Wrappers
           type: (params[:type] if ['house', 'street'].include?(params[:type]))
         }.merge(flatten_param(params))
 
-        search = ENV['APP_ENV'] == 'development' ? '/search' : '/search2steps'
+        search = ENV['APP_ENV'] != 'production' ? '/search' : '/search2steps'
         response = RestClient.get(@url + search, {params: p}) { |response, request, result, &block|
           case response.code
           when 200

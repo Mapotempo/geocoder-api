@@ -16,16 +16,17 @@
 # <http://www.gnu.org/licenses/agpl.html>
 #
 require 'simplecov'
-SimpleCov.start
+SimpleCov.start unless ENV['COV'] == 'false'
 
 ENV['APP_ENV'] ||= 'test'
 require File.expand_path('../../config/environments/' + ENV['APP_ENV'], __FILE__)
-Dir[File.dirname(__FILE__) + '/../config/initializers/*.rb'].each {|file| require file }
-require './addok_wrapper'
+Dir[File.dirname(__FILE__) + '/../config/initializers/*.rb'].each { |file| require file }
+require './geocoder_wrapper'
 require './api/root'
 
-require "minitest/reporters"
-require "minitest/focus"
+require 'minitest/reporters'
+require 'minitest/focus'
+require 'byebug'
 Minitest::Reporters.use!
 
 require 'grape'

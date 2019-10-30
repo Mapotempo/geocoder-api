@@ -17,7 +17,11 @@ gem 'rack-contrib'
 gem 'rest-client'
 gem 'border_patrol'
 gem 'activesupport'
-gem 'byebug'
+
+gem 'grape-erb'
+gem 'geocoder', github: 'Mapotempo/geocoder'
+gem 'sqlite3'
+gem 'redis-activesupport'
 
 group :test do
   gem 'rack-test'
@@ -27,10 +31,7 @@ group :test do
   gem 'simplecov', require: false
 end
 
-gem 'grape-erb'
-gem 'geocoder', github: 'Mapotempo/geocoder'
-gem 'sqlite3'
-
-#group :production do
-gem 'redis-activesupport'
-#end
+group :development, :test do
+  gem 'byebug'
+  gem 'rubocop'
+end

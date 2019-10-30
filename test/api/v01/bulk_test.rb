@@ -70,7 +70,7 @@ class Api::V01::BulkTest < Minitest::Test
     assert_equal 'Armentières', features[2]['properties']['geocoding']['city'] # From Demo wrapper
   end
 
-  def test_should_reverses_oder
+  def test_should_reverses_order
     post '/0.1/reverse', {api_key: 'demo', reverses: [
       {lat: 0.1, lng: 0.1},
       {lat: 46.03349, lng: 4.07271},

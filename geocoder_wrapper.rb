@@ -78,7 +78,7 @@ module GeocoderWrapper
           params[:index] = index
           params
         end
-        results = w.reverses(list_params)
+        results = w.reverses(params_list)
         results.each_with_index{ |result, i| result[:index] = params_list[i][:index] }
         results
       end
