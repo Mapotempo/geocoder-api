@@ -26,7 +26,7 @@ module Api
   module V01
     class Api < Grape::API
       before do
-        if !::GeocoderWrapper::config[:api_keys].include?(params[:api_key])
+        if !params || !::GeocoderWrapper.access(true).keys.include?(params[:api_key])
           error!('401 Unauthorized', 401)
         end
       end

@@ -44,23 +44,18 @@ module GeocoderWrapper
     product_title: 'Geocoder API',
     product_contact_email: 'tech@mapotempo.com',
     product_contact_url: 'https://github.com/Mapotempo/geocoder-api',
-    profiles: [{
-      api_keys: ['demo'],
-      geocoders: {
-        fra: ADDOK_FRA,
-      },
-      geocoder_fallback: DEMO
-    }],
+    profiles: {
+      standard: {
+        geocoders: {
+          fra: ADDOK_FRA,
+        },
+        geocoder_fallback: DEMO
+      }
+    },
     ruby_geocode: {
       # Set the appropriate authentication if required
       here: ['APP_ID', 'APP_CODE'],
       opencagedata: 'API_KEY'
     }
   }
-
-  @@c[:api_keys] = Hash[@@c[:profiles].collect{ |profile|
-    profile[:api_keys].collect{ |api_key|
-      [api_key, profile]
-    }
-  }.flatten(1)]
 end

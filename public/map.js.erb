@@ -27,8 +27,8 @@ L.mapotempo = (function() {
       this._map = new L.Map(id, option);
 
       // Set leaflet tile layer depending on api_key
-      var mapLayerUrl = "<%= ::GeocoderWrapper::config[:api_keys][params[:api_key]][:map][:url] %>"
-      var mapOptions = <%= ::GeocoderWrapper::config[:api_keys][params[:api_key]][:map][:options].to_json %>
+      var mapLayerUrl = "<%= ::GeocoderWrapper::config[:profiles][::GeocoderWrapper.access[params[:api_key]][:profile]][:map][:url] %>"
+      var mapOptions = <%= ::GeocoderWrapper::config[:profiles][::GeocoderWrapper.access[params[:api_key]][:profile]][:map][:options].to_json %>
 
       // Apply tile layer
       L.tileLayer(mapLayerUrl, mapOptions).addTo(this._map);

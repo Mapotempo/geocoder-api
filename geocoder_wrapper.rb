@@ -20,6 +20,11 @@ module GeocoderWrapper
     @@c
   end
 
+  def self.access(force_load = false)
+    load './config/custom/access.rb' if force_load
+    @access_by_api_key
+  end
+
   def self.wrapper_geocode(services, params)
     country = self.geocode_country(params[:country])
     if services[:geocoders].key?(country)
