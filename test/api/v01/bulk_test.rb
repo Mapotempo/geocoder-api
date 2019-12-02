@@ -88,4 +88,30 @@ class Api::V01::BulkTest < Minitest::Test
     post '/0.1/geocode', {api_key: 'demo', geocodes: 'plop'}
     assert !last_response.ok?, last_response.body
   end
+
+  def test_bulk_limit_should_pass
+    post '/0.1/geocode', {api_key: 'bulk_limit', geocodes: [
+      {query: 'NYC', country: 'ttt'}
+    ]}
+    assert last_response.ok?, last_response.body
+
+    post '/0.1/reverse', {api_key: 'bulk_limit', reverses: [
+      {lat: 0.1, lng: 0.1}
+    ]}
+    assert last_response.ok?, last_response.body
+  end
+
+  def test_bulk_limit_should_not_pass
+    post '/0.1/geocode', {api_key: 'bulk_limit', geocodes: [
+      {query: 'NYC', country: 'ttt'},
+      {query: 'Bordeaux', country: 'France'}
+    ]}
+    assert !last_response.ok?, last_response.body
+
+    post '/0.1/reverse', {api_key: 'bulk_limit', reverses: [
+      {lat: 0.1, lng: 0.1},
+      {lat: 46.03349, lng: 4.07271}
+    ]}
+    assert !last_response.ok?, last_response.body
+  end
 end

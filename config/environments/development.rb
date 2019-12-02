@@ -39,6 +39,8 @@ module GeocoderWrapper
   ESRI = Wrappers::Esri.new(nil, nil, CACHE)
   IGN = Wrappers::Ign.new(ENV['IGN_API_KEY'], CACHE)
 
+  PARAMS_LIMIT = { locations: 10000 }
+
   @@c = {
     product_title: 'Geocoder API',
     product_contact_email: 'tech@mapotempo.com',
@@ -49,6 +51,7 @@ module GeocoderWrapper
           fra: ADDOK_FRA,
         },
         geocoder_fallback: OPENCAGEDATA,
+        params_limit: PARAMS_LIMIT,
         map: {
           url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
           options: { zoom: 18, attribution: 'Map data &copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors' }

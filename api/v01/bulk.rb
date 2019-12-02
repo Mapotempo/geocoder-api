@@ -84,10 +84,16 @@ module Api
           ]
         }
         post do
-          if !params.key?('geocodes') || !params['geocodes'].kind_of?(Array)
+          if !params.key?('geocodes') || !params['geocodes'].is_a?(Array)
             error!({status: 'Missing or invalid field "geocodes".'}, 400)
           end
-          results = GeocoderWrapper::wrapper_geocodes(APIBase.services(params[:api_key]), params[:geocodes])
+
+          params_limit = APIBase.services(params[:api_key])[:params_limit].merge(GeocoderWrapper.access[params[:api_key]][:params_limit] || {})
+          if !params_limit[:locations].nil?
+            error!({status: "Location limit (#{params_limit[:locations]}) exceeded for api key #{params[:api_key]}"}, 400) if params['geocodes'].count > params_limit[:locations]
+          end
+
+          results = GeocoderWrapper.wrapper_geocodes(APIBase.services(params[:api_key]), params[:geocodes])
           if results
             results = { geocodes: results }
             status 200
@@ -117,9 +123,15 @@ module Api
           ]
         }
         post do
-          if !params.key?('reverses') || !params['reverses'].kind_of?(Array)
+          if !params.key?('reverses') || !params['reverses'].is_a?(Array)
             error!('400 Bad Request. Missing or invalid field "reverses".', 400)
           end
+
+          params_limit = APIBase.services(params[:api_key])[:params_limit].merge(GeocoderWrapper.access[params[:api_key]][:params_limit] || {})
+          if !params_limit[:locations].nil?
+            error!({status: "Location limit (#{params_limit[:locations]}) exceeded for api key #{params[:api_key]}"}, 400) if params['reverses'].count > params_limit[:locations]
+          end
+
           params['reverses'].each{ |param|
             begin
               param[:lat] = Float(param[:lat].gsub(',', '.'))
@@ -129,7 +141,7 @@ module Api
               param[:lng] = nil
             end
           }
-          results = GeocoderWrapper::wrapper_reverses(APIBase.services(params[:api_key]), params[:reverses])
+          results = GeocoderWrapper.wrapper_reverses(APIBase.services(params[:api_key]), params[:reverses])
           if results
             results = { reverses: results }
             status 200

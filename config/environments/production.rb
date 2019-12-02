@@ -36,7 +36,9 @@ module GeocoderWrapper
   ADDOK_LU = Wrappers::Addok.new(CACHE, 'http://addok-lu:7878', 'Luxemburg', 'poly/luxemburg.kml', PointInPolygon.new('./poly/luxemburg.sqlite'))
   HERE = Wrappers::RubyGeocoderHere.new(CACHE)
   DEMO = Wrappers::Demo.new(CACHE)
-  IGN = Wrappers::Ign.new(ENV['IGN_API_KEY'], CACHE)
+  IGN = Wrappers::Ign.new('hxexfaqsph8w23yaxap442ru', CACHE, 'poly/france.kml')
+
+  PARAMS_LIMIT = { locations: 1000 }.freeze
 
   @@c = {
     product_title: 'Geocoder API',
@@ -49,6 +51,7 @@ module GeocoderWrapper
           lux: ADDOK_LU,
         },
         geocoder_fallback: DEMO,
+        params_limit: PARAMS_LIMIT,
         map: {
           url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
           options: { zoom: 18, attribution: 'Map data &copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors' }

@@ -22,8 +22,6 @@ module Api
   module V01
     class APIBase < Grape::API
 
-      private
-
       def self.services(api_key)
         raise 'Profile missing in configuration' unless ::GeocoderWrapper.config[:profiles].key? ::GeocoderWrapper.access[api_key][:profile]
 

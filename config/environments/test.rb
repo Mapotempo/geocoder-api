@@ -40,6 +40,8 @@ module GeocoderWrapper
   OPENCAGEDATA = Wrappers::RubyGeocoderOpencagedata.new(CACHE)
   DEMO = Wrappers::Demo.new(CACHE)
 
+  PARAMS_LIMIT = { locations: 10000 }
+
   @@c = {
     product_title: 'Geocoder API',
     product_contact_email: 'tech@mapotempo.com',
@@ -49,7 +51,8 @@ module GeocoderWrapper
         geocoders: {
           fra: ADDOK_FRA,
         },
-        geocoder_fallback: DEMO
+        geocoder_fallback: DEMO,
+        params_limit: PARAMS_LIMIT
       }
     },
     ruby_geocode: {
