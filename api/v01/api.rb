@@ -107,6 +107,19 @@ module Api
         end
       end
 
+      resource :release do
+        content_type :json, 'application/json; charset=UTF-8'
+        default_format :json
+        desc 'Return release hash.', {
+          nickname: 'release',
+          success: Status
+        }
+        get do
+          profile = APIBase.profile(params[:api_key])
+          present(hash: GeocoderWrapper.release, geocoders: profile[:geocoders].keys.map{ |ke| {ke => profile[:geocoders][ke].version} })
+        end
+      end
+
       rescue_from :all, backtrace: ENV['APP_ENV'] != 'production' do |e|
         @error = e
         if ENV['APP_ENV'] != 'test'

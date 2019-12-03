@@ -25,6 +25,10 @@ module GeocoderWrapper
     @access_by_api_key
   end
 
+  def self.release
+    @release
+  end
+
   def self.wrapper_geocode(services, params)
     country = self.geocode_country(params[:country])
     if services[:geocoders].key?(country)
@@ -103,7 +107,7 @@ module GeocoderWrapper
   end
 
   def self.version
-    'Wrapper:1.1.0' # Update changelog.txt
+    'Wrapper:1.1.1' # Update changelog.txt
   end
 
   def self.geocode_country(name)

@@ -107,8 +107,6 @@ module Wrappers
       end
     end
 
-    protected
-
     def version(query = nil)
       "#{super} - ign"
     end

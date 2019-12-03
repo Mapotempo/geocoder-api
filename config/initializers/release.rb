@@ -1,4 +1,4 @@
-# Copyright © Mapotempo, 2015
+# Copyright © Mapotempo, 2019
 #
 # This file is part of Mapotempo.
 #
@@ -15,28 +15,6 @@
 # along with Mapotempo. If not, see:
 # <http://www.gnu.org/licenses/agpl.html>
 #
-require './test/test_helper'
-
-require './api/root'
-
-class Api::RootTest < Minitest::Test
-  include Rack::Test::Methods
-
-  def app
-    Api::Root
-  end
-
-  def test_ping
-    get '/ping?api_key=demo'
-    assert last_response.ok?, last_response.body
-    assert_equal '"pong"', last_response.body
-  end
-
-  def test_release
-    get '/0.1/release', api_key: 'demo'
-    assert last_response.ok?, last_response.body
-    body = JSON.parse(last_response.body)
-    assert_equal 'CI_RELEASE', body['hash']
-    assert_equal 1, body['geocoders'].count
-  end
+module GeocoderWrapper
+  @release = 'CI_RELEASE'
 end

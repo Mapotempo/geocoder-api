@@ -338,6 +338,10 @@ module Wrappers
       geojson
     end
 
+    def version(query = nil)
+      "#{super} - esri"
+    end
+
     private
 
     def fetch_oauth_token
@@ -368,12 +372,6 @@ module Wrappers
           @oauth_token = nil
         end
       }
-    end
-
-    protected
-
-    def version(query = nil)
-      "#{super} - esri"
     end
   end
 

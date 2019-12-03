@@ -114,6 +114,10 @@ module Wrappers
       addok_geocode(params, limit, true)
     end
 
+    def version(query = nil)
+      "#{super} - addok:1.1.0-rc1.2"
+    end
+
     private
 
     def flatten_param(params)
@@ -260,15 +264,7 @@ module Wrappers
         type: 'Feature'
       }
     end
-
-    protected
-
-    def version(query = nil)
-      "#{super} - addok:1.1.0-rc1.2"
-    end
-
   end
-
 
   class FakeFileStringIO < StringIO
     def path

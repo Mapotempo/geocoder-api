@@ -53,6 +53,17 @@ module Wrappers
       super params, limit: limit
     end
 
+    def version(query = nil)
+      if query != nil
+        version_regexp = %r{\/v\d+\/}
+        q = Geocoder::Query.new(query)
+        full_url = Geocoder::Lookup.get(:opencagedata).query_url(q)
+        "#{super} - opencagedata:#{full_url[version_regexp].tr('/', '')}"
+      else
+        "#{super} - opencagedata"
+      end
+    end
+
     private
 
     def opencagedata_geocoder(params, limit)
@@ -107,19 +118,6 @@ module Wrappers
       end
 
       r
-    end
-
-    protected
-
-    def version(query = nil)
-      if query != nil
-        version_regexp = %r{\/v\d+\/}
-        q = Geocoder::Query.new(query)
-        full_url = Geocoder::Lookup.get(:opencagedata).query_url(q)
-        "#{super} - opencagedata:#{full_url[version_regexp].tr('/', '')}"
-      else
-        "#{super} - opencagedata"
-      end
     end
   end
 end

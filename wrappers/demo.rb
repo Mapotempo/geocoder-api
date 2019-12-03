@@ -82,8 +82,6 @@ module Wrappers
       r
     end
 
-    protected
-
     def version(query = nil)
       "#{super} - demo"
     end

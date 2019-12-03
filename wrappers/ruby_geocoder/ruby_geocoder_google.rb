@@ -121,8 +121,9 @@ module Wrappers
       r
     end
 
-    #def reverse(params)
-    #end
+    def version(query = nil)
+      "#{super} - google"
+    end
 
     private
 
@@ -132,12 +133,6 @@ module Wrappers
         h[address_component['types'][0]] = address_component['short_name']
       }
       h
-    end
-
-    protected
-
-    def version(query = nil)
-      "#{super} - google"
     end
   end
 end

@@ -17,7 +17,6 @@
 #
 require 'border_patrol'
 
-
 module Wrappers
   class Wrapper
     def initialize(cache, boundary = nil)
@@ -83,6 +82,10 @@ module Wrappers
       raise NotImplementedError
     end
 
+    def version(_query = nil)
+      GeocoderWrapper.version
+    end
+
     private
 
     def clean_params(params)
@@ -126,12 +129,5 @@ module Wrappers
         } || [nil, []]
       end
     end
-
-    protected
-
-    def version(_query = nil)
-      GeocoderWrapper.version
-    end
   end
-
 end
