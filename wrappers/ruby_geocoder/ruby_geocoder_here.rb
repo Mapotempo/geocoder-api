@@ -80,7 +80,7 @@ module Wrappers
         if maybe_street
           query_hash.map { |query| "#{idx}|#{flatten_query query}|#{query[:country]}" }
         else
-          "#{idx}|#{flatten_query query_hash}|#{query[:country]}"
+          "#{idx}|#{flatten_query query_hash}|#{query_hash[:country]}"
         end
       end
 
