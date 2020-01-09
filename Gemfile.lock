@@ -95,7 +95,7 @@ GEM
       rack (>= 0.4)
     rack-contrib (1.5.0)
       rack (~> 1.4)
-    rack-cors (0.4.0)
+    rack-cors (1.0.3)
     rack-server-pages (0.1.0)
       rack
     rack-test (0.6.3)
