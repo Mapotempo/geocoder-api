@@ -87,6 +87,11 @@ module Wrappers
       here_geocoder_batch payload, 'geocode'
     end
 
+    def complete(params, limit = 10)
+      sleep 0.5
+      super params, limit: limit
+    end
+
     protected
 
     def max_by(result)
