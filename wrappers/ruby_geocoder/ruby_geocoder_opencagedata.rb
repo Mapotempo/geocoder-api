@@ -48,6 +48,11 @@ module Wrappers
       }
     end
 
+    def complete(params, limit = 10)
+      sleep 0.5
+      super params, limit: limit
+    end
+
     private
 
     def opencagedata_geocoder(params, limit)
