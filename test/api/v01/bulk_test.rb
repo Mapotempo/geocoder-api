@@ -21,6 +21,7 @@ require './api/root'
 
 class Api::V01::BulkTest < Minitest::Test
   include Rack::Test::Methods
+  include FakeRedis
 
   def app
     Api::Root
@@ -113,5 +114,35 @@ class Api::V01::BulkTest < Minitest::Test
       {lat: 46.03349, lng: 4.07271}
     ]}
     assert !last_response.ok?, last_response.body
+  end
+
+  def test_count_geocodes
+    (1..2).each do |i|
+      post '/0.1/geocode', {api_key: 'demo', geocodes: [
+        {query: 'NYC', country: 'ttt'},
+        {query: 'Bordeaux', country: 'France'},
+        {query: 'Rome', country: 'ttt'},
+      ]}
+      keys = GeocoderWrapper.config[:redis_count].keys("geocoder:geocode:#{Time.now.utc.to_s[0..9]}_key:demo_ip*")
+      assert_equal 1, keys.size
+      keys.each{ |key|
+        assert_equal({'hits' => "#{i}", 'transactions' => "#{i*3}"}, GeocoderWrapper.config[:redis_count].hgetall(key))
+      }
+    end
+  end
+
+  def test_count_reverses
+    (1..2).each do |i|
+      post '/0.1/reverse', {api_key: 'demo', reverses: [
+        {lat: 0.1, lng: 0.1},
+        {lat: 46.03349, lng: 4.07271},
+        {lat: 0.2, lng: 0.2},
+      ]}
+      keys = GeocoderWrapper.config[:redis_count].keys("geocoder:reverse:#{Time.now.utc.to_s[0..9]}_key:demo_ip*")
+      assert_equal 1, keys.size
+      keys.each{ |key|
+        assert_equal({'hits' => "#{i}", 'transactions' => "#{i*3}"}, GeocoderWrapper.config[:redis_count].hgetall(key))
+      }
+    end
   end
 end

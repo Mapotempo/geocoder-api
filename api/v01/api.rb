@@ -31,6 +31,43 @@ module Api
         end
       end
 
+      helpers do
+        def redis_count
+          GeocoderWrapper.config[:redis_count]
+        end
+
+        def count_time
+          @count_time ||= Time.now.utc
+        end
+
+        def count_key(operation)
+          @count_key ||= [
+            [:geocoder, operation, count_time.to_s[0..9]],
+            [:key, params[:api_key]],
+            [:ip, request.ip],
+            [:asset, params[:asset]]
+          ].map{ |a| a.join(':') }.join('_')
+        end
+
+        def count(operation)
+          return unless redis_count
+          @count_val = redis_count.hgetall(count_key(operation)).symbolize_keys
+          if @count_val.empty?
+            @count_val = {hits: 0, transactions: 0}
+            redis_count.mapped_hmset @count_key, @count_val
+            redis_count.expire @count_key, 100.days
+          end
+        end
+
+        def count_incr(operation, options)
+          return unless redis_count
+          count operation unless @count_val
+          incr = {hits: @count_val[:hits].to_i + 1}
+          incr[:transactions] = @count_val[:transactions].to_i + options[:transactions] if options[:transactions]
+          redis_count.mapped_hmset @count_key, incr
+        end
+      end
+
       rescue_from :all, backtrace: ENV['APP_ENV'] != 'production' do |e|
         @error = e
         if ENV['APP_ENV'] != 'test'

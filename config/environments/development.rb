@@ -16,6 +16,8 @@
 # <http://www.gnu.org/licenses/agpl.html>
 #
 require 'active_support'
+require 'active_support/core_ext'
+
 require 'tmpdir'
 
 require './wrappers/ruby_geocoder/ruby_geocoder_opencagedata'
@@ -27,6 +29,8 @@ require './wrappers/ign'
 
 require './lib/cache_manager'
 require './lib/point_in_polygon'
+
+require 'byebug'
 
 
 module GeocoderWrapper
@@ -40,6 +44,7 @@ module GeocoderWrapper
   IGN = Wrappers::Ign.new(ENV['IGN_API_KEY'], CACHE)
 
   PARAMS_LIMIT = { locations: 10000 }
+  REDIS_COUNT = ENV['REDIS_COUNT_HOST'] && Redis.new(host: ENV['REDIS_COUNT_HOST'])
 
   @@c = {
     product_title: 'Geocoder API',
@@ -62,6 +67,7 @@ module GeocoderWrapper
       # Set the appropriate authentication if required
       here: ['APP_ID', 'APP_CODE'],
       opencagedata: 'API_KEY'
-    }
+    },
+    redis_count: REDIS_COUNT,
   }
 end
