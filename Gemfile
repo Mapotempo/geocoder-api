@@ -5,7 +5,7 @@ gem 'rack'
 gem 'rakeup'
 gem 'puma'
 gem 'rack-cors'
-gem 'rack-server-pages', '~> 0.1.0'
+gem 'rack-server-pages'
 
 gem 'grape'
 gem 'grape_logging'
