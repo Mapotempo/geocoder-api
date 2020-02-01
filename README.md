@@ -36,12 +36,12 @@ Running
 =======
 
 ```
-bundle exec rake server
+bundle exec rackup -p 8558
 ```
 
 And in production mode:
 ```
-APP_ENV=production bundle exec rake server
+APP_ENV=production bundle exec rackup -p 8558
 ```
 
 Usage

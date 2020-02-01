@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 ruby '~> 2.3.3'
 
 gem 'rack'
-gem 'rakeup'
+gem 'rake'
 gem 'puma'
 gem 'rack-cors'
 gem 'rack-server-pages'
