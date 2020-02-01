@@ -17,6 +17,7 @@ gem 'rack-contrib'
 gem 'rest-client'
 gem 'border_patrol'
 gem 'activesupport'
+gem 'actionpack'
 
 gem 'grape-erb'
 gem 'geocoder', github: 'Mapotempo/geocoder'
