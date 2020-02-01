@@ -25,6 +25,7 @@ require 'rack/cors'
 require 'rack/contrib/try_static'
 require 'tilt'
 require 'rack-server-pages'
+require 'action_dispatch/middleware/remote_ip.rb'
 
 use Rack::ServerPages do |config|
   config.view_path = 'public'
@@ -44,3 +45,5 @@ run Api::Root
 use Rack::Config do |env|
   env['api.tilt.root'] = File.expand_path('public')
 end
+
+use ActionDispatch::RemoteIp
