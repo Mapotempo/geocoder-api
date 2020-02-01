@@ -32,6 +32,7 @@ module Api
           ]
         }
         get '/', erb: 'map' do
+          count_incr :map, transactions: 1
         end
       end
     end

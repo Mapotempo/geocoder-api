@@ -21,6 +21,7 @@ require './api/root'
 
 class Api::V01::UnitaryTest < Minitest::Test
   include Rack::Test::Methods
+  include FakeRedis
 
   def app
     Api::Root
@@ -80,6 +81,39 @@ class Api::V01::UnitaryTest < Minitest::Test
     get '/0.1/geocode', {api_key: 'demo', query: '', country: 'fr', limit: 2}
     assert_equal last_response.status, 400
     assert_equal "query is empty", JSON.parse(last_response.body)["message"]
+  end
+
+  def test_count_geocode
+    (1..2).each do |i|
+      get '/0.1/geocode', {api_key: 'demo', query: 'Place Pey Berland, Bordeaux', country: 'demo'}
+      keys = GeocoderWrapper.config[:redis_count].keys("geocoder:geocode:#{Time.now.utc.to_s[0..9]}_key:demo_ip*")
+      assert_equal 1, keys.size
+      keys.each{ |key|
+        assert_equal({'hits' => "#{i}", 'transactions' => "#{i}"}, GeocoderWrapper.config[:redis_count].hgetall(key))
+      }
+    end
+  end
+
+  def test_count_complete
+    (1..2).each do |i|
+      patch '/0.1/geocode', {api_key: 'demo', query: 'Place Pey Berland, Bordeaux', country: 'demo'}
+      keys = GeocoderWrapper.config[:redis_count].keys("geocoder:complete:#{Time.now.utc.to_s[0..9]}_key:demo_ip*")
+      assert_equal 1, keys.size
+      keys.each{ |key|
+        assert_equal({'hits' => "#{i}", 'transactions' => "#{i}"}, GeocoderWrapper.config[:redis_count].hgetall(key))
+      }
+    end
+  end
+
+  def test_count_reverse
+    (1..2).each do |i|
+      get '/0.1/reverse', {api_key: 'demo', lat: 0, lng: 0, country: 'demo'}
+      keys = GeocoderWrapper.config[:redis_count].keys("geocoder:reverse:#{Time.now.utc.to_s[0..9]}_key:demo_ip*")
+      assert_equal 1, keys.size
+      keys.each{ |key|
+        assert_equal({'hits' => "#{i}", 'transactions' => "#{i}"}, GeocoderWrapper.config[:redis_count].hgetall(key))
+      }
+    end
   end
 
   private

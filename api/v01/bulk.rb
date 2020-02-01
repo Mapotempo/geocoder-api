@@ -87,6 +87,7 @@ module Api
           if !params.key?('geocodes') || !params['geocodes'].is_a?(Array)
             error!({status: 'Missing or invalid field "geocodes".'}, 400)
           end
+          count :geocode
 
           params_limit = APIBase.services(params[:api_key])[:params_limit].merge(GeocoderWrapper.access[params[:api_key]][:params_limit] || {})
           if !params_limit[:locations].nil?
@@ -95,6 +96,7 @@ module Api
 
           results = GeocoderWrapper.wrapper_geocodes(APIBase.services(params[:api_key]), params[:geocodes])
           if results
+            count_incr :geocode, transactions: results.size
             results = { geocodes: results }
             status 200
             if params['format'] != :csv
@@ -126,6 +128,7 @@ module Api
           if !params.key?('reverses') || !params['reverses'].is_a?(Array)
             error!('400 Bad Request. Missing or invalid field "reverses".', 400)
           end
+          count :reverse
 
           params_limit = APIBase.services(params[:api_key])[:params_limit].merge(GeocoderWrapper.access[params[:api_key]][:params_limit] || {})
           if !params_limit[:locations].nil?
@@ -143,6 +146,7 @@ module Api
           }
           results = GeocoderWrapper.wrapper_reverses(APIBase.services(params[:api_key]), params[:reverses])
           if results
+            count_incr :reverse, transactions: results.size
             results = { reverses: results }
             status 200
             present results, with: ReversesResult

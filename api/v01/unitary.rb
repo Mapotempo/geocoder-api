@@ -53,6 +53,7 @@ module Api
           optional :limit, type: Integer, desc: 'Max results numbers. (default and upper max 10)'
         }
         get do
+          count :geocode
           params[:limit] = [params[:limit] || 10, 10].min
           results = GeocoderWrapper::wrapper_geocode(APIBase.services(params[:api_key]), params)
           if results && results[:error]
@@ -60,6 +61,7 @@ module Api
             error!(message, results[:response].code)
           elsif results
             results[:geocoding][:version] = 'draft#namespace#score'
+            count_incr :geocode, transactions: 1
             present results, with: GeocodeResult
           else
             error!('500 Internal Server Error', 500)
@@ -84,10 +86,12 @@ module Api
           optional :limit, type: Integer, desc: 'Max results numbers. (default and upper max 10)'
         }
         patch do
+          count :complete
           params[:limit] = [params[:limit] || 10, 10].min
           results = GeocoderWrapper::wrapper_complete(APIBase.services(params[:api_key]), params)
           if results
             results[:geocoding][:version] = 'draft#namespace#score'
+            count_incr :complete, transactions: 1
             present results, with: GeocodeResult
           else
             error!('500 Internal Server Error', 500)
@@ -105,9 +109,11 @@ module Api
           requires :lng, type: Float, desc: 'Longitude.'
         }
         get do
+          count :reverse
           results = GeocoderWrapper::wrapper_reverse(APIBase.services(params[:api_key]), params)
           if results
             results[:geocoding][:version] = 'draft#namespace#score'
+            count_incr :reverse, transactions: 1
             present results, with: GeocodeResult
           else
             error!('500 Internal Server Error', 500)

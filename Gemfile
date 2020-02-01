@@ -29,6 +29,7 @@ group :test do
   gem 'minitest-focus'
   gem 'minitest-reporters'
   gem 'simplecov', require: false
+  gem 'fakeredis'
 end
 
 group :development, :test do

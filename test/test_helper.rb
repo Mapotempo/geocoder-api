@@ -15,8 +15,10 @@
 # along with Mapotempo. If not, see:
 # <http://www.gnu.org/licenses/agpl.html>
 #
+require 'minitest'
 require 'simplecov'
 SimpleCov.start unless ENV['COV'] == 'false'
+require 'fakeredis/minitest'
 
 ENV['APP_ENV'] ||= 'test'
 require File.expand_path('../../config/environments/' + ENV['APP_ENV'], __FILE__)
@@ -35,3 +37,9 @@ require 'grape-entity'
 
 require 'minitest/autorun'
 require 'rack/test'
+
+module FakeRedis
+  def teardown
+    GeocoderWrapper.config[:redis_count].flushall
+  end
+end
