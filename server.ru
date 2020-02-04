@@ -25,7 +25,7 @@ require 'rack/cors'
 require 'rack/contrib/try_static'
 require 'tilt'
 require 'rack-server-pages'
-require 'action_dispatch/middleware/remote_ip.rb'
+require 'action_dispatch'
 
 use Rack::ServerPages do |config|
   config.view_path = 'public'
@@ -40,6 +40,7 @@ use Rack::Cors do
   end
 end
 
+#\ -p 8558
 run Api::Root
 
 use Rack::Config do |env|
