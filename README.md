@@ -38,12 +38,12 @@ Running
 =======
 
 ```
-bundle exec rackup -p 8558
+bundle exec rackup [-p 8558]
 ```
 
 And in production mode:
 ```
-APP_ENV=production bundle exec rackup -p 8558
+APP_ENV=production bundle exec rackup [-p 8558]
 ```
 
 Usage
