@@ -27,7 +27,7 @@ module Wrappers
     def initialize(cache, boundary = nil)
       super(cache, boundary)
 
-      @MIN_LENGTH = 10
+      @MIN_LENGTH = 50
 
       @header = {
         type: 'FeatureCollection',
