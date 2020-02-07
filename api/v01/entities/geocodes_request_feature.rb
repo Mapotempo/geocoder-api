@@ -27,7 +27,7 @@ module Api
       expose(:housenumber, documentation: { type: String, desc: 'Row Ref from bulk request.' })
       expose(:street, documentation: { type: String, desc: 'Street of the place.' })
       expose(:locality, documentation: { type: String, desc: 'Locality of the place.' })
-      expose(:maybe_street, documentation: { type: Array[String], desc: 'One undetermined entry of the array is the street, selects the good one for the geocoding process. Need to add an empty entry as alternative if you are unsure if there is a street in the list. Mutually exclusive field with street field.', is_array: true }, documentation: { param_type: 'query' })
+      expose(:maybe_street, documentation: { type: Array[String], desc: 'One undetermined entry of the array is the street, selects the good one for the geocoding process. Need to add an empty entry as alternative if you are unsure if there is a street in the list. Mutually exclusive field with street field.', is_array: true })
       expose(:postcode, documentation: { type: String, desc: 'Postcode of the place.' })
       expose(:city, documentation: { type: String, desc: 'City of the place.' })
       expose(:state, documentation: { type: String, desc: 'State of the place.' })

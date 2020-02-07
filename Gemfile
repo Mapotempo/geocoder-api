@@ -10,7 +10,7 @@ gem 'rack-server-pages'
 gem 'grape'
 gem 'grape_logging'
 gem 'grape-entity'
-gem 'grape-swagger'
+gem 'grape-swagger', '~> 0.34.1'
 gem 'grape-swagger-entity'
 
 gem 'rack-contrib'
