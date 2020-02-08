@@ -22,10 +22,12 @@ module Api
   module V01
     class APIBase < Grape::API
 
-      def self.services(api_key)
+      def self.profile(api_key)
         raise 'Profile missing in configuration' unless ::GeocoderWrapper.config[:profiles].key? ::GeocoderWrapper.access[api_key][:profile]
 
-        ::GeocoderWrapper.config[:profiles][::GeocoderWrapper.access[api_key][:profile]]
+        ::GeocoderWrapper.config[:profiles][::GeocoderWrapper.access[api_key][:profile]].deep_merge(
+          ::GeocoderWrapper.access[api_key].except(:profile)
+        )
       end
     end
   end

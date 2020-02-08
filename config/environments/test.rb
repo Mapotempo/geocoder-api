@@ -45,6 +45,7 @@ module GeocoderWrapper
   DEMO = Wrappers::Demo.new(CACHE)
 
   PARAMS_LIMIT = { locations: 10000 }
+  QUOTAS = [{ daily: 100000, monthly: 1000000, yearly: 10000000 }] # Only taken into account if REDIS_COUNT
   REDIS_COUNT = Redis.new # Fake redis
 
   @@c = {
@@ -60,7 +61,8 @@ module GeocoderWrapper
           fra: ADDOK_FRA,
         },
         geocoder_fallback: DEMO,
-        params_limit: PARAMS_LIMIT
+        params_limit: PARAMS_LIMIT,
+        quotas: QUOTAS, # Only taken into account if REDIS_COUNT
       }
     },
     ruby_geocode: {
