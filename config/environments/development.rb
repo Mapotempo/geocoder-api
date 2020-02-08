@@ -44,6 +44,7 @@ module GeocoderWrapper
   IGN = Wrappers::Ign.new(ENV['IGN_API_KEY'], CACHE)
 
   PARAMS_LIMIT = { locations: 10000 }
+  QUOTAS = [{ daily: 100000, monthly: 1000000, yearly: 10000000 }] # Only taken into account if REDIS_COUNT
   REDIS_COUNT = ENV['REDIS_COUNT_HOST'] && Redis.new(host: ENV['REDIS_COUNT_HOST'])
 
   @@c = {
@@ -57,6 +58,7 @@ module GeocoderWrapper
         },
         geocoder_fallback: OPENCAGEDATA,
         params_limit: PARAMS_LIMIT,
+        quotas: QUOTAS, # Only taken into account if REDIS_COUNT
         map: {
           url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
           options: { zoom: 18, attribution: 'Map data &copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors' }

@@ -116,6 +116,18 @@ class Api::V01::UnitaryTest < Minitest::Test
     end
   end
 
+  def test_use_quotas
+    patch '/0.1/geocode', {api_key: 'bulk_limit', query: 'Place Pey Berland, Bordeaux', country: 'demo'}
+    assert last_response.ok?, last_response.body
+    patch '/0.1/geocode', {api_key: 'bulk_limit', query: 'Place Pey Berland, Bordeaux', country: 'demo'}
+    assert_equal 429, last_response.status
+    assert JSON.parse(last_response.body)['message'].include?('Too many daily requests')
+    assert_equal({ "Content-Type" => "application/json; charset=UTF-8",
+                   "X-RateLimit-Limit" => 1,
+                   "X-RateLimit-Remaining" => 0,
+                   "X-RateLimit-Reset" => Time.now.utc.to_date.next_day.to_time.to_i }, last_response.headers)
+  end
+
   private
 
   def _test_geocode_from_full_text(country)

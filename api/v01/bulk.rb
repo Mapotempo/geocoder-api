@@ -85,16 +85,15 @@ module Api
         }
         post do
           if !params.key?('geocodes') || !params['geocodes'].is_a?(Array)
-            error!({status: 'Missing or invalid field "geocodes".'}, 400)
+            error!('Missing or invalid field "geocodes".', 400)
           end
-          count :geocode
-
-          params_limit = APIBase.services(params[:api_key])[:params_limit].merge(GeocoderWrapper.access[params[:api_key]][:params_limit] || {})
-          if !params_limit[:locations].nil?
-            error!({status: "Location limit (#{params_limit[:locations]}) exceeded for api key #{params[:api_key]}"}, 400) if params['geocodes'].count > params_limit[:locations]
+          params_limit = APIBase.profile(params[:api_key])[:params_limit]
+          if params_limit[:locations] && params[:geocodes].count > params_limit[:locations]
+            error!({message: "Exceeded \"geocodes\" limit authorized for your account: #{params_limit[:locations]}. Please contact support or sales to increase limits."}, 413)
           end
+          count :geocode, true, params[:geocodes].count
 
-          results = GeocoderWrapper.wrapper_geocodes(APIBase.services(params[:api_key]), params[:geocodes])
+          results = GeocoderWrapper.wrapper_geocodes(APIBase.profile(params[:api_key]), params[:geocodes])
           if results
             count_incr :geocode, transactions: results.size
             results = { geocodes: results }
@@ -126,14 +125,13 @@ module Api
         }
         post do
           if !params.key?('reverses') || !params['reverses'].is_a?(Array)
-            error!('400 Bad Request. Missing or invalid field "reverses".', 400)
+            error!('Missing or invalid field "reverses".', 400)
           end
-          count :reverse
-
-          params_limit = APIBase.services(params[:api_key])[:params_limit].merge(GeocoderWrapper.access[params[:api_key]][:params_limit] || {})
-          if !params_limit[:locations].nil?
-            error!({status: "Location limit (#{params_limit[:locations]}) exceeded for api key #{params[:api_key]}"}, 400) if params['reverses'].count > params_limit[:locations]
+          params_limit = APIBase.profile(params[:api_key])[:params_limit]
+          if params_limit[:locations] && params[:reverses].count > params_limit[:locations]
+            error!({message: "Exceeded \"reverses\" limit authorized for your account: #{params_limit[:locations]}. Please contact support or sales to increase limits."}, 413)
           end
+          count :reverse, true, params[:reverses].count
 
           params['reverses'].each{ |param|
             begin
@@ -144,7 +142,7 @@ module Api
               param[:lng] = nil
             end
           }
-          results = GeocoderWrapper.wrapper_reverses(APIBase.services(params[:api_key]), params[:reverses])
+          results = GeocoderWrapper.wrapper_reverses(APIBase.profile(params[:api_key]), params[:reverses])
           if results
             count_incr :reverse, transactions: results.size
             results = { reverses: results }
