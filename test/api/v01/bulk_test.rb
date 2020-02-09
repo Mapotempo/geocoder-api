@@ -42,11 +42,11 @@ class Api::V01::BulkTest < Minitest::Test
     assert 0 < features.size
   end
 
-  def test not_geocodes_without_country
+  def test_geocodes_without_country
     post '/0.1/geocode', {api_key: 'demo', geocodes: [{query: 'Place Pey Berland, Bordeaux'}]}
     assert last_response.ok?, last_response.body
     features = JSON.parse(last_response.body)['geocodes']
-    assert_equal 0, features.size
+    assert_equal 1, features.size
   end
 
   def test_reverses
