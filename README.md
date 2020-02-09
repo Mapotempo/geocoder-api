@@ -1,7 +1,7 @@
 Geocoder API
 ============
-Offers an unified API for multiple geocoders like [Addok](https://github.com/etalab/addok), OpenCageData, Here, Google based on countries distribution.
-Build in Ruby with a [Grape](https://github.com/intridea/grape) REST [swagger](http://swagger.io/) API compatible with [geocodejson-spec](https://github.com/yohanboniface/geocodejson-spec).
+Offers an unified API for multiple geocoders like [Addok](https://github.com/etalab/addok), OpenCageData, Here, Google based on countries distribution. The main idea of this API is to define some specific geocoder for some countries and a fallback geocoder for all other countries.
+Build in Ruby with a [Grape](https://github.com/intridea/grape) REST [swagger](http://swagger.io/) API compatible with [geocodejson-spec](https://github.com/yohanboniface/geocodejson-spec). Internal use of [Geocoder Gem](https://github.com/alexreisner/geocoder).
 
 Prerequisite
 ============
@@ -35,6 +35,7 @@ Adjust config/environments files.
 Running
 =======
 
+In development mode, you can launch only the api service (in this case all necesseray geocoder services will be called online with your dedicated api keys if needed):
 ```
 bundle exec rackup [-p 8558]
 ```
@@ -44,13 +45,25 @@ And in production mode:
 APP_ENV=production bundle exec rackup [-p 8558]
 ```
 
+Docker
+======
+
+If you need to used local geocoders (like Addok), docker is recommanded to launch all required services:
+```
+cd docker/
+export REGISTRY=registry.mapotempo.com/
+docker-compose -p geocoder up
+```
+
+The `docker-compose.yml` provided file allows to launch several services including a Addok instance for France and another for Luxembourg.
+
 Usage
 =====
 
 The API is defined in Swagger format at
 http://localhost:8558/swagger_doc
 and can be tested with Swagger-UI
-https://swagger.mapotempo.com/?url=https://geocode.mapotempo.com/swagger_doc
+https://swagger.mapotempo.com/?url=https://geocoder.mapotempo.com/swagger_doc
 
 Geocoding and Address completion
 ---------------------------------
@@ -161,8 +174,8 @@ Examples
 
 Geocode
 -------
-[Geocode full text address](http://geocode.mapotempo.com/geocode.html)
+[Geocode full text address](http://geocoder.mapotempo.com/geocode.html)
 
 Reverse geocode
 ---------------
-[Get address from lat/lng](http://geocode.mapotempo.com/reverse.html)
+[Get address from lat/lng](http://geocoder.mapotempo.com/reverse.html)
