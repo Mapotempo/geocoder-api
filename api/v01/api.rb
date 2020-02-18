@@ -23,6 +23,7 @@ require './api/v01/bulk'
 require './api/v01/map'
 
 require 'date'
+require 'active_support/core_ext/string/conversions'
 
 class QuotaExceeded < StandardError
   attr_reader :data
@@ -37,8 +38,10 @@ module Api
   module V01
     class Api < Grape::API
       before do
-        if !params || !::GeocoderWrapper.access(true).keys.include?(params[:api_key])
+        if !params || !GeocoderWrapper.access(true).keys.include?(params[:api_key])
           error!('401 Unauthorized', 401)
+        elsif GeocoderWrapper.access[params[:api_key]][:expire_at]&.to_date&.send(:<, Date.today)
+          error!('402 Subscription expired', 402)
         end
       end
 

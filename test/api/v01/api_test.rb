@@ -1,4 +1,4 @@
-# Copyright © Mapotempo, 2015
+# Copyright © Mapotempo, 2020
 #
 # This file is part of Mapotempo.
 #
@@ -17,26 +17,22 @@
 #
 require './test/test_helper'
 
-require './api/root'
-
-class Api::RootTest < Minitest::Test
+class Api::V01::ApiTest < Minitest::Test
   include Rack::Test::Methods
 
   def app
     Api::Root
   end
 
-  def test_ping
-    get '/ping'
-    assert last_response.ok?, last_response.body
-    assert_equal '"pong"', last_response.body
+  def test_should_not_access
+    get '/0.1/geocode', api_key: 'not', query: 'Place Pey Berland, Bordeaux', country: 'demo'
+    assert_equal 401, last_response.status
+    assert_equal '401 Unauthorized', JSON.parse(last_response.body)['error']
   end
 
-  def test_release
-    get '/0.1/release', api_key: 'demo'
-    assert last_response.ok?, last_response.body
-    body = JSON.parse(last_response.body)
-    assert_equal 'CI_RELEASE', body['hash']
-    assert_equal 1, body['geocoders'].count
+  def test_should_not_access_if_expired
+    get '/0.1/geocode', api_key: 'expired', query: 'Place Pey Berland, Bordeaux', country: 'demo'
+    assert_equal 402, last_response.status
+    assert_equal '402 Subscription expired', JSON.parse(last_response.body)['error']
   end
 end
