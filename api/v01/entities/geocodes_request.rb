@@ -1,4 +1,4 @@
-# Copyright © Mapotempo, 2016
+# Copyright © Mapotempo, 2015
 #
 # This file is part of Mapotempo.
 #
@@ -15,20 +15,17 @@
 # along with Mapotempo. If not, see:
 # <http://www.gnu.org/licenses/agpl.html>
 #
-require 'grape'
-require 'grape-swagger'
+require './api/v01/entities/geocodes_request_feature'
+
 
 module Api
   module V01
-    class APIBase < Grape::API
-
-      def self.profile(api_key)
-        raise 'Profile missing in configuration' unless ::GeocoderWrapper.config[:profiles].key? ::GeocoderWrapper.access[api_key][:profile]
-
-        ::GeocoderWrapper.config[:profiles][::GeocoderWrapper.access[api_key][:profile]].deep_merge(
-          ::GeocoderWrapper.access[api_key].except(:profile)
-        )
+    class GeocodesRequest < Grape::Entity
+      def self.entity_name
+        'GeocodesRequest'
       end
+
+      expose(:geocodes, using: GeocodesRequestFeature, documentation: { type: GeocodesRequestFeature, desc: 'Data to be geocoded.', is_array: true, param_type: 'form' })
     end
   end
 end
