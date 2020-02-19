@@ -1,0 +1,14 @@
+language: ruby
+
+rvm:
+  - 2.3.3
+
+cache: bundler
+
+before_install:
+  - sudo apt-get update
+  - sudo apt-get install -y git build-essential zlib1g-dev gdal-bin zlib1g libsqlite3-mod-spatialite libsqlite3-dev libspatialite-dev
+  - gem install bundler
+
+script:
+  - bundle exec rake test
