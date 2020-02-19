@@ -1,4 +1,4 @@
-Layout/ParameterAlignment:
+Metrics/LineLength:
   Enabled: false
 
 Layout/SpaceBeforeBlockBraces:
@@ -17,6 +17,9 @@ Metrics/PerceivedComplexity:
   Enabled: false
 
 Metrics/CyclomaticComplexity:
+  Enabled: false
+
+Layout/AlignParameters:
   Enabled: false
 
 Style/DoubleNegation:
@@ -40,9 +43,6 @@ Layout/SpaceInsideHashLiteralBraces:
 Style/NegatedIf:
   Enabled: false
 
-Layout/FirstHashElementIndentation:
-  Enabled: false
-
 Style/NumericLiterals:
   Enabled: false
 
@@ -58,7 +58,7 @@ Style/IfUnlessModifier:
 Layout/CommentIndentation:
   Enabled: false
 
-Layout/FirstArrayElementIndentation:
+Layout/IndentFirstHashElement:
   Enabled: false
 
 Style/ClassAndModuleChildren:
@@ -80,10 +80,4 @@ Style/BlockDelimiters:
   Enabled: false
 
 Style/RedundantSelf:
-  Enabled: false
-
-Style/SymbolArray:
-  Enabled: false
-
-Style/Documentation:
   Enabled: false

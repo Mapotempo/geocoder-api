@@ -17,7 +17,9 @@
 #
 require './api/v01/api_base'
 require './api/geojson_formatter'
+require './api/v01/entities/geocodes_request'
 require './api/v01/entities/geocodes_result'
+require './api/v01/entities/reverses_request'
 require './api/v01/entities/reverses_result'
 require './api/v01/entities/status'
 
@@ -67,6 +69,9 @@ module Api
       resource :geocode do
         desc 'Geocode from bulk json address. From full text or splited in fields.', {
           nickname: 'geocodes',
+          params: GeocodesRequest.documentation.deep_merge(
+            geocodes: { required: true }
+          ),
           success: GeocodesResult,
           failures: [
             {code: 400, model: Status}
@@ -78,13 +83,6 @@ module Api
             'text/csv; charset=UTF-8'
           ]
         }
-
-        params do
-          requires :geocodes, type: Array, desc: 'Data to be geocoded.', documentation: {param_type: 'body'} do
-            use :geocode_unitary_params, type: 'body'
-          end
-        end
-
         post do
           if !params.key?('geocodes') || !params['geocodes'].is_a?(Array)
             error!('Missing or invalid field "geocodes".', 400)
@@ -94,6 +92,7 @@ module Api
             error!({message: "Exceeded \"geocodes\" limit authorized for your account: #{params_limit[:locations]}. Please contact support or sales to increase limits."}, 413)
           end
           count :geocode, true, params[:geocodes].count
+
           results = GeocoderWrapper.wrapper_geocodes(APIBase.profile(params[:api_key]), params[:geocodes])
           if results
             count_incr :geocode, transactions: results.size
@@ -113,6 +112,9 @@ module Api
       resource :reverse do
         desc 'Reverse geocode from bulk json address.', {
           nickname: 'reverses',
+          params: ReversesRequest.documentation.deep_merge(
+            reverses: { required: true }
+          ),
           success: ReversesResult,
           produces: [
             'application/json; charset=UTF-8',
@@ -121,13 +123,6 @@ module Api
             'text/csv; charset=UTF-8'
           ]
         }
-
-        params do
-          requires :reverses, type: Array, desc: 'Data to be reversed.', documentation: {param_type: 'body'} do
-            use :reverse_unitary_params
-          end
-        end
-
         post do
           if !params.key?('reverses') || !params['reverses'].is_a?(Array)
             error!('Missing or invalid field "reverses".', 400)
