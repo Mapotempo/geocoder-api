@@ -50,14 +50,7 @@ APP_ENV=production bundle exec rackup [-p 8558]
 Docker
 ======
 
-If you need to used local geocoders (like Addok), docker is recommanded to launch all required services:
-```
-cd docker/
-export REGISTRY=registry.mapotempo.com/
-docker-compose -p geocoder up
-```
-
-The `docker-compose.yml` provided file allows to launch several services including a Addok instance for France and another for Luxembourg.
+See `docker/README.md`
 
 Usage
 =====
