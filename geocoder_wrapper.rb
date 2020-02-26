@@ -21,7 +21,7 @@ module GeocoderWrapper
   end
 
   def self.access(force_load = false)
-    load './config/custom/access.rb' if force_load
+    load config[:access_by_api_key][:file] || './config/access.rb' if force_load
     @access_by_api_key
   end
 

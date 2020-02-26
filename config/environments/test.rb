@@ -51,6 +51,9 @@ module GeocoderWrapper
     product_title: 'Geocoder API',
     product_contact_email: 'tech@mapotempo.com',
     product_contact_url: 'https://github.com/Mapotempo/geocoder-api',
+    access_by_api_key: {
+      file: './config/access.rb'
+    },
     profiles: {
       standard: {
         geocoders: {
