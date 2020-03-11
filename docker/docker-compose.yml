@@ -3,7 +3,7 @@ services:
   api:
     image: ${REGISTRY}mapotempo-${EDT:-ce}/geocoder-api:${GEOCODER_VERSION:-latest}
     ports:
-      - 8558:8558
+      - 8558:80
     volumes:
       - ./production.rb:/srv/app/config/environments/production.rb
       - ./access.rb:/srv/app/config/access.rb

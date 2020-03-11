@@ -1,33 +1,35 @@
-FROM ruby:2.3-slim as rake
-
-ENV LANG C.UTF-8
-
-COPY . /srv/app
-WORKDIR /srv/app
-# Install app
-RUN apt-get update > /dev/null && \
-  apt install -y git build-essential zlib1g-dev gdal-bin \
-    zlib1g libsqlite3-mod-spatialite libsqlite3-dev \
-    libspatialite-dev
-
-RUN bundle check --path vendor/bundle || bundle install --full-index --without development --path vendor/bundle
-
-# Final image
-FROM ruby:2.3-slim
-
-ENV LANG C.UTF-8
-ENV RAILS_ENV production
-ENV REDIS_HOST redis-cache
+FROM phusion/passenger-ruby25
 
 LABEL maintainer="Mapotempo <tech@mapotempo.com>"
 
-VOLUME /srv/app/poly
-
-COPY --from=rake /srv/app /srv/app
-COPY --from=rake /usr/local/ /usr/local/
-COPY --from=rake /usr/lib/x86_64-linux-gnu/ /usr/lib/x86_64-linux-gnu/
-
+ADD . /srv/app
 WORKDIR /srv/app
-EXPOSE 8558
 
-CMD ["bundle", "exec", "rake", "server"]
+# Install app
+ENV RAILS_ENV production
+ENV REDIS_HOST redis-cache
+
+RUN apt-get update && \
+  apt-get install -y git build-essential zlib1g-dev gdal-bin \
+          zlib1g libsqlite3-mod-spatialite libsqlite3-dev \
+          libspatialite-dev libnginx-mod-http-headers-more-filter && \
+  gem install bundler --version 2 && \
+  bundle check || bundle install --full-index --without test development -j $(nproc)
+
+# Cleanup Debian packages
+RUN apt-get remove -y git build-essential zlib1g-dev gdal-bin \
+            libsqlite3-dev libspatialite-dev && \
+  apt-get autoremove -y && \
+  apt-get clean && \
+  echo -n > /var/lib/apt/extended_states && \
+  rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/*
+
+# Enable Nginx and Passenger
+RUN rm -f /etc/service/nginx/down
+
+# Enable app
+RUN rm /etc/nginx/sites-enabled/default
+ADD docker/env.d/* /etc/nginx/main.d/
+ADD docker/webapp.conf /etc/nginx/sites-enabled/
+
+VOLUME /srv/app/poly
