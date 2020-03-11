@@ -31,3 +31,6 @@ build/
 .idea/*
 .ruby-gemset
 .ruby-version
+
+# Redis
+*.aof
