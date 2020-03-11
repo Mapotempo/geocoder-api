@@ -8,12 +8,13 @@ services:
     ports:
       - "8081:80" # HOST:CONTAINER, edit only HOST part
     volumes:
-        - ./production.rb:/srv/app/config/environments/production.rb
-        - ./production.rb:/srv/app/config/environments/development.rb
+        - ../config/environments/production.rb:/srv/app/config/environments/production.rb
+        - ../config/access.rb:/srv/app/config/access.rb
         - ./poly:/srv/app/poly
     restart: always
     links:
       - redis-cache
+      - redis-count
       - addok-fr
       - addok-lu
     environment:
@@ -22,6 +23,12 @@ services:
   redis-cache:
     image: redis:${REDIS_VERSION:-3.2-alpine}
     command: redis-server --save ""
+
+  redis-count:
+    image: redis:${REDIS_VERSION:-3.2-alpine}
+    volumes:
+      - ./data-count:/data
+    command: redis-server --appendonly yes
 
   # France
 
