@@ -1,3 +1,12 @@
+# 1.1.0
+- ability to count api calls
+- add parameters limits
+- access file without reloading app
+- refactor js/html sdk
+
+# 1.0.3
+- here bulk implementation & refactor ruby geocoders
+
 # 1.0.2
 - here complete implementation
 - demo with different api key
