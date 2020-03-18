@@ -113,7 +113,8 @@ GEM
       rack (>= 0.4)
     rack-contrib (1.8.0)
       rack (~> 1.4)
-    rack-cors (1.0.3)
+    rack-cors (1.0.6)
+      rack (>= 1.6.0)
     rack-server-pages (0.1.0)
       rack
     rack-test (0.6.3)
