@@ -1,3 +1,9 @@
+# 1.1.1
+- use ruby 2.5
+- ability to set count quotas
+- release endpoint
+- ability to set expire at on api key
+
 # 1.1.0
 - ability to count api calls
 - add parameters limits
