@@ -19,8 +19,9 @@ require './wrappers/wrapper'
 
 require 'csv'
 require 'rest-client'
-#RestClient.log = $stdout
+RestClient.log = $stdout
 require 'ostruct'
+require 'logger'
 
 module Wrappers
   class Addok < Wrapper
@@ -29,9 +30,14 @@ module Wrappers
       @url = url
       @country = country
       @point_in_polygon = point_in_polygon
+
+      @logger = Logger.new(STDOUT)
+      @logger.level = Logger::DEBUG
     end
 
     def geocode(params, limit = 10)
+      @logger.debug '####### ADDOK: UNITARY ########'
+      @logger.debug "params - #{params}"
       addok_geocode(params, limit, false)
     end
 
@@ -63,6 +69,8 @@ module Wrappers
     GEOCODES_SLICE_SIZE = 1000
 
     def geocodes(list_params)
+      @logger.debug '######## ADDOK: BULK #######'
+      @logger.debug "params - #{list_params}"
       slice_number = list_params.size / GEOCODES_SLICE_SIZE
 
       list_params.each_slice(GEOCODES_SLICE_SIZE).each_with_index.collect{ |slice_params, slice|
@@ -76,9 +84,11 @@ module Wrappers
             key = [:addok, :geocode, Digest::MD5.hexdigest(Marshal.dump(p))]
             r = @cache.read(key)
             if !r
+              @logger.debug 'BULK: Not using cache'
               csv << [p[:q0], p[:q], params[:ref]]
               csv_index_p << [index, p]
             else
+              @logger.debug 'BULK: using cache'
               r[:ref] = params[:ref]
               results[index] = r
             end
@@ -91,10 +101,12 @@ module Wrappers
           addok_geocodes("#{search}/csv", csv_string, ['q0'], ['q']).each{ |result|
             index, p = csv_index_p.shift
             results[index] = result
+            @logger.debug 'BULK: writting cache'
             @cache.write([:addok, :geocode, Digest::MD5.hexdigest(Marshal.dump(p))], result)
           }
         end
 
+        @logger.debug "###############\n"
         results
       }.flatten(1)
     end
@@ -144,6 +156,7 @@ module Wrappers
 
       json = @cache.read(key)
       if !json
+        @logger.debug 'UNITARY: not using cache'
         p = {
           limit: limit,
           autocomplete: complete ? 1 : 0,
@@ -153,6 +166,9 @@ module Wrappers
         }.merge(flatten_param(params))
 
         search = ENV['APP_ENV'] != 'production' ? '/search' : '/search2steps'
+        @logger.debug "UNITARY: pluggin endpoint #{search}"
+        @logger.debug "UNITARY: params #{p}"
+        @logger.debug "\n\n"
         response = RestClient.get(@url + search, {params: p}) { |response, request, result, &block|
           case response.code
           when 200
@@ -163,11 +179,15 @@ module Wrappers
             raise response
           end
         }
+        @logger.debug "\n\n"
         json = JSON.parse(response, object_class: OpenStruct)
         @cache.write(key, json)
       end
 
-      map_spec(json)
+      results = map_spec(json)
+      @logger.debug "UNITARY: results - #{results}"
+      @logger.debug "###############\n"
+      results
     end
 
     def map_spec(json)
@@ -216,6 +236,9 @@ module Wrappers
         columns0: columns0 && columns0.join(',')
       }.delete_if{ |k, v| v.nil? }
 
+      @logger.debug "BULK: pluggin endpoint #{@url + url_part}"
+      @logger.debug "BULK: params #{post} \n\n"
+
       response = RestClient::Request.execute(method: :post, url: @url + url_part, timeout: nil, payload: post) { |response, request, result, &block|
         case response.code
         when 200
@@ -224,6 +247,9 @@ module Wrappers
           raise [response.code, response].select{ |t| t && t != '' }.join(' ')
         end
       }
+
+      @logger.debug "\n\n"
+
       result = []
       CSV.parse(response.force_encoding('utf-8'), headers: true, quote_char: '"') { |p|
         map = map_from_csv(p)
