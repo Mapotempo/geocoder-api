@@ -35,7 +35,7 @@ require 'byebug'
 
 module GeocoderWrapper
   Geocoder::Configuration.always_raise = :all
-  CACHE = CacheManager.new(ActiveSupport::Cache::FileStore.new(File.join(Dir.tmpdir, 'geocoder'), namespace: 'geocoder', expires_in: 60*60*24*1))
+  CACHE = CacheManager.new(ActiveSupport::Cache::NullStore.new)
 
   ADDOK_FRA = Wrappers::Addok.new(CACHE, 'http://api-adresse.data.gouv.fr', 'France', 'poly/france.kml', PointInPolygon.new('./poly/france-ile-de-batz.sqlite'))
   OPENCAGEDATA = Wrappers::RubyGeocoderOpencagedata.new(CACHE)
