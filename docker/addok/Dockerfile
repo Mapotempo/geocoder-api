@@ -37,6 +37,8 @@ RUN apt-get -q update && \
 
 EXPOSE 7878
 
+ADD ./addok.conf /etc/addok/addok.conf
+
 ENTRYPOINT ["gunicorn"]
 
 CMD ["--bind", "0.0.0.0:7878", "--timeout", "7200", "--workers", "8", "addok.http.wsgi"]
