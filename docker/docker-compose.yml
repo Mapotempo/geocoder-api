@@ -44,6 +44,10 @@ services:
     volumes:
       - /srv/docker-data/geocoder-api/addok-fr.conf:/etc/addok/addok.conf
       - /srv/docker-data/geocoder-api/addresses-fr:/addresses
+    environment:
+      ADDOK_HOST: "redis-server-fr"
+      ADDOK_ATTRIBUTION: "BANO"
+      ADDOK_LICENCE: "ODbL"
     deploy:
       update_config:
         order: start-first
@@ -70,6 +74,10 @@ services:
     volumes:
       - /srv/docker-data/geocoder-api/addok-lu.conf:/etc/addok/addok.conf
       - /srv/docker-data/geocoder-api/addresses-lu:/addresses
+    environment:
+      ADDOK_HOST: "redis-server-lu"
+      ADDOK_ATTRIBUTION: "Grand-Duché of Luxembourg"
+      ADDOK_LICENCE: "CC0"
     deploy:
       update_config:
         order: start-first
