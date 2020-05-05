@@ -34,3 +34,7 @@ build/
 
 # Redis
 *.aof
+
+# builds
+docker/data-fr/dump.rdb
+poly/france.sqlite
