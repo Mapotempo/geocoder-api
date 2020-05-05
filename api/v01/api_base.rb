@@ -34,11 +34,11 @@ module Api
         params :geocode_unitary_params do |options|
           requires :country, type: String, desc: 'Simple country name, ISO 3166-alpha-2 or ISO 3166-alpha-3.'
           optional :housenumber, type: String
-          optional :street, type: String, allow_blank: false
+          optional :street, type: String, allow_blank: true
           optional :maybe_street, type: Array[String], desc: 'One undetermined entry of the array is the street, selects the good one for the geocoding process. Need to add an empty entry as alternative if you are unsure if there is a street in the list. Mutually exclusive field with street field.', documentation: { param_type: options[:type] || 'query'}
           mutually_exclusive :street, :maybe_street
-          optional :postcode, type: String, allow_blank: false
-          optional :city, type: String, allow_blank: false
+          optional :postcode, type: String, allow_blank: true
+          optional :city, type: String, allow_blank: true
           optional :state, type: String
           optional :query, type: String, allow_blank: false, desc: 'Full text, free form, address search.'
           at_least_one_of :query, :postcode, :city, :street

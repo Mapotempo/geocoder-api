@@ -71,6 +71,7 @@ module GeocoderWrapper
       here: ['APP_ID', 'APP_CODE'],
       opencagedata: 'API_KEY'
     },
+    addok_endpoint: '/search2steps',
     redis_count: REDIS_COUNT,
   }
 end
