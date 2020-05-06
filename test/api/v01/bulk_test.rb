@@ -165,4 +165,17 @@ class Api::V01::BulkTest < Minitest::Test
                    "X-RateLimit-Remaining" => 0,
                    "X-RateLimit-Reset" => Time.now.utc.to_date.next_month.to_time.to_i }, last_response.headers)
   end
+
+  def test_should_geocode_when_at_least_one_of_query_postcode_city_street
+    geocodes = [
+      { street: 'Place Pey Berland', postcode: nil, city: nil, country: 'fr' },
+      { street: nil, postcode: '33000', city: nil, country: 'fr' },
+      { street: nil, postcode: nil, city: 'bordeaux', country: 'fr' },
+    ]
+    post '/0.1/geocode', { api_key: 'demo', geocodes: geocodes }
+
+    body = JSON.parse(last_response.body)
+    assert last_response.ok?, last_response.body
+    assert body["geocodes"].count, geocodes.count
+  end
 end

@@ -121,7 +121,7 @@ module Wrappers
     private
 
     def flatten_param(params)
-      if !params[:query] && params[:city]
+      if !params[:query] && params[:city] && GeocoderWrapper.config[:addok_endpoint] == '/search2steps'
         {
           q0: [params[:postcode], params[:city]].compact.join(' '),
           q: gen_streets(params).collect{ |street| [params[:housenumber], street].compact.join(' ') }.join('|')
@@ -152,8 +152,7 @@ module Wrappers
           type: (params[:type] if ['house', 'street'].include?(params[:type]))
         }.merge(flatten_param(params))
 
-        search = ENV['APP_ENV'] != 'production' ? '/search' : '/search2steps'
-        response = RestClient.get(@url + search, {params: p}) { |response, request, result, &block|
+        response = RestClient.get(@url + GeocoderWrapper.config[:addok_endpoint], {params: p}) { |response, request, result, &block|
           case response.code
           when 200
             response

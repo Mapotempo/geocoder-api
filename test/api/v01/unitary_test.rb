@@ -39,22 +39,42 @@ class Api::V01::UnitaryTest < Minitest::Test
 
   def test_should_not_geocode_without_country
     get '/0.1/geocode', {api_key: 'demo', query: 'Place Pey Berland, Bordeaux'}
-    assert !last_response.ok?, last_response.body
+    assert last_response.status, 400
   end
 
   def test_should_not_geocode_without_query_or_city
     get '/0.1/geocode', {api_key: 'demo', country: 'France'}
-    assert !last_response.ok?, last_response.body
+    assert last_response.status, 400
   end
 
   def test_should_not_geocode_with_query_and_city
     get '/0.1/geocode', {api_key: 'demo', query: 'Place Pey Berland', city: 'Bordeaux'}
-    assert !last_response.ok?, last_response.body
+    assert last_response.status, 400
   end
 
   def test_should_geocode_with_maybe_street
     get '/0.1/geocode', {api_key: 'demo', maybe_street: ['foo', 'bar', 'Place Pey Berland'], city: 'Bordeaux', country: 'demo'}
     assert last_response.ok?, last_response.body
+  end
+
+  def test_should_not_geocode_when_not_at_least_one_of_query_postcode_city_street
+    get '/0.1/geocode', { api_key: 'demo', country: 'fr' }
+    assert last_response.status, 400
+  end
+
+  def test_should_geocode_when_at_least_one_of_query_postcode_city_street
+    [
+      { query: 'Place Pey Berland' },
+      { street: 'Place Pey Berland', postcode: nil, city: nil},
+      { street: nil, postcode: '33000', city: nil},
+      { street: nil, postcode: nil, city: 'bordeaux'},
+    ].each do |attr|
+      get '/0.1/geocode', { api_key: 'demo', country: 'fr' }.merge(attr)
+      body = JSON.parse(last_response.body)
+
+      assert body["geocoding"]["query"], attr.flat_map{ |key, value| value }.compact.first
+      assert last_response.ok?, last_response.body
+    end
   end
 
   def test_should_reverse
