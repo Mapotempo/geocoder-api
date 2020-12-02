@@ -2,18 +2,6 @@
 
 PROJECT=$1
 
-die() {
-  echo $*
-  exit 1
-}
-
-set -e
-
-[[ -z "${PROJECT}" ]] && die "You must pass a project name in parameter. For example: $0 geocoder"
-
-rm -f ${GEOCODER_DATA_DIR}data-lu/*
-docker service update ${PROJECT}_redis-server-lu
-
 wget https://download.data.public.lu/resources/adresses-georeferencees-bd-adresses/20170918-053115/addresses.geojson -O ${GEOCODER_DATA_DIR}addresses-lu/addresses.geojson
 
 jq -c '.features |
@@ -35,29 +23,21 @@ map({type: "municipality", name: .name, city: .name, postcode: .postcode, lat: (
 cat ${GEOCODER_DATA_DIR}addresses-lu/cities.json ${GEOCODER_DATA_DIR}addresses-lu/streets.json > ${GEOCODER_DATA_DIR}addresses-lu/addresses.json
 
 echo "Creating Addok building service."
+
+ADDOK_HOST=redis-server-lu
+ADDOK_ATTRIBUTION="Grand-Duché of Luxembourg"
+ADDOK_LICENCE=CC0
+
 docker service create \
   --restart-condition=none \
-  --mount type=bind,source=${GEOCODER_DATA_DIR}addok-lu.conf,target=/etc/addok/addok.conf \
+  --mount type=bind,source=${GEOCODER_DATA_DIR}addok.conf,target=/etc/addok/addok.conf \
   --mount type=bind,source=${GEOCODER_DATA_DIR}addresses-lu,target=/addresses \
   --network ${PROJECT}_addok_lu \
   --network ${PROJECT}_redis_server_lu \
   --entrypoint /bin/bash \
   --name ${PROJECT}_build \
+  --env ADDOK_HOST=${ADDOK_HOST} \
+  --env ADDOK_ATTRIBUTION=${ADDOK_ATTRIBUTION} \
+  --env ADDOK_LICENCE=${ADDOK_LICENCE} \
   ${REGISTRY}mapotempo/addok:${ADDOK_VERSION:-latest} \
   -c 'addok batch /addresses/addresses.json'
-
-echo "Waiting for Addok building service to finish."
-while true;
-do
-  STATE=$(docker service ps -q ${PROJECT}_build --filter 'desired-state=Shutdown')
-  if [ -n "${STATE}" ]; then break; fi
-  sleep 1
-done
-echo "Cleanup Addok building service."
-docker service rm ${PROJECT}_build >/dev/null 2>&1
-
-echo "NGrams"
-docker exec $(docker ps -q -f name=${PROJECT}_addok-lu.1) addok ngrams
-
-echo "redis-cli"
-docker exec $(docker ps -q -f name=${PROJECT}_redis-server-lu.1) redis-cli BGSAVE
