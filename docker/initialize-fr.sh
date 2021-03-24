@@ -12,7 +12,7 @@ set -e
 [[ -z "${PROJECT}" ]] && die "You must pass a project name in parameter. For example: $0 geocoder"
 
 docker-compose -p ${PROJECT} rm -sf redis-server-fr
-rm -f data-fr/*
+docker-compose -p ${PROJECT} run --rm redis-server-fr rm -f data-fr/*
 docker-compose -p ${PROJECT} up -d redis-server-fr
 
 # Download and load BAN

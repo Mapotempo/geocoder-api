@@ -12,7 +12,7 @@ set -e
 [[ -z "${PROJECT}" ]] && die "You must pass a project name in parameter. For example: $0 geocoder"
 
 docker-compose -p ${PROJECT} rm -sf redis-server-lu
-rm -f data-lu/*
+docker-compose -p ${PROJECT} run --rm redis-server-lu rm -f data-lu/*
 docker-compose -p ${PROJECT} up -d redis-server-lu
 
 wget https://download.data.public.lu/resources/adresses-georeferencees-bd-adresses/20170918-053115/addresses.geojson -O addresses-lu/addresses.geojson
