@@ -4,16 +4,7 @@
 
 ```
 export REGISTRY='registry.mapotempo.com/'
-```
-
-### geocoder
-```
-docker build -f ./docker/Dockerfile -t ${REGISTRY}mapotempo-ce/geocoder-api:latest .
-```
-
-### addok
-```
-docker build -f ./docker/addok/Dockerfile -t ${REGISTRY}mapotempo/addok:latest .
+docker-compose -f docker-compose.yml -f docker-compose-build.yml build
 ```
 
 ## Running services
