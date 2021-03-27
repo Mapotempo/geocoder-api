@@ -1,0 +1,34 @@
+version: '3.7'
+services:
+  api:
+    deploy:
+      update_config:
+        order: start-first
+      restart_policy:
+        condition: any
+
+  # France
+  addok-fr:
+    deploy:
+      update_config:
+        order: start-first
+      restart_policy:
+        condition: any
+
+  redis-server-fr:
+    deploy:
+      restart_policy:
+        condition: any
+
+  # Luxemburg
+  addok-lu:
+    deploy:
+      update_config:
+        order: start-first
+      restart_policy:
+        condition: any
+
+  redis-server-lu:
+    deploy:
+      restart_policy:
+        condition: any
