@@ -8,11 +8,6 @@ services:
       - ./production.rb:/srv/app/config/environments/production.rb
       - ./access.rb:/srv/app/config/access.rb
       - ./poly:/srv/app/poly
-    deploy:
-      update_config:
-        order: start-first
-      restart_policy:
-        condition: any
     environment:
       APP_ENV: production # Swith to "development" for more traces
       REDIS_HOST: redis-cache
@@ -26,9 +21,6 @@ services:
   redis-cache:
     image: redis:${REDIS_VERSION:-3.2-alpine}
     command: redis-server --save ""
-    deploy:
-      restart_policy:
-        condition: any
     networks:
       - redis_cache
 
@@ -47,11 +39,6 @@ services:
       ADDOK_HOST: "redis-server-fr"
       ADDOK_ATTRIBUTION: "BANO"
       ADDOK_LICENCE: "ODbL"
-    deploy:
-      update_config:
-        order: start-first
-      restart_policy:
-        condition: any
     networks:
       - addok_fr
       - redis_server_fr
@@ -61,9 +48,6 @@ services:
     volumes:
       - ./data-fr:/data
     command: redis-server --save ""
-    deploy:
-      restart_policy:
-        condition: any
     networks:
       - redis_server_fr
 
@@ -76,11 +60,6 @@ services:
       ADDOK_HOST: "redis-server-lu"
       ADDOK_ATTRIBUTION: "Grand-Duché of Luxembourg"
       ADDOK_LICENCE: "CC0"
-    deploy:
-      update_config:
-        order: start-first
-      restart_policy:
-        condition: any
     networks:
       - addok_lu
       - redis_server_lu
@@ -90,9 +69,6 @@ services:
     volumes:
       - ./data-lu:/data
     command: redis-server --save ""
-    deploy:
-      restart_policy:
-        condition: any
     networks:
       - redis_server_lu
 

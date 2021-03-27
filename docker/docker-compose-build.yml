@@ -1,0 +1,14 @@
+version: '3.7'
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+
+  # France
+  addok-fr:
+    build: addok
+
+  # Luxemburg
+  addok-lu:
+    build: addok
