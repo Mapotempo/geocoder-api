@@ -13,7 +13,7 @@ docker build -f ./docker/Dockerfile -t ${REGISTRY}mapotempo-ce/geocoder-api:late
 
 ### addok
 ```
-docker build -f ./docker/addok/Dockerfile -t ${REGISTRY}mapotempo/addok:latest .
+docker build -t ${REGISTRY}mapotempo/addok:latest ./docker/addok
 ```
 
 ## Running services
