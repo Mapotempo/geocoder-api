@@ -39,17 +39,17 @@ class Api::V01::UnitaryTest < Minitest::Test
 
   def test_should_not_geocode_without_country
     get '/0.1/geocode', {api_key: 'demo', query: 'Place Pey Berland, Bordeaux'}
-    assert last_response.status, 400
+    assert 400, last_response.status
   end
 
   def test_should_not_geocode_without_query_or_city
     get '/0.1/geocode', {api_key: 'demo', country: 'France'}
-    assert last_response.status, 400
+    assert 400, last_response.status
   end
 
   def test_should_not_geocode_with_query_and_city
     get '/0.1/geocode', {api_key: 'demo', query: 'Place Pey Berland', city: 'Bordeaux'}
-    assert last_response.status, 400
+    assert 400, last_response.status
   end
 
   def test_should_geocode_with_maybe_street
@@ -59,7 +59,7 @@ class Api::V01::UnitaryTest < Minitest::Test
 
   def test_should_not_geocode_when_not_at_least_one_of_query_postcode_city_street
     get '/0.1/geocode', { api_key: 'demo', country: 'fr' }
-    assert last_response.status, 400
+    assert 400, last_response.status
   end
 
   def test_should_geocode_when_at_least_one_of_query_postcode_city_street
