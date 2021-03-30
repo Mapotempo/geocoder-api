@@ -81,7 +81,7 @@ http://localhost:8558/0.1/geocode.json?&api_key=demo&country=fr&query=2+Avenue+P
 ```
 
 Returns geocodejson (and geojson) valid result:
-```
+```json
 {
   "type":"FeatureCollection",
   "geocoding":{
@@ -122,7 +122,7 @@ Reverse:
 http://localhost:8558/0.1/reverse.json?api_key=demo&lat=44&lng=0
 ```
 
-```
+```json
 {
   "type": "FeatureCollection",
   "geocoding": {
