@@ -1,0 +1,21 @@
+name: CI test
+
+on:
+  push:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+      - run: sudo apt-get update -y > /dev/null
+      - name: Install lib
+        run: sudo apt-get install -y git build-essential zlib1g-dev gdal-bin zlib1g libsqlite3-mod-spatialite libsqlite3-dev libspatialite-dev > /dev/null
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.5.7
+          bundler-cache: true
+      - run: bundle exec rake test
