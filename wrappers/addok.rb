@@ -146,7 +146,7 @@ module Wrappers
       if !json
         p = {
           limit: limit,
-          autocomplete: complete ? 1 : 0,
+          autocomplete: complete ? 1 : '',
           lat: params['lat'],
           lon: params['lng'],
           type: (params[:type] if ['house', 'street'].include?(params[:type]))

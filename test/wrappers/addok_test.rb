@@ -96,4 +96,13 @@ class Wrappers::AddokTest < Minitest::Test
     assert v.include? 'addok'
   end
 
+  def test_no_autocomplete
+    rg = GeocoderWrapper::ADDOK_FRA
+    result = rg.geocode({city: '33000 Bordeaux', country: 'FR'}, limit = 1)
+    g = result[:features][0][:properties][:geocoding]
+    assert_equal 'Bordeaux', g[:city]
+    assert_equal 'city', g[:type]
+    assert_equal nil, g[:street]
+  end
+
 end if ENV['ADDOK_API']
