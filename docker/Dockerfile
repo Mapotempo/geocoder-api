@@ -1,4 +1,5 @@
-FROM phusion/passenger-ruby25
+# 1.0.13 is the latest version containing bundler 2
+FROM phusion/passenger-ruby25:1.0.13
 
 LABEL maintainer="Mapotempo <tech@mapotempo.com>"
 
