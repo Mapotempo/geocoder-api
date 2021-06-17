@@ -62,10 +62,15 @@ module GeocoderWrapper
         geocoder_fallback: OPENCAGEDATA,
         params_limit: PARAMS_LIMIT,
         quotas: QUOTAS, # Only taken into account if REDIS_COUNT
-        map: {
-          url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-          options: { zoom: 18, attribution: 'Map data &copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors' }
-        }
+        map: [
+          {
+            name: 'OpenStreetMap',
+            url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            options: { zoom: 18, attribution: 'Map data &copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors' },
+            # default: true,
+            # overlay: false
+          }
+        ]
       }
     },
     ruby_geocode: {
