@@ -20,6 +20,7 @@ module GeocoderWrapper
     # params_limit and quota overload values from profile
     'demo' => { profile: :standard },
     'bulk_limit' => { profile: :standard, params_limit: { locations: 2 }, quotas: [{ operation: :complete, daily: 1 }, { monthly: 2 }] },
+    'bulk_nil_quotas' => { profile: :quotas, params_limit: { locations: 2 }, quotas: [{ operation: :complete, daily: nil }] },
     'expired' => { profile: :standard, expire_at: '2000-01-01' }
   }
 end
