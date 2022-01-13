@@ -2,12 +2,12 @@
 FROM phusion/passenger-ruby25:1.0.13
 
 LABEL maintainer="Mapotempo <tech@mapotempo.com>"
+ARG BUNDLE_WITHOUT="development test"
 
 ADD . /srv/app
 WORKDIR /srv/app
 
 # Install app
-ENV RAILS_ENV production
 ENV REDIS_HOST redis-cache
 
 # untill phusion/passenger-ruby27
@@ -20,7 +20,7 @@ RUN apt-get update && \
           zlib1g libsqlite3-mod-spatialite libsqlite3-dev \
           libspatialite-dev libnginx-mod-http-headers-more-filter && \
   gem install bundler --version 2 && \
-  bundle check || bundle install --full-index --without test development -j $(nproc)
+  bundle check || bundle install --path vendor/bundle --full-index --without ${BUNDLE_WITHOUT} -j $(nproc)
 
 # Cleanup Debian packages
 RUN apt-get remove -y git build-essential zlib1g-dev gdal-bin \

@@ -1,21 +1,81 @@
 name: CI test
 
+env:
+  NB_SERVICES: ${{ secrets.NB_SERVICES }}
+  PROJECT: geocoder
+
 on:
   push:
   pull_request:
     types: [opened, synchronize, reopened]
 
 jobs:
-  test:
+  build:
+    if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
-    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v2
-      - run: sudo apt-get update -y > /dev/null
-      - name: Install lib
-        run: sudo apt-get install -y git build-essential zlib1g-dev gdal-bin zlib1g libsqlite3-mod-spatialite libsqlite3-dev libspatialite-dev > /dev/null
-      - uses: ruby/setup-ruby@v1
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Cache layers and gems
+        id: cache
+        uses: actions/cache@v2
         with:
-          ruby-version: 2.5.7
-          bundler-cache: true
-      - run: bundle exec rake test
+          path: |
+            vendor/bundle
+            /tmp/.buildx-cache
+          key: ${{ runner.os }}-${{ hashFiles('Gemfile.lock') }}
+      - name: Check cached gems
+        run: |
+          echo $(pwd)
+          echo $(ls -lh vendor/bundle)
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Build
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: docker/Dockerfile
+          build-args: |
+            BUNDLE_WITHOUT=production
+          tags: registry.test.com/mapotempo-ce/geocoder-api:latest
+          outputs: type=docker,dest=/tmp/geocoder-api.tar
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
+      - name: Move buildx cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+      - name: Extract gems from image to cache folder
+        run: |
+          rm -rf vendor/bundle
+          mkdir -p vendor/bundle
+          docker load --input /tmp/geocoder-api.tar
+          docker cp "$(docker create --rm registry.test.com/mapotempo-ce/geocoder-api:latest)":/srv/app/vendor/bundle/. vendor/bundle
+          echo $(ls -lh vendor/bundle)
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          path: /tmp/geocoder-api.tar
+
+  tests:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          path: /tmp
+      - name: Load Docker image
+        run: docker load --input /tmp/artifact/geocoder-api.tar
+      - name: Launch Stack
+        timeout-minutes: 4
+        run: ./.github/actions/launch_stack.sh
+        shell: bash
+      - name: Starting tests
+        timeout-minutes: 10
+        run: ./.github/actions/tests.sh
+        shell: bash
