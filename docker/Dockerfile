@@ -10,6 +10,11 @@ WORKDIR /srv/app
 ENV RAILS_ENV production
 ENV REDIS_HOST redis-cache
 
+# untill phusion/passenger-ruby27
+RUN mv /etc/apt/sources.list.d /etc/apt/sources.list.d.bak && \
+  apt update && apt install -y ca-certificates && \
+  mv /etc/apt/sources.list.d.bak /etc/apt/sources.list.d
+
 RUN apt-get update && \
   apt-get install -y git build-essential zlib1g-dev gdal-bin \
           zlib1g libsqlite3-mod-spatialite libsqlite3-dev \
