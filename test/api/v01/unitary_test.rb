@@ -148,6 +148,14 @@ class Api::V01::UnitaryTest < Minitest::Test
                    "X-RateLimit-Reset" => Time.now.utc.to_date.next_day.to_time.to_i }, last_response.headers)
   end
 
+  def test_nil_quotas
+    # assert override 10 by nil (unlimited)
+    11.times do
+      patch '/0.1/geocode', {api_key: 'bulk_nil_quotas', query: 'Place Pey Berland, Bordeaux', country: 'demo'}
+      assert last_response.ok?, last_response.body
+    end
+  end
+
   private
 
   def _test_geocode_from_full_text(country)

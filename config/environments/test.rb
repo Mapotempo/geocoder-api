@@ -63,6 +63,14 @@ module GeocoderWrapper
         geocoder_fallback: DEMO,
         params_limit: PARAMS_LIMIT,
         quotas: QUOTAS, # Only taken into account if REDIS_COUNT
+      },
+      quotas: {
+        geocoders: {
+          fra: ADDOK_FRA,
+        },
+        geocoder_fallback: DEMO,
+        params_limit: PARAMS_LIMIT,
+        quotas: [{ daily: 100000 }], # Only taken into account if REDIS_COUNT
       }
     },
     ruby_geocode: {
