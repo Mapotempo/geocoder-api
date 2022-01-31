@@ -107,7 +107,7 @@ module GeocoderWrapper
   end
 
   def self.version
-    'Wrapper:1.1.1' # Update changelog.txt
+    'Wrapper:1.1.2' # Update changelog.txt
   end
 
   def self.geocode_country(name)
