@@ -1,107 +1,80 @@
 version: '3.7'
+
+x-default-deploy: &default-deploy
+  update_config:
+    order: start-first
+  restart_policy:
+    condition: any
+
+# keep command outside anchor because of performance problems
+x-default-redis: &default-redis
+  image: redis:${REDIS_VERSION:-6.2.5-alpine}
+  deploy:
+    <<: *default-deploy
+  volumes:
+    - ${APP_HOME:-..}/redis:/data
+
 services:
   api:
-    image: ${REGISTRY}mapotempo-${EDT:-ce}/geocoder-api:${GEOCODER_VERSION:-latest}
-    ports:
-      - 8558:80
+    image: ${REGISTRY:-registry.mapotempo.com}/mapotempo-${EDT:-ce}/geocoder-api:${GEOCODER_VERSION:-latest}
     volumes:
-      - ./production.rb:/srv/app/config/environments/production.rb
-      - ./access.rb:/srv/app/config/access.rb
-      - ./poly:/srv/app/poly
+      - ${APP_HOME:-..}/poly:/srv/app/poly
     deploy:
-      update_config:
-        order: start-first
-      restart_policy:
-        condition: any
+      <<: *default-deploy
     environment:
-      APP_ENV: production # Swith to "development" for more traces
-      REDIS_HOST: redis-cache
+      PASSENGER_APP_ENV: test
       REDIS_COUNT_HOST: redis-count
+      REDIS_HOST: redis-cache
     networks:
+      - addok
       - base
-      - addok_fr
-      - addok_lu
       - redis_cache
+      - redis_count
 
   redis-cache:
-    image: redis:${REDIS_VERSION:-3.2-alpine}
+    <<: *default-redis
+    hostname: redis-cache
     command: redis-server --save ""
-    deploy:
-      restart_policy:
-        condition: any
     networks:
       - redis_cache
 
   redis-count:
-    image: redis:${REDIS_VERSION:-3.2-alpine}
-    volumes:
-      - ./data-count:/data
+    <<: *default-redis
+    hostname: redis-count
     command: redis-server --appendonly yes
-
-  # France
-  addok-fr:
-    image: ${REGISTRY}mapotempo/addok:${ADDOK_VERSION:-1.1.0-rc1-2}
     volumes:
-      - ./geocoder-api/addresses-fr:/addresses
+      - ${APP_HOME:-..}/redis-count:/data
+    networks:
+      - redis_count
+
+  addok:
+    image: registry.mapotempo.com/mapotempo/addok:${ADDOK_VERSION:-1.1.0-rc1-2}
+    volumes:
+      - ${APP_HOME:-..}/addresses:/addresses
     environment:
-      ADDOK_HOST: "redis-server-fr"
+      ADDOK_HOST: "redis-server"
       ADDOK_ATTRIBUTION: "BANO"
       ADDOK_LICENCE: "ODbL"
     deploy:
-      update_config:
-        order: start-first
-      restart_policy:
-        condition: any
+      <<: *default-deploy
     networks:
-      - addok_fr
-      - redis_server_fr
+      - addok
+      - redis_server
 
-  redis-server-fr:
-    image: redis:${REDIS_VERSION:-3.2-alpine}
-    volumes:
-      - ./data-fr:/data
+  redis-server:
+    <<: *default-redis
+    hostname: redis-server
     command: redis-server --save ""
-    deploy:
-      restart_policy:
-        condition: any
-    networks:
-      - redis_server_fr
-
-  # Luxemburg
-  addok-lu:
-    image: ${REGISTRY}mapotempo/addok:${ADDOK_VERSION:-1.1.0-rc1}
     volumes:
-      - ./geocoder-api/addresses-lu:/addresses
-    environment:
-      ADDOK_HOST: "redis-server-lu"
-      ADDOK_ATTRIBUTION: "Grand-Duché of Luxembourg"
-      ADDOK_LICENCE: "CC0"
-    deploy:
-      update_config:
-        order: start-first
-      restart_policy:
-        condition: any
+      - ${APP_HOME:-..}/data:/data
     networks:
-      - addok_lu
-      - redis_server_lu
-
-  redis-server-lu:
-    image: redis:${REDIS_VERSION:-3.2-alpine}
-    volumes:
-      - ./data-lu:/data
-    command: redis-server --save ""
-    deploy:
-      restart_policy:
-        condition: any
-    networks:
-      - redis_server_lu
+      - redis_server
 
 networks:
-  redis_cache:
-  addok_fr:
-  redis_server_fr:
-  addok_lu:
-  redis_server_lu:
+  addok:
   base:
     external: ${EXTERNAL_NETWORK:-false}
     driver: overlay
+  redis_cache:
+  redis_count:
+  redis_server:
