@@ -1,6 +1,10 @@
 # 1.0.13 is the latest version containing bundler 2
 FROM phusion/passenger-ruby25:1.0.13
 
+ARG BUNDLE_WITHOUT="development test"
+
+VOLUME /srv/app/poly
+
 LABEL maintainer="Mapotempo <tech@mapotempo.com>"
 ARG BUNDLE_WITHOUT="development test"
 
@@ -20,7 +24,18 @@ RUN apt-get update && \
           zlib1g libsqlite3-mod-spatialite libsqlite3-dev \
           libspatialite-dev libnginx-mod-http-headers-more-filter && \
   gem install bundler --version 2 && \
-  bundle check || bundle install --path vendor/bundle --full-index --without ${BUNDLE_WITHOUT} -j $(nproc)
+  bundle install --path vendor/bundle --full-index --without ${BUNDLE_WITHOUT} -j $(nproc)
+
+USER root
+
+# Enable Nginx and Passenger
+RUN rm -f /etc/service/nginx/down
+RUN rm /etc/nginx/sites-enabled/default
+
+# Enable app
+ADD docker/env.d/* /etc/nginx/main.d/
+ADD docker/snippets/* /etc/nginx/snippets/
+ADD docker/webapp.conf /etc/nginx/sites-enabled/webapp.conf
 
 # Cleanup Debian packages
 RUN apt-get remove -y git build-essential zlib1g-dev gdal-bin \
@@ -29,13 +44,3 @@ RUN apt-get remove -y git build-essential zlib1g-dev gdal-bin \
   apt-get clean && \
   echo -n > /var/lib/apt/extended_states && \
   rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/*
-
-# Enable Nginx and Passenger
-RUN rm -f /etc/service/nginx/down
-
-# Enable app
-RUN rm /etc/nginx/sites-enabled/default
-ADD docker/env.d/* /etc/nginx/main.d/
-ADD docker/webapp.conf /etc/nginx/sites-enabled/
-
-VOLUME /srv/app/poly
