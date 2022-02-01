@@ -36,5 +36,7 @@ build/
 *.aof
 
 # builds
-docker/data-fr/dump.rdb
-poly/france.sqlite
+addresses
+data*/*.rdb
+poly/*.sqlite
+redis-count
