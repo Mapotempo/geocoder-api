@@ -1,0 +1,38 @@
+version: '3.7'
+
+# keep command outside anchor because of performance problems
+x-default-redis: &default-redis
+  image: redis:${REDIS_VERSION:-6.2.5-alpine}
+  volumes:
+    - ./redis:/data
+
+services:
+  redis-cache:
+    <<: *default-redis
+    hostname: redis-cache
+    command: redis-server --save ""
+
+  redis-count:
+    <<: *default-redis
+    hostname: redis-count
+    command: redis-server --appendonly yes
+    volumes:
+      - ./redis-count:/data
+
+  addok:
+    image: registry.mapotempo.com/mapotempo/addok:${ADDOK_VERSION:-1.1.0-rc1-2}
+    ports:
+      - 7878:7878
+    volumes:
+      - ./addresses:/addresses
+    environment:
+      ADDOK_HOST: "redis-server"
+      ADDOK_ATTRIBUTION: "BANO"
+      ADDOK_LICENCE: "ODbL"
+
+  redis-server:
+    <<: *default-redis
+    hostname: redis-server
+    command: redis-server --save ""
+    volumes:
+      - ./data:/data
