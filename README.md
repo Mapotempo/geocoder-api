@@ -1,22 +1,18 @@
-Geocoder API
-============
+# Geocoder API
 Offers an unified API for multiple geocoders like [Addok](https://github.com/etalab/addok), OpenCageData, Here, Google based on countries distribution. The main idea of this API is to define some specific geocoder for some countries and a fallback geocoder for all other countries.
 Build in Ruby with a [Grape](https://github.com/intridea/grape) REST [swagger](http://swagger.io/) API compatible with [geocodejson-spec](https://github.com/yohanboniface/geocodejson-spec). Internal use of [Geocoder Gem](https://github.com/alexreisner/geocoder).
 
 ![Build Status](https://github.com/Mapotempo/geocoder-api/actions/workflows/main.yml/badge.svg?branch=master)
 
-Prerequisite
-============
-
+# Local installation
+## Prerequisite
 You need to install prerequisite packages :
 
 ```
 apt-get install -y git build-essential zlib1g-dev gdal-bin zlib1g libsqlite3-mod-spatialite libsqlite3-dev libspatialite-dev
 ```
 
-Installation
-============
-
+## Installation
 If you need to create a kml, install package containing ogr2ogr exec from system package (GDAL).
 
 In geocoder-api as root directory:
@@ -27,51 +23,56 @@ bundle install
 (cd contrib && sh ./osm2france+dom-geojson.sh)
 ```
 
+# Running (dev/test only)
 
-Configuration
-=============
+## Use Docker Compose to develop Mapotempo Geocoder
 
-Adjust config/environments files.
+### Launch necessary services
+```
+docker compose up -d
+```
+
+### generate necessary data
+By default it creates data for 2B corsica (618K)
+```
+./initialize.sh
+```
+
+To build other department pass it as an argument (*full* for France)
+```
+./initialize.sh 33
+```
+
+### Launch api
+Access it at http://localhost:8558
 
 
-Running
-=======
-
-In development mode, you can launch only the api service (in this case all necesseray geocoder services will be called online with your dedicated api keys if needed):
 ```
 bundle exec rackup [-p 8558]
 ```
 
-And in production mode:
+## Building images (dev/test only)
+If you need to work with local built addok images and api
+
 ```
-APP_ENV=production bundle exec rackup [-p 8558]
+docker compose -f docker-compose.yml -f docker-compose-build.yml build
 ```
 
-Docker
-======
-
-See `docker/README.md`
-
-Usage
-=====
-
+# Usage
 The API is defined in Swagger format at
 http://localhost:8558/swagger_doc
 and can be tested with Swagger-UI
 https://swagger.mapotempo.com/?url=https://geocoder.mapotempo.com/swagger_doc
 
-Geocoding and Address completion
----------------------------------
+## Geocoding and Address completion
 The search can be done by full text free form or by fields. Prefer fields form when you have an already splitted address. For any form, the country is a required field, use a simple country name or code in two or three chars.
 
 Search can be guided by proximity. Set latitude and longitude of an close location.
 
-Reverse geocoding
------------------
+## Reverse geocoding
 Retrieve the closest address from latitude and longitude position by GET request.
 
-Unitary request
----------------
+## Unitary request
 Unitary requesting convert only one address or coordinates at once using GET request.
 
 Geocoding:
@@ -156,21 +157,17 @@ http://localhost:8558/0.1/reverse.json?api_key=demo&lat=44&lng=0
 }
 ```
 
-Batch request
--------------
+## Batch request
 Batch convert a list in json or CSV format using POST request.
 
 ```
 curl -v -X POST -H "Content-Type: text/csv" --data-binary @in.csv http://localhost:8558/0.1/geocode.csv?api_key=demo > out.csv
 ```
 
-Examples
-========
+# Examples
 
-Geocode
--------
+## Geocode
 [Geocode full text address](http://geocoder.mapotempo.com/geocode.html)
 
-Reverse geocode
----------------
+## Reverse geocode
 [Get address from lat/lng](http://geocoder.mapotempo.com/reverse.html)
