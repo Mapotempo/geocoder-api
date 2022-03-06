@@ -1,5 +1,7 @@
 #!/bin/bash
 
+mkdir -p addresses
+
 # shellcheck disable=SC1091
 source ./docker/builder/get_bano.sh
 
