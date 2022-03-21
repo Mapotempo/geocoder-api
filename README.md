@@ -33,7 +33,7 @@ docker compose up -d
 ```
 
 ### generate necessary data
-By default it creates data for 2B corsica (618K)
+By default it creates data for 2A corsica (317 Kb)
 ```
 ./initialize.sh
 ```
