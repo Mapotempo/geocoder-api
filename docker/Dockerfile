@@ -1,8 +1,6 @@
 # 1.0.13 is the latest version containing bundler 2
 FROM phusion/passenger-ruby25:1.0.13
 
-ARG BUNDLE_WITHOUT="development test"
-
 VOLUME /srv/app/poly
 
 LABEL maintainer="Mapotempo <tech@mapotempo.com>"
