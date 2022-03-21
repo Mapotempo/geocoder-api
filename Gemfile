@@ -20,7 +20,7 @@ gem 'activesupport'
 gem 'actionpack'
 
 gem 'grape-erb'
-gem 'geocoder', github: 'Mapotempo/geocoder'
+gem 'geocoder', git: 'https://github.com/Mapotempo/geocoder.git'
 gem 'sqlite3'
 gem 'redis-activesupport'
 
