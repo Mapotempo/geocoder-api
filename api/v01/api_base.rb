@@ -50,6 +50,7 @@ module Api
           optional :lat, type: Float, desc: 'Prioritize results around this latitude.'
           optional :lng, type: Float, desc: 'Prioritize results around this longitude.'
           optional :limit, type: Integer, desc: 'Max results numbers. (default and upper max 10)'
+          optional :sanitize_address, type: Boolean, default: false, desc: 'Apply language/country specific cleaning rules before geoeocoding.'
         end
 
         params :reverse_unitary_params do

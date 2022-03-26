@@ -26,6 +26,7 @@ require './wrappers/addok'
 require './wrappers/demo'
 require './wrappers/esri'
 require './wrappers/ign'
+require './sanitizer/sanitizer'
 
 require './lib/cache_manager'
 require './lib/point_in_polygon'
@@ -54,6 +55,7 @@ module GeocoderWrapper
     access_by_api_key: {
       file: './config/access.rb'
     },
+    sanitizer: Sanitizer::Sanitizer.new('./sanitizer/'),
     profiles: {
       standard: {
         geocoders: {

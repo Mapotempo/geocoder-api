@@ -156,6 +156,26 @@ class Api::V01::UnitaryTest < Minitest::Test
     end
   end
 
+  def test_nil_sanitize_actions
+    # Nothing to sanitize
+    query = 'Place Pey Berland, Bordeaux'
+    get '/0.1/geocode', {api_key: 'demo', sanitize_address: true, query: query, country: 'fr'}
+    assert last_response.ok?, last_response.body
+    assert_equal query, JSON.parse(last_response.body)['geocoding']['query']
+
+    # sanitize_address: false
+    sufix = '(en haut)'
+    get '/0.1/geocode', {api_key: 'demo', sanitize_address: false, query: query + sufix, country: 'fr'}
+    assert last_response.ok?, last_response.body
+    assert_equal query + sufix, JSON.parse(last_response.body)['geocoding']['query']
+
+    # sanitize_address: true, sufix removed
+    suffix = '(en haut)'
+    get '/0.1/geocode', {api_key: 'demo', sanitize_address: true, query: query + sufix, country: 'fr'}
+    assert last_response.ok?, last_response.body
+    assert_equal query, JSON.parse(last_response.body)['geocoding']['query']
+  end
+
   private
 
   def _test_geocode_from_full_text(country)

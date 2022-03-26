@@ -1,0 +1,3 @@
+on_word_bounds:
+  - '[0-9]{1,2} ?(st|nd|rd)? ?floor' # (flat ?)
+  - '(first|second|third) floor'
