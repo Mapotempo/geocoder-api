@@ -23,12 +23,12 @@ class Sanitizer::SanitizerTest < Minitest::Test
   include Rack::Test::Methods
 
   def test_constructor
-    all = Sanitizer::Sanitizer.new('./test/sanitizer/')
+    all = Sanitizer::Sanitizer.new('./test/sanitizer/', './sanitizer/countryInfo.txt')
     assert all
   end
 
   def test_sanitize_one
-    all = Sanitizer::Sanitizer.new('./test/sanitizer/')
+    all = Sanitizer::Sanitizer.new('./test/sanitizer/', './sanitizer/countryInfo.txt')
     assert all
 
     sanitized = all.sanitize({query: 'Place Pey Berland, Bordeaux (au fond à droite)'})[:query]
@@ -36,7 +36,7 @@ class Sanitizer::SanitizerTest < Minitest::Test
   end
 
   def test_sanitize_multi
-    all = Sanitizer::Sanitizer.new('./test/sanitizer/')
+    all = Sanitizer::Sanitizer.new('./test/sanitizer/', './sanitizer/countryInfo.txt')
     assert all
 
     sanitized = all.sanitize({query: 'Place Pey Berland Bât 4, Bordeaux (au fond à droite)'})[:query]
