@@ -56,7 +56,7 @@ module GeocoderWrapper
     access_by_api_key: {
       file: './config/access.rb'
     },
-    sanitizer: Sanitizer::Sanitizer.new('./sanitizer/'),
+    sanitizer: Sanitizer::Sanitizer.new('./sanitizer/', './sanitizer/countryInfo.txt'),
     profiles: {
       standard: {
         geocoders: {

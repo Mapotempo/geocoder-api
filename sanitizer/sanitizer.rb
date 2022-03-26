@@ -19,10 +19,11 @@ require 'yaml'
 
 module Sanitizer
   class Sanitizer
-    def initialize(rules_path)
+    def initialize(rules_path, country_info)
       @rules = Hash[Dir.glob(rules_path + '*.yaml').collect{ |rules_file|
         [rules_file.gsub(/.*\//, '').gsub(/.yaml$/, ''), load_rules(rules_file)]
       }]
+      @country_languages = load_country_languages(country_info)
       @rules_by_country = {}
     end
 
@@ -55,7 +56,16 @@ module Sanitizer
     end
 
     def matching_rules_by_country(country)
-      @rules['all'] + (@rules[country] || [])
+      keys = ['all', country] + (@country_languages[country] || [])
+      keys.collect{ |key| @rules[key] }.compact.flatten
+    end
+
+    def load_country_languages(country_info)
+      Hash[CSV.read(country_info, col_sep: "\t").select{ |row|
+        row[0][0] != '#' && row[15]
+      }.collect{ |row|
+        [row[0], row[15].split(',')]
+      }]
     end
   end
 end
