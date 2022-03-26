@@ -66,6 +66,7 @@ module Wrappers
 
     def geocode(params, limit = 10)
       r = @@header.dup
+      r[:geocoding][:query] = params[:query]
       r[:features] = ([@@feature] * limit).collect(&:dup)
       r
     end
@@ -78,6 +79,7 @@ module Wrappers
 
     def complete(params, limit = 10)
       r = @@header.dup
+      r[:geocoding][:query] = params[:query]
       r[:features] = ([@@feature] * limit).collect(&:dup)
       r
     end

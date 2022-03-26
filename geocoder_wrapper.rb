@@ -31,11 +31,9 @@ module GeocoderWrapper
 
   def self.wrapper_geocode(services, params)
     country = self.geocode_country(params[:country])
-    if services[:geocoders].key?(country)
-      services[:geocoders][country].geocode(params, params[:limit])
-    elsif services[:geocoder_fallback]
-      services[:geocoder_fallback].geocode(params, params[:limit])
-    end
+    service = services[:geocoders].key?(country) ? services[:geocoders][country] : services[:geocoder_fallback]
+    params = self.config[:sanitizer].sanitize(params) if params[:sanitize_address]
+    service.geocode(params, params[:limit])
   end
 
   def self.wrapper_reverse(services, params)
@@ -58,10 +56,12 @@ module GeocoderWrapper
         params
       end
 
-      results = if services[:geocoders].key?(country)
-        services[:geocoders][country].geocodes(params_list)
-      elsif services[:geocoder_fallback]
-        services[:geocoder_fallback].geocodes(params_list)
+      service = services[:geocoders].key?(country) ? services[:geocoders][country] : services[:geocoder_fallback]
+      results = if service
+        params_list = params_list.collect{ |params|
+          params[:sanitize_address] ? self.config[:sanitizer].sanitize(params) : params
+        }
+        service.geocodes(params_list)
       else
         []
       end
@@ -99,11 +99,9 @@ module GeocoderWrapper
   def self.wrapper_complete(services, params)
     country = self.geocode_country(params[:country])
 
-    if services[:geocoders].key?(country)
-      services[:geocoders][country].complete(params, params[:limit])
-    elsif services[:geocoder_fallback]
-      services[:geocoder_fallback].complete(params, params[:limit])
-    end
+    service = services[:geocoders].key?(country) ? services[:geocoders][country] : services[:geocoder_fallback]
+    params = self.config[:sanitizer].sanitize(params) if params[:sanitize_address]
+    service.complete(params, params[:limit])
   end
 
   def self.version
