@@ -156,22 +156,36 @@ class Api::V01::UnitaryTest < Minitest::Test
     end
   end
 
-  def test_nil_sanitize_actions
-    # Nothing to sanitize
+  def test_sanitize_actions_nothing
     query = 'Place Pey Berland, Bordeaux'
+
+    # Nothing to sanitize
     get '/0.1/geocode', {api_key: 'demo', sanitize_address: true, query: query, country: 'fr'}
     assert last_response.ok?, last_response.body
     assert_equal query, JSON.parse(last_response.body)['geocoding']['query']
+  end
+
+  def test_sanitize_actions_keep_suffix
+    query = 'Place Pey Berland, Bordeaux'
 
     # sanitize_address: false
-    sufix = '(en haut)'
-    get '/0.1/geocode', {api_key: 'demo', sanitize_address: false, query: query + sufix, country: 'fr'}
-    assert last_response.ok?, last_response.body
-    assert_equal query + sufix, JSON.parse(last_response.body)['geocoding']['query']
-
-    # sanitize_address: true, sufix removed
     suffix = '(en haut)'
-    get '/0.1/geocode', {api_key: 'demo', sanitize_address: true, query: query + sufix, country: 'fr'}
+    get '/0.1/geocode', {api_key: 'demo', sanitize_address: false, query: query + suffix, country: 'fr'}
+    assert last_response.ok?, last_response.body
+    assert_equal query + suffix, JSON.parse(last_response.body)['geocoding']['query']
+
+    # false as string
+    get '/0.1/geocode', {api_key: 'demo', sanitize_address: 'false', query: query + suffix, country: 'fr'}
+    assert last_response.ok?, last_response.body
+    assert_equal query + suffix, JSON.parse(last_response.body)['geocoding']['query']
+  end
+
+  def test_sanitize_actions_remove_suffix
+    query = 'Place Pey Berland, Bordeaux'
+
+    # sanitize_address: true, suffix removed
+    suffix = '(en haut)'
+    get '/0.1/geocode', {api_key: 'demo', sanitize_address: true, query: query + suffix, country: 'fr'}
     assert last_response.ok?, last_response.body
     assert_equal query, JSON.parse(last_response.body)['geocoding']['query']
   end
