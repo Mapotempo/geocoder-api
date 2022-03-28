@@ -58,7 +58,7 @@ If you need to work with local built addok images and api
 docker compose -f docker-compose.yml -f docker-compose-build.yml build
 ```
 
-The countries data |sanitizer/countryInfo.txt` for supported languages can be update from https://download.geonames.org/export/dump/countryInfo.txt . The data is under creative commons attributions from GeoNames.
+The countries data `sanitizer/countryInfo.txt` for supported languages can be update from https://download.geonames.org/export/dump/countryInfo.txt . The data is under creative commons attributions from GeoNames.
 
 # Usage
 The API is defined in Swagger format at

@@ -57,7 +57,7 @@ module Sanitizer
 
     def matching_rules_by_country(country)
       keys = ['all', country] + (@country_languages[country] || [])
-      keys.collect{ |key| @rules[key] }.compact.flatten
+      keys.flat_map{ |key| @rules[key] }.compact
     end
 
     def load_country_languages(country_info)
