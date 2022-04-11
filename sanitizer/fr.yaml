@@ -1,0 +1,16 @@
+on_word_bounds:
+  - 'b\.? ?p\.? ?[\d]*'
+  - 'b(a|â)t(\.|iment)?\s*([0-9]+|[A-Z]\s+)'
+  - 'porte ?([0-9]+|[A-Z]\s+)'
+  - 'bureau ?([0-9]+|[A-Z]\s+)'
+  - '([eé]tage) ?[0-9]{1,2}'
+  - 'N[o°](?=[ 0-9])'
+
+  - '([0-9]{1,2} ?[e|è][r|m]?e?|2 ?nd) [e|é]tage' # 1er étage / 2e etage / 2nd etage / 3 ème étage
+  - '(premier|second|troisi[e|è]me) [e|é]tage'
+  - '(rez[ |\-]de[ |\-]chauss[é|e]e?|r\-?d\-?c)' # rez-de-chaussée | rez de chausse | RDC
+  - 'escalier [0-9A-Z]'
+  - 'hall [0-9A-Z]'
+  - '(appart(ement)?|appm?t)\.? ?n?°? ?[0-9]{1-4}'
+  - '(digi)?code ?(porte|portail|grille|entrée)? [0-9AB]{1,6}'
+  - 'interphone'
