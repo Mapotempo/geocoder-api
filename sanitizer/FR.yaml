@@ -1,0 +1,4 @@
+on_word_bounds:
+  - 'lieu[ -]?dit'
+  - 'c\.? ?s\.? ?[\d]*'
+  - 'r\.? ?[n|d]\.? ?[\d]*'
