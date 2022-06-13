@@ -30,7 +30,7 @@ class Sanitizer::SanitizerTest < Minitest::Test
     all = Sanitizer::Sanitizer.new('./test/sanitizer/', './sanitizer/countryInfo.txt')
     assert all
 
-    sanitized = all.sanitize({query: 'Place Pey Berland, Bordeaux (au fond à droite)'})[:query]
+    sanitized = all.sanitize({query: 'Place Pey Berland, Bordeaux (au fond à droite)'}, :xxx)[:query]
     assert_equal 'Place Pey Berland, Bordeaux ', sanitized
   end
 
@@ -38,10 +38,10 @@ class Sanitizer::SanitizerTest < Minitest::Test
     all = Sanitizer::Sanitizer.new('./test/sanitizer/', './sanitizer/countryInfo.txt')
     assert all
 
-    sanitized = all.sanitize({query: 'Place Pey Berland, Bordeaux FRANCE', country: 'fr'})[:query]
+    sanitized = all.sanitize({query: 'Place Pey Berland, Bordeaux FRANCE'}, :fr)[:query]
     assert_equal 'Place Pey Berland, Bordeaux ', sanitized
 
-    sanitized = all.sanitize({query: 'Place Pey Berland, Bordeaux FRANCE', country: 'es'})[:query]
+    sanitized = all.sanitize({query: 'Place Pey Berland, Bordeaux FRANCE'}, :es)[:query]
     assert_equal 'Place Pey Berland, Bordeaux FRANCE', sanitized
   end
 end

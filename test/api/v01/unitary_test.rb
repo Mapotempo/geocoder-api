@@ -183,9 +183,15 @@ class Api::V01::UnitaryTest < Minitest::Test
   def test_sanitize_actions_remove_suffix
     query = 'Place Pey Berland, Bordeaux'
 
-    # sanitize_address: true, suffix removed
+    # sanitize_address: true, country code
     suffix = '(en haut)'
     get '/0.1/geocode', {api_key: 'demo', sanitize_address: true, query: query + suffix, country: 'fr'}
+    assert last_response.ok?, last_response.body
+    assert_equal query, JSON.parse(last_response.body)['geocoding']['query']
+
+    # true as a string, unknown country
+    suffix = '(en haut)'
+    get '/0.1/geocode', {api_key: 'demo', sanitize_address: 'true', query: query + suffix, country: 'xxx'}
     assert last_response.ok?, last_response.body
     assert_equal query, JSON.parse(last_response.body)['geocoding']['query']
   end
