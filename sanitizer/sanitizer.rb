@@ -20,35 +20,40 @@ require 'yaml'
 module Sanitizer
   class Sanitizer
     def initialize(rules_path, country_info)
-      @rules = Hash[Dir.glob(rules_path + '*.yaml').collect{ |rules_file|
-        [rules_file.gsub(/.*\//, '').gsub(/.yaml$/, ''), load_rules(rules_file)]
-      }]
+      @rules = Dir.glob("#{rules_path}*.yaml").map do |rules_file|
+        [rules_file.gsub(/country_|.*\/|.yaml$/, ''), load_rules(rules_file)]
+      end.to_h
       @country_info = country_info
       @country_languages = load_country_languages
       @rules_by_country = {}
     end
 
     def sanitize(params, country)
-      [:query, :street, :maybe_street].each{ |field|
-        params[field] = matching_rules(country).reduce(params[field]) { |text, rule|
-          text.gsub(rule, '')
-        } if params[field]
-      }
+      [:query, :street, :maybe_street].each do |field|
+        next unless params[field].present?
+
+        if params[field].is_a? Array
+          params[field].map!{ |prm| sanitize_param(prm, country) }
+        else
+          params[field] = sanitize_param(params[field], country)
+        end
+      end
+
       params
     end
 
     private
 
-    def load_rules(rules_file)
-      rules = YAML.load(File.read(rules_file))
+    def sanitize_param(param, country)
+      matching_rules(country).each { |rule| param&.gsub!(rule, '') }
+      param.gsub(/(,|\;|:|\/)/, ' ').gsub(/\s{2,}/, ' ').strip
+    end
 
-      (rules && rules['any_where'] || []).collect{ |rule|
-        # Use regex as is
-        Regexp.new(rule, 'i')
-      } + (rules && rules['on_word_bounds'] || []).collect{ |rule|
-        # Bound regex with \b (word sperator)
-        Regexp.new('\b' + rule + '\b', 'i')
-      }
+    def load_rules(rules_file)
+      rules = YAML.safe_load(File.read(rules_file))
+
+      (rules.try(:[], 'any_where') || []).map{ |rule| Regexp.new(rule, 'i') } +
+        (rules.try(:[], 'on_word_bounds') || []).map{ |rule| Regexp.new('\b' + rule + '\b', 'i') }
     end
 
     def matching_rules(country)
@@ -57,26 +62,25 @@ module Sanitizer
     end
 
     def matching_country(country)
-      load_country_info.find{ |row|
-        row[0].downcase.to_sym == country || row[1].downcase.to_sym == country || row[4].downcase.to_sym == country
-      }.try(:[], 0)
+      load_country_info.find do |row|
+        [row[0], row[1], row[4]].map(&:downcase).include?(country.to_s.downcase)
+      end&.first
     end
 
     def load_country_info
-      @load_country_info ||= CSV.read(@country_info, col_sep: "\t").select{ |row|
+      @load_country_info ||= CSV.read(@country_info, col_sep: "\t").select do |row|
         row[0][0] != '#' && row[15]
-      }
+      end
     end
 
     def matching_rules_by_country(country)
-      keys = ['all', country] + (@country_languages[country] || [])
-      keys.flat_map{ |key| @rules[key] }.compact
+      (['all', country] + (@country_languages[country] || [])).flat_map{ |key| @rules[key] }.compact
     end
 
     def load_country_languages
-      Hash[load_country_info.collect{ |row|
+      load_country_info.collect do |row|
         [row[0], row[15].split(',').map{ |locale| locale.gsub(/\-.+/, '') }]
-      }]
+      end.to_h
     end
   end
 end

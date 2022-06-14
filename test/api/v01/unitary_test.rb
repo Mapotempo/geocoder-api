@@ -156,44 +156,46 @@ class Api::V01::UnitaryTest < Minitest::Test
     end
   end
 
-  def test_sanitize_actions_nothing
-    query = 'Place Pey Berland, Bordeaux'
+  def test_should_geocode_without_sanitizing_address
+    query = 'Place Pey Berland Bordeaux'
+    suffix = ',(en haut)'
 
-    # Nothing to sanitize
-    get '/0.1/geocode', {api_key: 'demo', sanitize_address: true, query: query, country: 'fr'}
-    assert last_response.ok?, last_response.body
-    assert_equal query, JSON.parse(last_response.body)['geocoding']['query']
-  end
-
-  def test_sanitize_actions_keep_suffix
-    query = 'Place Pey Berland, Bordeaux'
-
-    # sanitize_address: false
-    suffix = '(en haut)'
     get '/0.1/geocode', {api_key: 'demo', sanitize_address: false, query: query + suffix, country: 'fr'}
     assert last_response.ok?, last_response.body
     assert_equal query + suffix, JSON.parse(last_response.body)['geocoding']['query']
 
-    # false as string
     get '/0.1/geocode', {api_key: 'demo', sanitize_address: 'false', query: query + suffix, country: 'fr'}
     assert last_response.ok?, last_response.body
     assert_equal query + suffix, JSON.parse(last_response.body)['geocoding']['query']
   end
 
-  def test_sanitize_actions_remove_suffix
-    query = 'Place Pey Berland, Bordeaux'
+  def test_should_geocode_sanitizing_address
+    query = 'Place Pey Berland'
+    city = "Bordeaux"
+    suffix = ',(en haut)'
 
-    # sanitize_address: true, country code
-    suffix = '(en haut)'
-    get '/0.1/geocode', {api_key: 'demo', sanitize_address: true, query: query + suffix, country: 'fr'}
+    get '/0.1/geocode', {api_key: 'demo', sanitize_address: true, query: query + suffix + city, country: 'fr'}
     assert last_response.ok?, last_response.body
-    assert_equal query, JSON.parse(last_response.body)['geocoding']['query']
+    assert_equal "#{query} #{city}", JSON.parse(last_response.body)['geocoding']['query']
 
-    # true as a string, unknown country
-    suffix = '(en haut)'
-    get '/0.1/geocode', {api_key: 'demo', sanitize_address: 'true', query: query + suffix, country: 'xxx'}
+    get '/0.1/geocode', {api_key: 'demo', sanitize_address: 'true', query: query + suffix + city, country: 'xxx'}
     assert last_response.ok?, last_response.body
-    assert_equal query, JSON.parse(last_response.body)['geocoding']['query']
+    assert_equal "#{query} #{city}", JSON.parse(last_response.body)['geocoding']['query']
+
+    get '/0.1/geocode', {api_key: 'demo', sanitize_address: 'true', street: query + suffix, city: city, country: 'fra'}
+    assert last_response.ok?, last_response.body
+    assert_equal "#{query} #{city}", JSON.parse(last_response.body)['geocoding']['query']
+  end
+
+  def test_should_geocode_sanitizing_address_with_maybe_street
+    queries = ['Place Pey Berland', '1 cours Victor Hugo', 'Place de la Victoire']
+    suffixes = [',(en haut)', ' batiment A', ' rez-de-chaussée']
+
+    streets = queries.map.with_index { |q, i| "#{q} #{suffixes[i]}" }
+
+    get '/0.1/geocode', {api_key: 'demo', sanitize_address: true, maybe_street: streets, country: 'fr', city: 'Bordeaux'}
+    assert last_response.ok?, last_response.body
+    assert_equal queries.map{ |q| "#{q} Bordeaux" }, JSON.parse(last_response.body)['geocoding']['query'].split('|')
   end
 
   private

@@ -1,5 +1,0 @@
-any_where:
-  - '\(.*?\)'
-
-on_word_bounds:
-  - 'b(a|â)t(\.|iment)?\s*([0-9]+|[A-Z]\s+)'
