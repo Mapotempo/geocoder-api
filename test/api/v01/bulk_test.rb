@@ -178,4 +178,37 @@ class Api::V01::BulkTest < Minitest::Test
     assert last_response.ok?, last_response.body
     assert body["geocodes"].count, geocodes.count
   end
+
+  def test_should_geocode_without_sanitizing_addresses
+    queries = ['Place Pey Berland', '1 cours Victor Hugo', 'Place de la Victoire']
+    suffixes = [',(en haut)', ' batiment A', ' rez-de-chaussée']
+    city = 'Bordeaux'
+    countries = ['fr', :fra, 'france']
+    geocodes = []
+    queries.each_with_index do |q, i|
+      geocodes.push({ street: "#{q}#{suffixes[i]}", postcode: nil, city: city, country: countries[i], sanitize_address: false })
+    end
+
+    post '/0.1/geocode', { api_key: 'demo', geocodes: geocodes }
+    assert last_response.ok?, last_response.body
+    results = JSON.parse(last_response.body)['geocodes']
+    results.each_with_index { |res, i| assert_equal "#{queries[i]}#{suffixes[i]}", res['properties']['geocoding']['source']['street'] }
+  end
+
+  def test_should_geocode_sanitizing_addresses
+    queries = ['Place Pey Berland', '1 cours Victor Hugo', 'Place de la Victoire']
+    suffixes = [',(en haut)', ' batiment A', ' rez-de-chaussée']
+    city = 'Bordeaux'
+    countries = ['fr', :fra, 'france']
+    geocodes = []
+    queries.each_with_index do |q, i|
+      geocodes.push({ query: "#{q}#{suffixes[i]}", country: countries[i], sanitize_address: true })
+    end
+
+    post '/0.1/geocode', { api_key: 'demo', geocodes: geocodes }
+    assert last_response.ok?, last_response.body
+    results = JSON.parse(last_response.body)['geocodes']
+
+    results.each_with_index { |res, i| assert_equal queries[i], res['properties']['geocoding']['source']['query'] }
+  end
 end
