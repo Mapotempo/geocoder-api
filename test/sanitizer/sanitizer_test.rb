@@ -22,26 +22,66 @@ require './sanitizer/sanitizer'
 class Sanitizer::SanitizerTest < Minitest::Test
   include Rack::Test::Methods
 
-  def test_constructor
-    assert Sanitizer::Sanitizer.new('./test/sanitizer/', './sanitizer/countryInfo.txt')
+  def test_should_initialize
+    assert sanitizer = Sanitizer::Sanitizer.new('./sanitizer/', './sanitizer/countryInfo.txt')
+    assert_equal Sanitizer::Sanitizer, sanitizer.class
   end
 
-  def test_sanitize_one
-    all = Sanitizer::Sanitizer.new('./test/sanitizer/', './sanitizer/countryInfo.txt')
-    assert all
+  def test_should_sanitize_one_address_on_each_param
+    address = 'Place Pey Berland Bordeaux'
+    sanitizer = Sanitizer::Sanitizer.new('./sanitizer/', './sanitizer/countryInfo.txt')
 
-    sanitized = all.sanitize({query: 'Place Pey Berland, Bordeaux (au fond à droite)'}, :xxx)[:query]
-    assert_equal 'Place Pey Berland, Bordeaux ', sanitized
+    [:query, :street, :maybe_street].each do |key|
+      unsanitized_address = build_random_address(address)
+      sanitized_address = sanitizer.sanitize({key => unsanitized_address}, :fr)[key]
+      assert_equal address, sanitized_address
+    end
+
+    addresses = []
+    3.times { addresses.push(build_random_address(address)) }
+    sanitizer.sanitize({query: addresses[0], street: addresses[1], maybe_street: [addresses[2]]}, :fr).each_value do |sanitized_address|
+      assert_equal(sanitized_address.is_a?(Array) ? [address] : address, sanitized_address)
+    end
   end
 
-  def test_sanitize_languages
-    all = Sanitizer::Sanitizer.new('./test/sanitizer/', './sanitizer/countryInfo.txt')
-    assert all
+  def test_should_sanitize_depending_on_country
+    sanitizer = Sanitizer::Sanitizer.new('./sanitizer/', './sanitizer/countryInfo.txt')
+    address = 'Place Pey Berland Bordeaux'
+    prefix = 'rez-de-chaussée '
+    suffix = ' (à supprimer dans tous les cas)'
 
-    sanitized = all.sanitize({query: 'Place Pey Berland, Bordeaux FRANCE'}, :fr)[:query]
-    assert_equal 'Place Pey Berland, Bordeaux ', sanitized
+    # Different types for France
+    assert_equal address, sanitizer.sanitize({query: prefix + address + suffix}, :fr)[:query]
+    assert_equal address, sanitizer.sanitize({query: prefix + address + suffix}, :fra)[:query]
+    assert_equal address, sanitizer.sanitize({query: prefix + address + suffix}, :france)[:query]
+    assert_equal address, sanitizer.sanitize({query: prefix + address + suffix}, :FR)[:query]
 
-    sanitized = all.sanitize({query: 'Place Pey Berland, Bordeaux FRANCE'}, :es)[:query]
-    assert_equal 'Place Pey Berland, Bordeaux FRANCE', sanitized
+    # For Italy french language is also accepted
+    assert_equal address, sanitizer.sanitize({query: prefix + address + suffix}, :it)[:query]
+    assert_equal address, sanitizer.sanitize({query: prefix + address + suffix}, :italy)[:query]
+
+    # Countries without french language acceptance -> all only
+    assert_equal prefix + address, sanitizer.sanitize({query: prefix + address + suffix}, :en)[:query]
+
+    # None country -> all only
+    assert_equal prefix + address, sanitizer.sanitize({query: prefix + address + suffix}, :xx)[:query]
+  end
+
+  private
+
+  def build_random_address(address)
+    return address if address.blank?
+
+    elements = ['batiment D', '(au fond à droite)', 'lieu-dit', 'REZ-DE-CHAUSSéE',
+                'bureau 10', 'Interphone', 'DIGICODE 1234', 'ESCALIER C', '4ème étage'].shuffle
+    to_sanitize = []
+    2.times { to_sanitize << elements.slice!(0..rand(0..elements.size)) }
+    to_sanitize << elements
+
+    elements = address.split(' ')
+    to_keep = [elements.slice!(0..rand(0..elements.size)), elements]
+
+    elements = to_sanitize[0] + to_keep[0] + to_sanitize[1] + to_keep[1] + to_sanitize[2]
+    elements.join(' ')
   end
 end
