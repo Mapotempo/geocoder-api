@@ -1,11 +1,10 @@
 on_word_bounds:
   - 'b\.? ?p\.? ?[\d]*'
-  - 'b(a|â)t(\.|iment)?\s*([0-9]+|[A-Z]\s+)'
-  - 'porte ?([0-9]+|[A-Z]\s+)'
-  - 'bureau ?([0-9]+|[A-Z]\s+)'
+  - 'b(a|â)t(\.|iment)?\s*([0-9]+|[A-Z]+)'
+  - 'porte ?([0-9]+|[A-Z]+)'
+  - 'bureau ?([0-9]+|[A-Z]+)'
   - '([eé]tage) ?[0-9]{1,2}'
   - 'N[o°](?=[ 0-9])'
-
   - '([0-9]{1,2} ?[e|è][r|m]?e?|2 ?nd) [e|é]tage' # 1er étage / 2e etage / 2nd etage / 3 ème étage
   - '(premier|second|troisi[e|è]me) [e|é]tage'
   - '(rez[ |\-]de[ |\-]chauss[é|e]e?|r\-?d\-?c)' # rez-de-chaussée | rez de chausse | RDC
