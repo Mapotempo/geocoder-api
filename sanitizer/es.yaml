@@ -1,0 +1,17 @@
+on_word_bounds:
+  - '(1 ?er|2 ?[eè]me?|2 ?nd)? ?(digi?)?code[a-zàéèê ]{0,20}(porte|portail|grille|entr[eé]e)? [0-9AB#\*]{1,6}' # code première porte A1234
+  - 'telefonillo ?[A-Z]?[0-9]{0,4}[A-Z]?' # interphone
+  - 'edificio ?([0-9]+|[A-Z0-9]{1,2})'
+  - '(portal|puerta) ?([0-9]+|[0-9AB]{1,6}|[A-Z]) ?(izq(uierd[ao])?|de?re?ch[ao])'
+  - '(piso|planta) ?[0-9]{1,2} ?(izq(uierd[ao])?|de?re?ch[ao])?'
+  - '(primer|secundo) piso ?(izq(uierd[ao])?|de?re?ch[ao])?'
+  - 'planta baja ?(izq(uierd[ao])?|de?re?ch[ao])?' # rez-de-chaussée
+  - 'esc(\.|alera)? ?[0-9A-Z]'
+  - 'esc(\.|alera)? ?(izq(uierd[ao])?|de?re?ch[ao])'
+  - 'N[o°](?=[ 0-9])'
+  - 'bajo [0-9A-Z]'
+  - 'bajo (izq(uierd[ao])?|de?re?ch[ao])'
+  - '(app?art(amento)?|app?m?t?o?|app?rt)\.? ?(n?[°r\.]?|num(ero)?)? ?[A-Z]?[0-9]{1,6}[A-Z]?'
+  - 'torre [0-9A-Z]'
+  - 'bloque [0-9A-Z]'
+
