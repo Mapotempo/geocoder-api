@@ -1,15 +1,26 @@
 on_word_bounds:
+  - '(1 ?er|2 ?[eè]me?|2 ?nd)? ?(digi?)?code[a-zàéèê ]{0,20}(porte|portail|grille|entr[eé]e)? [0-9AB#\*]{1,6}' # code première porte A1234
+  - 'interphone ?[A-Z]?[0-9]{0,4}[A-Z]?'
   - 'b\.? ?p\.? ?[\d]*'
-  - 'b(a|â)t(\.|iment)?\s*([0-9]+|[A-Z]+)'
-  - 'porte ?([0-9]+|[A-Z]+)'
-  - 'bureau ?([0-9]+|[A-Z]+)'
-  - '([eé]tage) ?[0-9]{1,2}'
+  - 'b(a|â)t(\.|iments?)? ?([0-9]+|[A-Z0-9]{1,2})'
+  - '(porte|pte) ?([0-9]+|[0-9AB]{1,6}|[A-Z]|RDC|([aà]|de)? ?ga?u?che|([aà]|de)? ?dro?i?te)'
+  - 'portail ([aà]|de)? ?(ga?u?che|dro?i?te)'
+  - 'bureau ?([0-9]+|[A-Z])'
+  - '([eé]tages?|[eé]tg|niv(eau)?) ?[0-9]{1,2} ?(([aà]|de)? ?ga?u?che|([aà]|de)? ?dro?i?te)?'
+  - '([0-9]{1,2} ?[eè][rm]?e?|2 ?nd) [eé]tages? ?(([aà]|de)? ?ga?u?che|([aà]|de)? ?dro?i?te)?' # 1er étage / 2e etage / 2nd etage / 3 ème étage
+  - '(premier|second|deuxi[eè]me|troisi[eè]me) [eé]tages? ?(([aà]|de)? ?ga?u?che|([aà]|de)? ?dro?i?te)?'
+  - '(rez[ |\-]de[ |\-]chauss[ée]e?|r\-?d\-?c) ?(([aà]|de)? ?ga?u?che|([aà]|de)? ?dro?i?te)?' # rez-de-chaussée | rez de chausse | RDC
+  - 'esc(\.|alier)? ?[0-9A-Z]'
+  - 'esc(\.|alier)? ([aà]|de)? ?(ga?u?che|dro?i?te)'
   - 'N[o°](?=[ 0-9])'
-  - '([0-9]{1,2} ?[e|è][r|m]?e?|2 ?nd) [e|é]tage' # 1er étage / 2e etage / 2nd etage / 3 ème étage
-  - '(premier|second|troisi[e|è]me) [e|é]tage'
-  - '(rez[ |\-]de[ |\-]chauss[é|e]e?|r\-?d\-?c)' # rez-de-chaussée | rez de chausse | RDC
-  - 'escalier [0-9A-Z]'
   - 'hall [0-9A-Z]'
-  - '(appart(ement)?|appm?t)\.? ?n?°? ?[0-9]{1-4}'
-  - '(digi)?code ?(porte|portail|grille|entrée)? [0-9AB]{1,6}'
-  - 'interphone'
+  - 'hall ([aà]|de)? ?(ga?u?che|dro?i?te)'
+  - '(app?art(t?emm?ent)?|app?m?t?|app?rtm?)s?\.? ?(n?[°\.]?|num([eé]ro)?)? ?[A-Z]?[0-9]{1,6}[A-Z]?'
+  - '(app?art(t?emm?ent)?|app?m?t?|app?rtm?)s?\.? ?([aà]|de)? ?(ga?u?che|dro?i?te)'
+  - 'cha?m?bre ?(n?[°\.]?|num([eé]ro)?)? ?[A-Z]?[0-9]{1,4}[A-Z]?'
+  - 'cha?m?bre ([aà]|de)? ?(ga?u?che|dro?i?te)'
+  - 'pavillons? ?(n?[°\.]?|num([eé]ro)?)? ?[A-Z]?[0-9]{1,4}[A-Z]?'
+  - '(logement|logt) ?(n?[°\.]?|num([eé]ro)?)? ?[A-Z]?[0-9]{1,4}[A-Z]?'
+
+any_where:
+  - ' chez [^0-9\,]+'

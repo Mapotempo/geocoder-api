@@ -67,6 +67,24 @@ class Sanitizer::SanitizerTest < Minitest::Test
     assert_equal prefix + address, sanitizer.sanitize({query: prefix + address + suffix}, :xx)[:query]
   end
 
+  def test_should_sanitize_missing_space
+    sanitizer = Sanitizer::Sanitizer.new('./sanitizer/', './sanitizer/countryInfo.txt')
+    address = 'Place Pey Berland Bordeaux'
+    additional = '(chez papa)'
+    suffix = 'digicode:A1234'
+
+    assert_equal address, sanitizer.sanitize({query: address + additional + suffix}, :fr)[:query]
+  end
+
+  def test_should_sanitize_any_where
+    sanitizer = Sanitizer::Sanitizer.new('./sanitizer/', './sanitizer/countryInfo.txt')
+    address = 'Place Pey Berland Bordeaux'
+    additional = 'chez papa'
+
+    assert_equal address, sanitizer.sanitize({query: address + ' ' + additional}, :fr)[:query]
+    assert_equal additional + ' ' + address, sanitizer.sanitize({query: additional + ' ' + address}, :fr)[:query]
+  end
+
   private
 
   def build_random_address(address)

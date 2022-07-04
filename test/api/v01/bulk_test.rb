@@ -209,6 +209,6 @@ class Api::V01::BulkTest < Minitest::Test
     assert last_response.ok?, last_response.body
     results = JSON.parse(last_response.body)['geocodes']
 
-    results.each_with_index { |res, i| assert_equal queries[i], res['properties']['geocoding']['source']['query'] }
+    results.each_with_index { |res, i| refute_includes res['properties']['geocoding']['source']['query'], suffixes[i] }
   end
 end
