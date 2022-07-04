@@ -45,8 +45,12 @@ module Sanitizer
     private
 
     def sanitize_param(param, country)
-      matching_rules(country).each { |rule| param&.gsub!(rule, '') }
-      param.gsub(/(,|\;|:|\/)/, ' ').gsub(/\s{2,}/, ' ').strip
+      return unless param
+
+      param.gsub!(':', ' ') # To simplify matching rules regexp with "digicode: 1234"
+      matching_rules(country).reduce(param) { |text, rule|
+        text.gsub(/\s{2,}/, ' ').gsub(rule, ' ')
+      }.strip
     end
 
     def load_rules(rules_file)

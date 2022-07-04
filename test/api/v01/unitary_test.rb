@@ -176,15 +176,15 @@ class Api::V01::UnitaryTest < Minitest::Test
 
     get '/0.1/geocode', {api_key: 'demo', sanitize_address: true, query: query + suffix + city, country: 'fr'}
     assert last_response.ok?, last_response.body
-    assert_equal "#{query} #{city}", JSON.parse(last_response.body)['geocoding']['query']
+    assert_equal "#{query}, #{city}", JSON.parse(last_response.body)['geocoding']['query']
 
     get '/0.1/geocode', {api_key: 'demo', sanitize_address: 'true', query: query + suffix + city, country: 'xxx'}
     assert last_response.ok?, last_response.body
-    assert_equal "#{query} #{city}", JSON.parse(last_response.body)['geocoding']['query']
+    assert_equal "#{query}, #{city}", JSON.parse(last_response.body)['geocoding']['query']
 
     get '/0.1/geocode', {api_key: 'demo', sanitize_address: 'true', street: query + suffix, city: city, country: 'fra'}
     assert last_response.ok?, last_response.body
-    assert_equal "#{query} #{city}", JSON.parse(last_response.body)['geocoding']['query']
+    assert_equal "#{query}, #{city}", JSON.parse(last_response.body)['geocoding']['query']
   end
 
   def test_should_geocode_sanitizing_address_with_maybe_street
@@ -195,7 +195,8 @@ class Api::V01::UnitaryTest < Minitest::Test
 
     get '/0.1/geocode', {api_key: 'demo', sanitize_address: true, maybe_street: streets, country: 'fr', city: 'Bordeaux'}
     assert last_response.ok?, last_response.body
-    assert_equal queries.map{ |q| "#{q} Bordeaux" }, JSON.parse(last_response.body)['geocoding']['query'].split('|')
+    json = JSON.parse(last_response.body)['geocoding']['query'].split('|')
+    queries.each_with_index { |q, i| assert_match Regexp.new("#{q}[, ]+Bordeaux"), json[i], "No match with #{q}" }
   end
 
   private
