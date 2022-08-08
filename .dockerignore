@@ -3,3 +3,8 @@ docker
 !docker/env.d
 !docker/snippets
 !docker/webapp.conf
+addresses
+redis
+redis-count
+poly
+data
