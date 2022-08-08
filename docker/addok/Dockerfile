@@ -19,6 +19,7 @@ RUN apt-get -q update && \
     apt-get -qy install redis-tools jq && \
     \
     pip install gunicorn addok==${ADDOK_VERSION} addok-fr==${ADDOK_FR_VERSION} addok-france==${ADDOK_FRANCE_VERSION} addok-csv==${ADDOK_CSV_VERSION} && \
+    pip install git+https://github.com/frodrigo/addok_ban_clean@master && \
     pip install git+https://github.com/frodrigo/addok_luxemburg@v${ADDOK_LUXEMBURG_VERSION} && \
     pip install git+https://github.com/Mapotempo/addok_france_clean@v${ADDOK_FRANCE_CLEAN_VERSION} && \
     pip install git+https://github.com/frodrigo/addok_luxemburg_clean@v${ADDOK_LUXEMBURG_CLEAN_VERSION} && \
@@ -37,6 +38,7 @@ RUN apt-get -q update && \
 
 EXPOSE 7878
 
+ADD ./ban_filter.sh /usr/usr/local/bin/ban_filter.sh
 ADD ./addok.conf /etc/addok/addok.conf
 
 ENTRYPOINT ["gunicorn"]
