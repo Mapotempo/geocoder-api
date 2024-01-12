@@ -113,6 +113,8 @@ module GeocoderWrapper
       :fra
     elsif %w[luxembourg luxemburg lux lu].include?(name.strip.downcase)
       :lux
+    elsif %w[espana españa spain espagne esp es].include?(name.strip.downcase)
+      :esp
     else
       name.downcase.to_sym
     end
