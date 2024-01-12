@@ -1,3 +1,6 @@
+# 1.2.1
+- new param to sanitize address (remove part in address containing other than street, postal code or city)
+
 # 1.1.2
 - don't use autocomplete addok option if no need
 - add sentry
