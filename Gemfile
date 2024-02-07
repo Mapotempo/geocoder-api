@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '~> 2.5.0'
+ruby '~> 2.7.0'
 
 gem 'rack'
 gem 'rake'
@@ -21,7 +21,7 @@ gem 'actionpack'
 
 gem 'grape-erb'
 gem 'geocoder', git: 'https://github.com/Mapotempo/geocoder.git'
-gem 'sqlite3'
+gem 'sqlite3', '< 1.5'
 gem 'redis-activesupport'
 
 gem 'sentry-raven'

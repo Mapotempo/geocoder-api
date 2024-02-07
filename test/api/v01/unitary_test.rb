@@ -142,10 +142,10 @@ class Api::V01::UnitaryTest < Minitest::Test
     patch '/0.1/geocode', {api_key: 'bulk_limit', query: 'Place Pey Berland, Bordeaux', country: 'demo'}
     assert_equal 429, last_response.status
     assert JSON.parse(last_response.body)['message'].include?('Too many daily requests')
-    assert_equal({ "Content-Type" => "application/json; charset=UTF-8",
-                   "X-RateLimit-Limit" => 1,
-                   "X-RateLimit-Remaining" => 0,
-                   "X-RateLimit-Reset" => Time.now.utc.to_date.next_day.to_time.to_i }, last_response.headers)
+    assert_equal({ "content-type" => "application/json; charset=UTF-8",
+                   "x-ratelimit-limit" => 1,
+                   "x-ratelimit-remaining" => 0,
+                   "x-ratelimit-reset" => Time.now.utc.to_date.next_day.to_time.to_i }, last_response.headers)
   end
 
   def test_nil_quotas
