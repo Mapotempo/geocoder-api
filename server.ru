@@ -45,7 +45,6 @@ use Rack::Cors do
   end
 end
 
-#\ -p 8558
 run Api::Root
 
 use Rack::Config do |env|
