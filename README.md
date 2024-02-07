@@ -48,7 +48,7 @@ Access it at http://localhost:8558
 
 
 ```
-bundle exec rackup [-p 8558]
+bundle exec rackup -p 8558
 ```
 
 ## Building images (dev/test only)
