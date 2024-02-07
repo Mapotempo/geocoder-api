@@ -1,5 +1,5 @@
 # 1.0.13 is the latest version containing bundler 2
-FROM phusion/passenger-ruby25:1.0.13
+FROM phusion/passenger-ruby27:2.5.1
 
 VOLUME /srv/app/poly
 
@@ -11,11 +11,6 @@ WORKDIR /srv/app
 
 # Install app
 ENV REDIS_HOST redis-cache
-
-# untill phusion/passenger-ruby27
-RUN mv /etc/apt/sources.list.d /etc/apt/sources.list.d.bak && \
-  apt update && apt install -y ca-certificates && \
-  mv /etc/apt/sources.list.d.bak /etc/apt/sources.list.d
 
 RUN apt-get update && \
   apt-get install -y git build-essential zlib1g-dev gdal-bin \
