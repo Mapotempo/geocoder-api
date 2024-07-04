@@ -1,8 +1,7 @@
 source 'https://rubygems.org'
 ruby '~> 2.7.0'
 
-gem 'rack'
-gem 'rackup'
+gem 'rack', '2.2.8'
 gem 'rake'
 gem 'puma'
 gem 'rack-cors'
@@ -17,8 +16,8 @@ gem 'grape-swagger-entity'
 gem 'rack-contrib'
 gem 'rest-client'
 gem 'border_patrol'
-gem 'activesupport'
-gem 'actionpack'
+gem 'activesupport', '6.1.7.6'
+gem 'actionpack', '6.1.7.6'
 
 gem 'grape-erb'
 gem 'geocoder', git: 'https://github.com/Mapotempo/geocoder.git'
@@ -26,6 +25,7 @@ gem 'sqlite3', '< 1.5'
 gem 'redis-activesupport'
 
 gem 'sentry-raven'
+gem 'nokogiri', '1.14'
 
 group :test do
   gem 'rack-test'
