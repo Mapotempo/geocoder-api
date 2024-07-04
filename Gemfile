@@ -20,7 +20,7 @@ gem 'activesupport', '6.1.7.6'
 gem 'actionpack', '6.1.7.6'
 
 gem 'grape-erb'
-gem 'geocoder', git: 'https://github.com/Mapotempo/geocoder.git'
+gem 'geocoder', '>= 1.8' # For Geocoder Here v7 compatibility
 gem 'sqlite3', '< 1.5'
 gem 'redis-activesupport'
 
