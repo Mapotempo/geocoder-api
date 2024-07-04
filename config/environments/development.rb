@@ -38,7 +38,7 @@ module GeocoderWrapper
   Geocoder::Configuration.always_raise = :all
   CACHE = CacheManager.new(ActiveSupport::Cache::FileStore.new(File.join(Dir.tmpdir, 'geocoder'), namespace: 'geocoder', expires_in: 60*60*24*1))
 
-  ADDOK_FRA = Wrappers::Addok.new(CACHE, 'host.docker.internal:7878', 'France', 'poly/france.kml')
+  ADDOK_FRA = Wrappers::Addok.new(CACHE, 'host.docker.internal:7878', 'France', 'poly/france.kml', PointInPolygon.new('./poly/france.sqlite'))
   OPENCAGEDATA = Wrappers::RubyGeocoderOpencagedata.new(CACHE)
   HERE = Wrappers::RubyGeocoderHere.new(CACHE)
   ESRI = Wrappers::Esri.new(nil, nil, CACHE)

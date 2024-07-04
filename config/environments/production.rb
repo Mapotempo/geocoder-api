@@ -35,7 +35,7 @@ module GeocoderWrapper
   ActiveSupport::Cache.lookup_store :redis_store
   CACHE = CacheManager.new(ActiveSupport::Cache::RedisStore.new(host: ENV['REDIS_HOST'] || 'localhost', namespace: 'geocoder', expires_in: 60 * 60 * 24 * 1, raise_errors: true))
 
-  ADDOK_FR = Wrappers::Addok.new(CACHE, "#{ENV['ADDOK_FR_HOST'] || 'http://addok-fr'}:#{ENV['ADDOK_FR_PORT'] || '7878'}", 'France', 'poly/france.kml')
+  ADDOK_FR = Wrappers::Addok.new(CACHE, "#{ENV['ADDOK_FR_HOST'] || 'http://addok-fr'}:#{ENV['ADDOK_FR_PORT'] || '7878'}", 'France', 'poly/france.kml', PointInPolygon.new('./poly/france.sqlite'))
   ADDOK_LU = Wrappers::Addok.new(CACHE, "#{ENV['ADDOK_LU_HOST'] || 'http://addok-lu'}:#{ENV['ADDOK_LU_PORT'] || '7878'}", 'Luxemburg', 'poly/luxemburg.kml', PointInPolygon.new('./poly/luxemburg.sqlite'))
   HERE = Wrappers::RubyGeocoderHere.new(CACHE)
   DEMO = Wrappers::Demo.new(CACHE)
