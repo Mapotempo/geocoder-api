@@ -24,8 +24,9 @@ require './wrappers/ruby_geocoder/ruby_geocoder'
 module Wrappers
   # https://developer.here.com/rest-apis/documentation/geocoder/topics/resource-type-response-geocode.html
   class RubyGeocoderHere < RubyGeocoder
-    def initialize(cache, boundary = nil)
+    def initialize(cache, boundary = nil, credentials = nil)
       super(cache, boundary)
+      @credentials = credentials
 
       @MIN_LENGTH = 50
 
@@ -40,51 +41,54 @@ module Wrappers
       }
 
       @match_level = {
-        'country' => 'country',
-        'state' => 'state',
-        'county' => 'county',
-        'city' => 'city',
-        'district' => 'city', # HERE 'district' not at the rank in other geocoders
-        'street' => 'street',
+        'administrativeArea' => 'city',
+        'place' => 'city',
+        'locality' => 'house',
         'intersection' => 'intersection',
+        'addressBlock' => 'street',
+        'postalCodePoint' => 'street',
+        'street' => 'street',
         'houseNumber' => 'house',
-        'postalCode' => 'city',
-        'landmark' => 'house'
       }
 
-      @batch_url = 'https://batch.geocoder.api.here.com/6.2/jobs'
+      @batch_url = 'https://batch.search.hereapi.com/v1/batch/jobs'
     end
 
     def reverses(params)
       # use unit geocode if bulk would be to slow
       return super(params) unless params.length > @MIN_LENGTH
 
-      payload = ['recId|prox']
-      # 250 magicnumber as default parameter for here api
-      payload << params.each_with_index.map do |current, idx|
-        "#{idx}|#{current[:lat]},#{current[:lng]},250"
+      payload = params.each_with_index.map do |current, idx|
+        "#{idx}|#{current[:lat]},#{current[:lng]}|1"
       end
 
-      here_geocoder_batch payload, 'reverse'
+      here_geocoder_batch(
+        'hrn:here:service::olp-here:search-revgeocode-7',
+        'recId|at|limit',
+        payload,
+      )
     end
 
     def geocodes(params)
       # use unit reverse if bulk would be to slow
       return super(params) unless params.length > @MIN_LENGTH
 
-      payload = ['recId|searchText|country']
-      payload << params.each_with_index.map do |current, idx|
+      payload = params.each_with_index.map do |current, idx|
         maybe_street = maybe_streets?(current)
         query_hash = build_request_query(current, maybe_street)
 
         if maybe_street
-          query_hash.map { |query| "#{idx}|#{flatten_query query}|#{query[:country]}" }
+          query_hash.map { |query| "#{idx}|#{flatten_query_non_empty(query)}|#{query[:country]}" }
         else
-          "#{idx}|#{flatten_query query_hash}|#{query_hash[:country]}"
+          "#{idx}|#{flatten_query_non_empty(query_hash)}|#{query_hash[:country]}"
         end
       end
 
-      here_geocoder_batch payload, 'geocode'
+      here_geocoder_batch(
+        'hrn:here:service::olp-here:search-geocode-7',
+        'recId|searchText|country',
+        payload,
+      )
     end
 
     def complete(params, limit = 10)
@@ -113,7 +117,7 @@ module Wrappers
     def setup_geocoder
       Geocoder::Configuration.lookup = :here
       Geocoder::Configuration.use_https = true
-      Geocoder::Configuration.api_key = GeocoderWrapper.config[:ruby_geocode][Geocoder::Configuration.lookup]
+      Geocoder::Configuration.api_key = @credentials || GeocoderWrapper.config[:ruby_geocode][Geocoder::Configuration.lookup]
     end
 
     def build_features(query, data, options, bulk = false)
@@ -128,161 +132,117 @@ module Wrappers
 
     def version(query = nil)
       if query.nil?
-        "#{super} - here:6.2"
+        "#{super} - here:7.0"
       else
         version_regexp = %r{\/\d+\.\d+\/}
         q = Geocoder::Query.new(query)
         full_url = Geocoder::Lookup.get(:here).query_url(q)
-        "#{super} - here:#{full_url[version_regexp].tr('/', '')}"
+        "#{super} - here:#{full_url[version_regexp]&.tr('/', '') || '7.0'}"
       end
     end
 
     private
 
     def match_quality(r)
-      mq = r[0].data['MatchQuality']
-      return if mq.nil?
-      (mq['Country'] || 0) * 1000 + (mq['City'] || 0) * 100 + (mq['Street'] && mq['Street'][0] || 0) * 10 + (mq['HouseNumber'] || 0)
+      r[0].data['queryScore']
     end
 
-    def build_search_text_param(param)
-      if param.key?(:query)
-        param
-      else
-        p = param.dup
-        gen_streets(param).collect{ |street| p[:street] = street }
-        p
-      end
+    def flatten_query_non_empty(params, with_country = true)
+      # Avoid empty string that shift bulk geocoding
+      query = flatten_query(params, with_country)
+      query.empty? ? 'a' : query
     end
 
-    def map_results(headers, results)
-      headers = headers.split('|')
-      results.map do |row|
-        h = { 'MatchQuality' => {} }
-        row_data = row.split('|')
-        headers.each_with_index do |header, idx|
-          if header.include?('matchQuality')
-            key = header.sub('matchQuality', '').titleize.split.join
-            h['MatchQuality'][key] = key == 'Street' ? [row_data[idx].to_f] : row_data[idx].to_f
-          else
-            h[header] = row_data[idx]
-          end
-        end
-        h
-      end
-    end
-
-    def parse_batch_additional_data(address_additional_data)
-      address_additional_data.split('; ').each_with_object({}) do |current, acc|
-        splited_data = current.split('=')
-        acc[splited_data[0]] = splited_data[1]
-        acc
-      end
-    end
-
-    def here_geocoder_batch(payload, mode = nil)
-
+    def here_geocoder_batch(mode, columns, payload)
       outcols = %w[
-        displayLatitude
-        displayLongitude
-        locationLabel
+        recId
+        accessLatitude
+        accessLongitude
+        positionLatitude
+        positionLongitude
+        queryScore
+        resultType
+        label
         houseNumber
         street
-        district
+        postcode
         city
-        postalCode
+        district
         county
         state
         country
-        relevance
-        addressAdditionalData
-        matchLevel
-        addressDetailsBuilding
-        matchQualityCountry
-        matchQualityCity
-        matchQualityHouseNumber
-        matchQualityStreet
-      ].join(',')
+      ].join('|')
 
-      app_id = ::GeocoderWrapper.config[:ruby_geocode][:here][0]
-      app_code = ::GeocoderWrapper.config[:ruby_geocode][:here][1]
-
+      api_key = ::GeocoderWrapper.config[:ruby_geocode][:here]
       params = {
-        gen: 8,
-        app_id: app_id,
-        app_code: app_code,
-        action: 'run',
-        header: true,
-        indelim: '|',
-        outdelim: '|',
-        outcols: outcols,
-        outputCombined: true
+        apiKey: api_key,
+        serviceHrn: mode,
+        outputColumns: outcols,
       }
-
-      params['mode'] = 'retrieveAddresses' if mode == 'reverse'
 
       RestClient::Request.execute(
         method: :post,
         url: @batch_url,
-        payload: payload.flatten.join("\n"),
         headers: {
           params: params,
-          content_type: '*'
-        }
+          content_type: 'text/plain'
+        },
+        payload: ([columns] + payload).flatten.join("\n"),
       ) do |response|
         case response.code
-        when 200
-            root = Document.new(response.body).root
-            job_id = root.elements['Response/MetaInfo/RequestId'].text
+        when 201
+            job = JSON.parse(response.body)
+            job_id = job['id']
+            href = job['href']
 
-            status_url = "#{@batch_url}/#{job_id}"
-            status = nil
-
-            until status && %w[completed failed].include?(status)
+            status = job['status']
+            until status && %w[completed success failure deleted].include?(status)
+              sleep(6)
               response = RestClient::Request.execute(
                 method: :get,
-                url: status_url,
+                url: href,
                 headers: {
                   params: {
-                    app_id: app_id,
-                    app_code: app_code,
-                    action: 'status'
+                    apiKey: api_key
                   }
                 }
               )
 
-              root = Document.new(response.body).root
-              status = root.elements['Response/Status'].text
+              job = JSON.parse(response.body)
+              status = job['status']
+              href = job['href']
+              results_href = job['resultsHref']
+              errors_href = job['errorsHref']
             end
 
-            raise response if status == 'failed'
+            if status == 'failure'
+              response = RestClient::Request.execute(
+                method: :get,
+                url: errors_href,
+                headers: {
+                  params: {
+                    apiKey: api_key
+                  }
+                }
+              )
+              raise response.body
+            end
 
-            result_url = "#{@batch_url}/#{job_id}/result"
             response = RestClient::Request.execute(
               method: :get,
-              url: result_url,
+              url: results_href,
               headers: {
                 params: {
-                  app_id: app_id,
-                  app_code: app_code,
-                  outputcompressed: false
+                  apiKey: api_key
                 },
-                content_type: 'application/octet-stream'
               }
             )
 
             results = response.body.split("\n")
-            headers = results.shift
-
-            results = map_results(headers, results)
-
-            results = results.group_by { |result| result['recId'] }
-                             .map do |_, value|
-               value.max_by do |v|
-                 max_by([OpenStruct.new(data: v)]) || []
-               end
-            end
-
+            headers = results[0].split('|')
+            results = results.drop(1).collect{ |row|
+              headers.zip(row.split('|')).to_h
+            }
             build_features(nil, results, nil, true)
         else
           raise response
@@ -290,71 +250,66 @@ module Wrappers
       end
     end
 
+    def house_number(data)
+      ['block', 'subblock', 'houseNumber', 'building'].collect{ |p| data[p] }.select{ |p| p }.join(' ')
+    end
+
     def features(query, data)
-      additional_data = parse_address_additional_data(data['Location']['Address']['AdditionalData'])
-      house_number = [data['Location']['Address']['HouseNumber'], data['Location']['Address']['Building']].select{ |i| i }.join(' ')
+      number = house_number(data['address'])
       {
         properties: {
           geocoding: {
             geocoder_version: version(query),
-            score: data['Relevance'],
-            type: @match_level[data['MatchLevel']],
-            label: data['Location']['Address']['Label'],
-            name: "#{house_number} #{data['Location']['Address']['Street']}".strip,
-            housenumber: house_number,
-            street: data['Location']['Address']['Street'],
-            postcode: data['Location']['Address']['PostalCode'],
-            city: data['Location']['Address']['City'],
-            #district: a['Location']['Address']['District'], # In HERE API district is a city district
-            county: additional_data['CountyName'],
-            state: additional_data['StateName'],
-            country: additional_data['CountryName'],
+            score: data.dig('scoring', 'queryScore') || (data['distance'] == 0 ? 1 : [1, 100.0 / data['distance']].min ), # No score for reverse, use distance
+            type: @match_level[data['resultType']],
+            label: data['address']['label'],
+            name: "#{number} #{data['address']['street']}".strip,
+            housenumber: number,
+            street: data['address']['street'],
+            postcode: data['address']['postalCode'],
+            city: data['address']['city'],
+            district: data['address']['district'],
+            county: data['address']['county'],
+            state: data['address']['state'],
+            country: data['address']['countryName'],
           }.delete_if{ |_k, v| v.nil? || v == '' }
         },
         type: 'Feature',
         geometry: {
           coordinates: [
-            data['Location']['DisplayPosition']['Longitude'],
-            data['Location']['DisplayPosition']['Latitude']
+            data.dig('access', 0, 'lng') || data['position']['lng'],
+            data.dig('access', 0, 'lat') || data['position']['lat']
           ],
           type: 'Point'
         }
       }
     end
 
-    def parse_address_additional_data(additional_data)
-      hash = Hash.new { |h, k| h[k] = nil }
-      additional_data.each { |ad| hash[ad['key']] = ad['value'] }
-      hash
-    end
-
     def autocomplete_features(query, data)
-      h = {}
-      data['address'].each { |k, v| h[k] = v } if data.key?('address')
-      name = "#{h['houseNumber'].nil? ?  '' : h['houseNumber']} #{h['street'].nil? ? '' : h['street']}".strip
+      number = house_number(data['address'])
       {
         properties: {
           geocoding: {
             geocoder_version: version(query),
-            type: @match_level[data['matchLevel']],
-            label: data['label'],
-            name: name == '' ? nil : name,
-            housenumber: h['houseNumber'],
-            street: h['street'],
-            postcode: h['postalCode'],
-            city: h['city'],
-            district: h['district'], # In HERE API district is a city district
-            county: h['county'],
-            state: h['stateName'],
-            country: h['country'],
+            type: @match_level[data['resultType']],
+            label: data['address']['label'],
+            name: "#{number} #{data['address']['street']}".strip,
+            housenumber: number,
+            street: data['address']['street'],
+            postcode: data['address']['postalCode'],
+            city: data['address']['city'],
+            district: data['address']['district'],
+            county: data['address']['county'],
+            state: data['address']['state'],
+            country: data['address']['countryName'],
           }.delete_if { |_, v| v.nil? || v == '' }
         }
       }
     end
 
-    def bulk_features(data)
-      data.map do |result_data|
-        if result_data['matchLevel'] == 'NOMATCH'
+    def bulk_features(bulk_data)
+      bulk_data.map do |data|
+        if !data['accessLongitude'] && !data['positionLongitude']
           {
             properties: {
               geocoding: {
@@ -362,29 +317,30 @@ module Wrappers
             }
           }
         else
-          additional_data = parse_batch_additional_data result_data['addressAdditionalData']
+          number = house_number(data)
           {
             properties: {
               geocoding: {
                 geocoder_version: version,
-                score: result_data['relevance'].to_f,
-                type: @match_level[result_data['matchLevel']],
-                label: result_data['locationLabel'],
-                name: "#{result_data['houseNumber']} #{result_data['street']}".strip,
-                housenumber: result_data['houseNumber'],
-                postcode: result_data['postalCode'],
-                city: result_data['city'],
-                # district: result_data['district'],
-                county: result_data['county'],
-                state: result_data['state'],
-                country: additional_data['countryName']
+                score: data['queryScore'],
+                type: @match_level[data['resultType']],
+                label: data['label'],
+                name: "#{number} #{data['street']}".strip,
+                housenumber: number,
+                street: data['street'],
+                postcode: data['postalCode'],
+                city: data['city'],
+                district: data['district'],
+                county: data['county'],
+                state: data['state'],
+                country: data['countryName'],
               }.delete_if{ |_k, v| v.nil? || v == '' }
             },
             type: 'Feature',
             geometry: {
               coordinates: [
-                result_data['displayLongitude'].to_f,
-                result_data['displayLatitude'].to_f
+                data['accessLongitude'] == '' ?  data['positionLongitude'] : data['accessLongitude'],
+                data['accessLatitude'] == '' ? data['positionLatitude'] : data['accessLatitude']
               ],
               type: 'Point'
             }
