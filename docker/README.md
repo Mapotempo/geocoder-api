@@ -8,6 +8,13 @@ mkdir -p ./docker/redis
 docker stack deploy -c ./docker-compose.yml ${PROJECT_NAME}
 ```
 
+## Quick start
+
+```
+docker compose -f docker-compose-build.yml build
+docker compose up -d
+```
+
 ## Data build
 
 After the first deployment, you need to initialize Addok database.

@@ -15,6 +15,8 @@ ENV ADDOK_USAGE_NAME_BAN_FR_VERSION 1.0.0
 ENV ADDOK_USAGE_NAME_LU_VERSION 1.1.0
 ENV ADDOK_SCORE_PREPROCESSSED_QUERY_VERSION 1.0.0
 
+RUN echo "deb http://archive.debian.org/debian stretch main" > /etc/apt/sources.list
+
 RUN apt-get -q update && \
     apt-get -qy install redis-tools jq && \
     \

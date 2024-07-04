@@ -7,6 +7,20 @@ x-default-redis: &default-redis
     - ./redis:/data
 
 services:
+  api:
+    build:
+      context: .
+      dockerfile: docker/dev/Dockerfile
+    image: dev.example.com/mapotempo/geocoder-api
+    volumes:
+      - ${APP_HOME:-.}/poly:/srv/app/poly
+    ports:
+      - 8558:8558
+    environment:
+      PASSENGER_APP_ENV: test
+      REDIS_COUNT_HOST: redis-count
+      REDIS_HOST: redis-cache
+
   redis-cache:
     <<: *default-redis
     hostname: redis-cache
