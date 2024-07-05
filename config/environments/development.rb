@@ -38,7 +38,7 @@ module GeocoderWrapper
   Geocoder::Configuration.always_raise = :all
   CACHE = CacheManager.new(ActiveSupport::Cache::FileStore.new(File.join(Dir.tmpdir, 'geocoder'), namespace: 'geocoder', expires_in: 60*60*24*1))
 
-  ADDOK_FRA = Wrappers::Addok.new(CACHE, 'localhost:7878', 'France', 'poly/france.kml')
+  ADDOK_FRA = Wrappers::Addok.new(CACHE, 'host.docker.internal:7878', 'France', 'poly/france.kml', PointInPolygon.new('./poly/france.sqlite'))
   OPENCAGEDATA = Wrappers::RubyGeocoderOpencagedata.new(CACHE)
   HERE = Wrappers::RubyGeocoderHere.new(CACHE)
   ESRI = Wrappers::Esri.new(nil, nil, CACHE)
@@ -77,7 +77,7 @@ module GeocoderWrapper
     },
     ruby_geocode: {
       # Set the appropriate authentication if required
-      here: ['APP_ID', 'APP_CODE'],
+      here: 'API_KEY',
       opencagedata: 'API_KEY'
     },
     addok_endpoint: '/search',

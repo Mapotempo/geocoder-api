@@ -25,7 +25,7 @@ class Wrappers::RubyGeocoderHereTest < Minitest::Test
     result = rg.geocode({query: 'ул. Неглинная, д.4, Москва, 109012'})
     assert 0 < result[:features].size
     g = result[:features][0][:properties][:geocoding]
-    assert_equal 'Москва', g[:city]
+    assert_equal 'Moscow', g[:city]
   end
 
   def test_geocode_from_part
@@ -33,7 +33,7 @@ class Wrappers::RubyGeocoderHereTest < Minitest::Test
     result = rg.geocode({housenumber: '4', street: 'ул. Неглинная', city: 'Москва'})
     assert 0 < result[:features].size
     g = result[:features][0][:properties][:geocoding]
-    assert_equal 'Москва', g[:city]
+    assert_equal 'Moscow', g[:city]
   end
 
   def test_geocode_maybe_street
@@ -43,6 +43,14 @@ class Wrappers::RubyGeocoderHereTest < Minitest::Test
     g = result[:features][0][:properties][:geocoding]
     assert_equal 'Bordeaux', g[:city]
     assert_equal 'Rue Fondaudège', g[:street]
+  end
+
+  def test_complete
+    rg = GeocoderWrapper::HERE
+    result = rg.complete({query: 'ул. Неглинная, д.4, Мос'})
+    assert 0 < result[:features].size
+    g = result[:features][0][:properties][:geocoding]
+    assert_equal 'Moscow', g[:city]
   end
 
   def test_reverse
@@ -61,4 +69,37 @@ class Wrappers::RubyGeocoderHereTest < Minitest::Test
     assert v.include? 'here'
   end
 
+  def test_geocodes_from_full_text
+    rg = Wrappers::RubyGeocoderHere.new(GeocoderWrapper::CACHE, boundary = nil, min_length = 0)
+    result = rg.geocodes([
+      {query: ''},
+      {query: 'ул. Неглинная, д.4, Москва, 109012'}
+    ])
+    assert_equal 2, result.size
+    g = result[0][:properties][:geocoding]
+    assert_equal 0, g.size
+    g = result[1][:properties][:geocoding]
+    assert_equal 'Москва', g[:city]
+  end
+
+  def test_reverses
+    rg = Wrappers::RubyGeocoderHere.new(GeocoderWrapper::CACHE, boundary = nil, min_length = 0)
+    result = rg.reverses([{lat: 42.89442, lng: -2.16792}])
+    assert_equal 1, result.size
+    g = result[0][:properties][:geocoding]
+    assert_equal 'Alsasua', g[:city]
+  end
+
+  def test_reverses_no_result
+    rg = Wrappers::RubyGeocoderHere.new(GeocoderWrapper::CACHE, boundary = nil, min_length = 0)
+    result = rg.reverses([
+      {lat: 0, lng: 0},
+      {lat: 42.89442, lng: -2.16792},
+    ])
+    assert_equal 2, result.size
+    g = result[0][:properties][:geocoding]
+    assert_equal 0, g.size
+    g = result[1][:properties][:geocoding]
+    assert_equal 'Alsasua', g[:city]
+  end
 end if ENV['HERE_API']
